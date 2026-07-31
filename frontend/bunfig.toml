@@ -1,0 +1,12 @@
+# コンポーネントテストの下ごしらえ（src/test-setup.ts の但し書きも参照）。
+#
+# preload はここで指定できるが、svelte をブラウザ側へ解決させる conditions は bunfig では
+# 効かない（bun 1.3 は --conditions を CLI でしか見ない。[test]・ルート・[run] のいずれに
+# 書いても無視されることを確認済み）。そのため実行は `bun run test` に統一し、
+# package.json の test スクリプトが --conditions browser を渡している。
+# 素の `bun test` で走らせた場合は test-setup.ts が理由を書いて即座に止める。
+[test]
+# 対象は src 配下（package.json の test スクリプトから src を外せる＝
+# `bun run test <ファイル>` で1本だけ走らせられる）。
+root = "./src"
+preload = ["./src/test-setup.ts"]

@@ -1,0 +1,82 @@
+# natsuyasumi-board — docker compose up --build で起動し、http://<ホストのIP>:8082 を開く。
+#
+# 管理API(/api/admin/*)の保護方針は「明示的に選ぶ」必要があります（下記 admin-auth-guard）。
+# 次のどちらかを指定して起動してください:
+#   1) PIN で保護する（推奨）:           ADMIN_PIN=1234 docker compose up --build
+#   2) PIN なし運用を承知で使う（家庭内LAN専用）: ADMIN_NO_AUTH=1 docker compose up --build
+# どちらも指定しないと admin-auth-guard が起動を止めます（無防備な管理APIを黙って公開しないため）。
+#
+# 音声読み上げ（VOICEVOX）も使う場合は、上のどちらかに --profile voice を足す:
+#   ADMIN_PIN=1234 docker compose --profile voice up --build
+#
+# データ（SQLite: 定義＋チェック記録）はホストの ./data に永続化される。
+# バックアップは ./data をコピーするだけ。
+services:
+  # 起動ガード: 公開ポート8082で管理APIを出す前に、保護方針が選ばれているか確かめる。
+  # ADMIN_PIN も ADMIN_NO_AUTH も未設定なら非ゼロ終了し、depends_on で backend/frontend の
+  # 起動ごと止める（＝無防備な管理APIを黙って公開しない）。実際の PIN 値はここに渡さず、
+  # 値をそのまま渡し、backend の app.admin.auth._env_flag と同じ真偽判定でガードする。
+  # ${VAR:+1} で「空でなければ真」にすると ADMIN_NO_AUTH=0 や false でもガードを通ってしまい、
+  # backend 側は同じ値を偽として管理 API を閉じ続ける＝起動はするのに設定が効かない、という
+  # 食い違いが起きる。backend の image を再利用するので追加の依存イメージは増えない。
+  admin-auth-guard:
+    build: ./backend
+    environment:
+      ADMIN_PIN: ${ADMIN_PIN:-}
+      ADMIN_NO_AUTH: ${ADMIN_NO_AUTH:-}
+    command:
+      - /bin/sh
+      - -c
+      - |
+        # backend と同じ判定（app.admin.auth._env_flag）で「保護方針が選ばれているか」を見る
+        if ! python -c "import sys; from app.admin.auth import pin_required, _env_flag; sys.exit(0 if (pin_required() or _env_flag('ADMIN_NO_AUTH')) else 1)"; then
+          echo "" >&2
+          echo "[natsuyasumi-board] 起動を中止しました。" >&2
+          echo "管理API(/api/admin/*)の保護方針が未設定のまま、公開ポート 8082 で" >&2
+          echo "起動しようとしています。次のどちらかを明示して起動してください:" >&2
+          echo "  1) PIN で保護する:              ADMIN_PIN=<すきな数字> docker compose up --build" >&2
+          echo "  2) PIN なし運用を承知で使う:     ADMIN_NO_AUTH=1 docker compose up --build" >&2
+          echo "     （2 は家庭内LAN専用。インターネットに公開しないでください）" >&2
+          echo "" >&2
+          exit 1
+        fi
+        echo "[natsuyasumi-board] admin-auth-guard: OK（ADMIN_PIN か ADMIN_NO_AUTH が設定されています）"
+
+  backend:
+    build: ./backend
+    volumes:
+      - ./data:/app/data
+    environment:
+      VOICEVOX_URL: http://voicevox:50021
+      ADMIN_PIN: ${ADMIN_PIN:-}
+      # PIN なし運用の明示オプトイン（ADMIN_NO_AUTH=1）。未設定なら backend は管理APIを
+      # 閉じる（fail-closed）。この値を backend コンテナに渡さないとオプトインが届かない。
+      ADMIN_NO_AUTH: ${ADMIN_NO_AUTH:-}
+      # backend は compose ネットワーク内（frontend のプロキシ）からしか届かないので、
+      # プロキシが付ける x-real-client を信じてよい＝管理PINのスロットルを端末ごとに掛けられる。
+      # 直接届きうる構成（手動セットアップ等）では立てないこと（詐称でスロットルを回避される）。
+      TRUST_PROXY_CLIENT_HEADER: "1"
+    depends_on:
+      admin-auth-guard:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      # 8080 は家庭内サーバで取り合いになりやすい（別のダッシュボードやリバースプロキシが
+      # 先に握っていることが多い）ので、既定は 8082 にしてある。変えたい場合はここと
+      # frontend/vite.config.ts の dev サーバ、README の案内をそろえて直す。
+      - "8082:3000"
+    environment:
+      API_UPSTREAM: http://backend:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # 音声読み上げ（オプション）。--profile voice を付けたときだけ起動する。
+  # 起動していなければ画面から音声ボタンが消えるだけで、他の機能はそのまま使える。
+  voicevox:
+    image: voicevox/voicevox_engine:cpu-latest
+    profiles: ["voice"]
+    restart: unless-stopped

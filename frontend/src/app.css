@@ -1,0 +1,88 @@
+@import 'tailwindcss';
+
+/* natsuyasumi-board 共通スタイル
+ *
+ * カラー戦略：
+ *   - @theme でライト用の値を CSS variable として登録 → Tailwind が `bg-surface` 等の
+ *     ユーティリティを `background-color: var(--color-surface)` の形で生成する
+ *   - <html class="dark"> が付いた時に variable をダーク用の値で上書きする
+ *     （+layout.svelte が prefers-color-scheme に追従して付け外しする）
+ */
+
+@theme {
+	--font-sans: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', system-ui, sans-serif;
+
+	/* ライトテーマのデフォルト値 */
+	--color-bg: #f5f7fa;
+	--color-surface: #ffffff;
+	/* モーダル等「背後にコンテンツが来る面」用の不透明パネル（ライト/ダークでは surface と同値） */
+	--color-surface-solid: #ffffff;
+	--color-surface2: #f1f5f9;
+	--color-border-dim: #e2e8f0;
+	--color-text-base: #1e293b;
+	--color-text-dim: #64748b;
+	--color-accent: #2563eb;
+	--color-warn: #ea580c;
+	--color-danger: #dc2626;
+	--color-ok: #16a34a;
+	--color-attn: #ca8a04;
+}
+
+/* ダークテーマ：<html class="dark"> 時に variable を上書き */
+.dark {
+	--color-bg: #0f1117;
+	--color-surface: #1a1d27;
+	--color-surface-solid: #1a1d27;
+	--color-surface2: #232735;
+	--color-border-dim: #2d3245;
+	--color-text-base: #e4e6ef;
+	--color-text-dim: #8b8fa3;
+	--color-accent: #6c8cff;
+	--color-warn: #ffa94d;
+	--color-danger: #ff6b6b;
+	--color-ok: #69db7c;
+	--color-attn: #ffd43b;
+}
+
+html,
+body {
+	font-family: var(--font-sans);
+	background: var(--color-bg);
+	color: var(--color-text-base);
+	font-size: 14px;
+	margin: 0;
+	padding: 0;
+	/* iOS Safari の横向き時の文字自動拡大を抑止 */
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+
+/* iOS Safari の入力フォーカス時自動ズーム対策 */
+input,
+textarea,
+select {
+	font-size: 16px !important;
+}
+
+/* 細スクロールバー（内部スクロールするパネルに付ける） */
+.scroll-elegant {
+	scrollbar-width: thin;
+	scrollbar-color: color-mix(in srgb, var(--color-text-dim) 38%, transparent) transparent;
+}
+.scroll-elegant::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+.scroll-elegant::-webkit-scrollbar-track {
+	background: transparent;
+}
+.scroll-elegant::-webkit-scrollbar-thumb {
+	background-color: color-mix(in srgb, var(--color-text-dim) 30%, transparent);
+	border-radius: 9999px;
+	border: 2px solid transparent;
+	background-clip: padding-box;
+	transition: background-color 0.15s ease;
+}
+.scroll-elegant:hover::-webkit-scrollbar-thumb {
+	background-color: color-mix(in srgb, var(--color-text-dim) 50%, transparent);
+}

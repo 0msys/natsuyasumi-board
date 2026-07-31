@@ -1,0 +1,28 @@
+# データ（SQLite: 定義＋記録）
+data/
+
+# 環境変数
+.env
+
+# Claude Code のマシン固有設定（ツール許可の記録など個人的な内容）。
+# チームで共有したい設定・スキルは .claude/ 配下の別ファイルに置けば追跡される。
+.claude/settings.local.json
+
+# ローカル環境専用の Compose 上書き（ポートの逃がし先などマシン固有の設定）。
+# 標準名なので置いてあるだけで必ず自動適用される＝取り込むと全利用者の公開ポートが変わる。
+docker-compose.override.yml
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Node / Bun
+node_modules/
+frontend/.svelte-kit/
+frontend/build/
+
+# OS
+.DS_Store
