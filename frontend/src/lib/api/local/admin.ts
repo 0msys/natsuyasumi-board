@@ -3,7 +3,14 @@
 // 保存は「キー採番 → 検証 → 楽観ロック → 履歴に退避」を、書き込みの直列化のなかで
 // まとめて行う（バックエンドが1トランザクションでやっていたのと同じ範囲）。
 import { todayJst } from '$lib/core/clock';
-import { SummerDefinitionError, parseDefinition, parseGrade } from '$lib/core/definition';
+import {
+	SummerDefinitionError,
+	dailyItemKeys,
+	flagItemKeys,
+	parseDefinition,
+	parseGrade,
+	type SummerDefinition
+} from '$lib/core/definition';
 import { GRADE_KANJI_SOURCE } from '$lib/core/generated/kanjiTable';
 import { assignKeys, shiftDocToNextYear, stripKeys } from '$lib/core/keys';
 import { TEMPLATES, type Period } from '$lib/core/template';
@@ -11,6 +18,7 @@ import { validateDocument } from '$lib/core/validate';
 import { mutate, read } from '$lib/store/db';
 import {
 	HISTORY_KEEP,
+	containsSeparator,
 	defKey,
 	joinKey,
 	splitKey,
@@ -47,10 +55,31 @@ const entryOf = (db: Db, row: DefinitionRow) => ({
 /** 定義を検証して受け取る（壊れていれば 422）。 */
 function parseOr422(doc: Doc, source: string) {
 	try {
-		return parseDefinition(doc, source);
+		const definition = parseDefinition(doc, source);
+		assertKeyable(definition);
+		return definition;
 	} catch (e) {
 		if (e instanceof SummerDefinitionError) throw new ApiError(422, e.message);
 		throw e;
+	}
+}
+
+/** 記録のキーに載せられる文字だけでできているか。
+ *
+ *  記録は「名前＋日付＋項目キー」を区切り文字でつないだキーで持つ。名前や項目キーに
+ *  区切りそのものが入ると、読むときの切り分けがずれて、書けたはずの記録が別人の
+ *  ものに見えて出てこなくなる。**保存は成功するので、消えたことに気づけない。**
+ *
+ *  ふつうの操作では入らない（画面から打てる文字ではない）。入りうるのは、手で書いた
+ *  JSON を取り込む道だけ。バックエンドは SQLite の列に素直に入るので気にしなくてよく、
+ *  これは lite の持ちかたに固有の制約——だから core ではなくここで断る。 */
+function assertKeyable(definition: SummerDefinition): void {
+	const values = [definition.child, ...dailyItemKeys(definition), ...flagItemKeys(definition)];
+	if (values.some(containsSeparator)) {
+		throw new ApiError(
+			422,
+			'名前や項目のキーに、この版では使えない文字が入っています（記録を保存できません）'
+		);
 	}
 }
 
@@ -152,6 +181,9 @@ export function createNextYear(db: Db, child: string) {
 export function renameChild(db: Db, child: string, next: string) {
 	const trimmed = String(next ?? '').trim();
 	if (!trimmed) throw new ApiError(400, '新しい名前を入れてください');
+	if (containsSeparator(trimmed)) {
+		throw new ApiError(400, '名前に、この版では使えない文字が入っています');
+	}
 	if (trimmed === child) return { ok: true, child: trimmed };
 	if (Object.values(db.definitions).some((r) => r.child === trimmed)) {
 		throw new ApiError(409, `「${trimmed}」はもう居ます`);

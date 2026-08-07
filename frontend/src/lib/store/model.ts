@@ -79,6 +79,13 @@ export const checkKey = (child: string, day: DayString, itemKey: string): string
 export const flagKey = (child: string, itemKey: string): string => `${child}${SEP}${itemKey}`;
 export const timerKey = (child: string, day: DayString): string => `${child}${SEP}${day}`;
 
+/** 値の中に区切りそのものが入っていないか。
+ *
+ *  入っていると、組み立てたキーを splitKey で切り分けたときに境目がずれる。
+ *  書き込みは成功するのに読み出しでは別のものに見える＝記録が黙って消えるので、
+ *  保存に載せる前に断る（呼ぶのは $lib/api/local/admin.ts）。 */
+export const containsSeparator = (value: string): boolean => value.includes(SEP);
+
 /** キーの先頭にある子ども名を取り出す（改名で全キーを付け替えるときに使う）。 */
 export const splitKey = (key: string): string[] => key.split(SEP);
 export const joinKey = (...parts: (string | number)[]): string => parts.join(SEP);
