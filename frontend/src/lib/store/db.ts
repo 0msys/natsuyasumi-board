@@ -5,6 +5,8 @@ import { memoryPersistence, type Persistence } from './persist';
 
 /** 多タブへ「書いたよ」を知らせる通路。 */
 const CHANNEL = 'nyb';
+/** 読んで書き換えて書き戻すまでを、タブをまたいで1つずつにするための鍵。 */
+const LOCK = 'nyb-write';
 
 let persistence: Persistence | null = null;
 let loaded: Db | null = null;
@@ -69,6 +71,24 @@ export function watch(fn: (db: Db) => void): () => void {
 	return () => watchers.delete(fn);
 }
 
+/**
+ * 「読む → 書き換える → 書き戻す」を、タブをまたいで1つずつにする。
+ *
+ * 同じタブの中は下の chain で直列になるが、それだけでは足りない。2つのタブが
+ * ほぼ同時に書くと、両方が同じ内容を読んでから書き戻して、あとから書いたほうが
+ * 相手の変更を消す。全体を1本のドキュメントとして書き戻す作りなので、読みと
+ * 書きのあいだに誰も割り込まないことを、保存の外側で保証する必要がある。
+ *
+ * Web Locks が無い端末（Safari 15.4 より前）では鍵なしで進む。そこは
+ * 「同時に押さなければ壊れない」ままだが、鍵が無いことを理由に読み直しごと
+ * やめてしまうより、できる範囲で狭めるほうがよい。
+ */
+function withWriteLock<T>(run: () => Promise<T>): Promise<T> {
+	const locks = typeof navigator === 'undefined' ? undefined : navigator.locks;
+	if (!locks?.request) return run();
+	return locks.request(LOCK, run) as Promise<T>;
+}
+
 /** 保存から読む（失敗したらメモリ保存へ退避して空で始める）。 */
 async function readPersisted(): Promise<Db> {
 	try {
@@ -105,29 +125,33 @@ export function load(): Promise<Db> {
  * IndexedDB から数ミリ秒で、書き込みは人が押したときにしか起きないので、毎回やってよい。
  */
 export function mutate<T>(fn: (db: Db) => T): Promise<T> {
-	const next = chain.then(async () => {
-		ensureChannel();
-		const db = await readPersisted();
-		loaded = db;
-		loading = Promise.resolve(db);
-		// 通番は fn を呼ぶ**前**に上げる。あとから上げると、fn の中で
-		// 「この書き込みが終わったときの通番」を知る手段が無くなる。
-		// 実際それでバックアップが自分の書き込みを数えてしまい、書き出した直後に
-		// 「そのあと 1件」と出ていた。
-		db.meta.seq += 1;
-		try {
-			const result = fn(db);
-			await pickPersistence().save(db);
-			channel?.postMessage({ seq: db.meta.seq });
-			return result;
-		} catch (e) {
-			// 保存しなかったのに、手元の写しだけ通番が進んだ状態になっている。
-			// 次に読むときに保存から取り直させる。
-			loaded = null;
-			loading = null;
-			throw e;
-		}
-	});
+	const next = chain.then(() =>
+		// 鍵の中で「読む」からやり直す。鍵を取るまでのあいだに別のタブが書いている
+		// かもしれないので、鍵の外で読んだものを使ってはいけない。
+		withWriteLock(async () => {
+			ensureChannel();
+			const db = await readPersisted();
+			loaded = db;
+			loading = Promise.resolve(db);
+			// 通番は fn を呼ぶ**前**に上げる。あとから上げると、fn の中で
+			// 「この書き込みが終わったときの通番」を知る手段が無くなる。
+			// 実際それでバックアップが自分の書き込みを数えてしまい、書き出した直後に
+			// 「そのあと 1件」と出ていた。
+			db.meta.seq += 1;
+			try {
+				const result = fn(db);
+				await pickPersistence().save(db);
+				channel?.postMessage({ seq: db.meta.seq });
+				return result;
+			} catch (e) {
+				// 保存しなかったのに、手元の写しだけ通番が進んだ状態になっている。
+				// 次に読むときに保存から取り直させる。
+				loaded = null;
+				loading = null;
+				throw e;
+			}
+		})
+	);
 	// 失敗しても鎖は続ける（1回の失敗で以降の書き込みが全部詰まらないように）。
 	chain = next.catch(() => undefined);
 	return next;
@@ -136,13 +160,20 @@ export function mutate<T>(fn: (db: Db) => T): Promise<T> {
 /** 読み取り。書き込みの途中には割り込まない。 */
 export const read = <T>(fn: (db: Db) => T): Promise<T> => load().then(fn);
 
-/** 中身をまるごと入れ替える（バックアップからの復元）。 */
+/** 中身をまるごと入れ替える（バックアップからの復元）。
+ *
+ *  ふつうの書き込みと同じ列に並べる。`await chain` で待つだけだと、待ち終わった直後に
+ *  始まった書き込みと並走してしまう——たとえばバックアップの状態を見にいったときに
+ *  裏で走る「保存の持続を聞いた結果を覚える」書き込みと重なると、復元した中身が
+ *  その1件で上書きされたり、逆にその1件が消えたりする。復元は「全部失った人が
+ *  取り戻す」経路なので、いちばん割り込ませてはいけない。 */
 export async function replaceAll(raw: unknown): Promise<void> {
-	const db = normalizeDb(raw);
-	await chain;
-	await pickPersistence().save(db);
-	loaded = db;
-	loading = Promise.resolve(db);
-	ensureChannel();
-	channel?.postMessage({ seq: db.meta.seq });
+	const next = normalizeDb(raw);
+	await mutate((db) => {
+		// mutate が既に1つ進めた通番。復元で戻すと、他のタブが「古い」と誤解する。
+		const seq = db.meta.seq;
+		for (const key of Object.keys(db)) delete (db as Record<string, unknown>)[key];
+		Object.assign(db, next);
+		db.meta.seq = Math.max(seq, next.meta.seq + 1);
+	});
 }
