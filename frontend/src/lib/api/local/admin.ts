@@ -149,6 +149,23 @@ export function renameChild(db: Db, child: string, next: string) {
 	if (!Object.values(db.definitions).some((r) => r.child === child)) {
 		throw new ApiError(404, `「${child}」の定義がありません`);
 	}
+	// 定義を消しても記録は残す（登録し直せば戻る）ので、消したあとの名前には
+	// まだ記録がぶら下がっている。そこへ別の子を改名すると、同じ日・同じ項目キーの
+	// 行が黙って上書きされて、戻せるはずだった記録が消える。
+	// 項目キーは定義ごとに振り直されるので普通はぶつからないが、同じ設定 JSON を
+	// 兄弟で使い回した場合（README が勧めている使いかた）は一致する。
+	// バックエンドは保存側の一意制約に弾かれてエラーになる＝データは失われない。
+	// こちらは素のオブジェクトなので、自分で断る。
+	const retained = [db.daily_checks, db.flags, db.media_timer, db.definition_history].some(
+		(table) => Object.keys(table).some((key) => splitKey(key)[0] === trimmed)
+	);
+	if (retained) {
+		throw new ApiError(
+			409,
+			`「${trimmed}」の記録がのこっています（まえに消した子のものです）。` +
+				`上書きしてしまうので、「${trimmed}」を登録しなおして中身を確かめるか、べつの名前にしてください`
+		);
+	}
 
 	// 記録は子どもの名前をキーの先頭に持っているので、5つとも付け替える。
 	// どれか1つでも忘れると、その子の記録だけが行方不明になる。

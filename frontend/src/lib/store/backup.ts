@@ -50,13 +50,56 @@ export function parseBackup(raw: unknown): Db {
 		);
 	}
 	const db = payload.db;
-	// 中身がそろっているか。正しく書き出したものには必ず全部ある。
-	const required = ['definitions', 'daily_checks', 'flags'] as const;
-	if (!isMap(db) || required.some((key) => !isMap((db as Record<string, unknown>)[key]))) {
+	if (!isMap(db)) {
 		throw new Error('バックアップの中身が足りません（途中で切れたファイルかもしれません）');
+	}
+
+	// 区画があるかだけでなく、1行ずつ形を見る。
+	//
+	// ここを「マップならよい」で通すと、definitions: { "x": null } のようなものが
+	// そのまま入り、置きかえたあとに一覧が row.child を読んで落ちる＝記録を失ったうえに
+	// アプリが開けなくなる。置きかえは元に戻せないので、疑わしいものは入れない。
+	for (const [section, checkRow] of Object.entries(ROW_CHECKS)) {
+		const table = (db as Record<string, unknown>)[section];
+		if (table === undefined) continue; // 区画ごと無いのは normalizeDb が埋める
+		if (!isMap(table)) {
+			throw new Error(`バックアップの「${section}」が壊れています`);
+		}
+		for (const [key, row] of Object.entries(table)) {
+			if (!checkRow(row)) {
+				throw new Error(`バックアップの「${section}」に読めない記録があります（${key}）`);
+			}
+		}
+	}
+	// 正しく書き出したものには必ずある区画
+	for (const section of ['definitions', 'daily_checks', 'flags'] as const) {
+		if (!isMap((db as Record<string, unknown>)[section])) {
+			throw new Error('バックアップの中身が足りません（途中で切れたファイルかもしれません）');
+		}
 	}
 	return normalizeDb(db);
 }
+
+const isInt = (v: unknown): boolean => typeof v === 'number' && Number.isInteger(v);
+
+/** 区画ごとの、1行に最低限そろっていてほしいもの。
+ *
+ *  ここに挙げるのは「読む側が実際に触る欄」だけにする。将来ふえた欄まで必須にすると、
+ *  古いバックアップが読めなくなる。 */
+const ROW_CHECKS: Record<string, (row: unknown) => boolean> = {
+	definitions: (row) =>
+		isMap(row) &&
+		typeof row.child === 'string' &&
+		isInt(row.year) &&
+		isMap(row.doc) &&
+		isInt(row.revision),
+	definition_history: (rows) =>
+		Array.isArray(rows) && rows.every((r) => isMap(r) && isInt(r.revision) && isMap(r.doc)),
+	daily_checks: (row) => isMap(row) && typeof row.status === 'string',
+	flags: (row) => isMap(row) && isInt(row.value),
+	media_timer: (row) =>
+		isMap(row) && isInt(row.accumulated_seconds) && typeof row.running === 'boolean'
+};
 
 export function buildBackup(db: Db, now: number): { filename: string; payload: BackupPayload } {
 	return {
@@ -66,7 +109,9 @@ export function buildBackup(db: Db, now: number): { filename: string; payload: B
 			version: BACKUP_VERSION,
 			exported_at: now,
 			schema_version: SCHEMA_VERSION,
-			db
+			// 生きている中身をそのまま渡さない。受け取った側が触ると本体が変わってしまう
+			// ——書き出しは「そのときの写し」であるべきで、参照を配る場所ではない。
+			db: JSON.parse(JSON.stringify(db)) as Db
 		}
 	};
 }

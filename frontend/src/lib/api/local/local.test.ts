@@ -226,6 +226,38 @@ describe('管理画面の保存', () => {
 	});
 });
 
+describe('名前の変更', () => {
+	it('消した子の記録がのこっている名前へは変えられない', async () => {
+		// 兄弟で同じ設定を使い回すと、項目キーまで一致する（README が勧めている使いかた）
+		const shared = (child: string) => ({
+			child,
+			child_kana: child,
+			year: Number(today.slice(0, 4)),
+			grade: '小2',
+			period: PERIOD,
+			habits: [{ key: 'h_same', label: 'はみがき' }]
+		});
+		await api.adminImportDefinition(shared('はな'));
+		await api.adminImportDefinition(shared('そら'));
+
+		// そらに記録を入れてから、定義だけ消す（記録は残る＝登録し直せば戻る）
+		await api.summerSetCheck('そら', today, 'h_same', 'done');
+		await api.adminDeleteDefinition('そら');
+
+		// ここで はな → そら に改名できてしまうと、そらの記録が黙って上書きされる
+		expect(api.adminRenameChild('はな', 'そら')).rejects.toThrow('記録がのこっています');
+
+		const db = await read((d) => d);
+		expect(db.daily_checks[checkKey('そら', today, 'h_same')].status).toBe('done');
+	});
+
+	it('記録がのこっていない名前へは変えられる', async () => {
+		await wizard();
+		await api.adminRenameChild(CHILD, 'そら');
+		expect((await api.summerChildren()).children[0].child).toBe('そら');
+	});
+});
+
 describe('来年ぶん', () => {
 	it('項目は引き継ぎ、キーは振り直す（去年の「できた」を持ち越さない）', async () => {
 		await wizard();
@@ -385,6 +417,19 @@ describe('バックアップの取り込み', () => {
 		delete (payload.db as Record<string, unknown>).daily_checks;
 		expect(api.backupImportAll(payload)).rejects.toThrow('中身が足りません');
 		expect((await api.summerChildren()).children).toHaveLength(1);
+	});
+
+	// 「マップならよい」で通すと、置きかえたあとに一覧が row.child を読んで落ちる。
+	// 記録を失ったうえにアプリが開けなくなるので、入れる前に断る。
+	it('行の形が壊れているファイルは断る', async () => {
+		await wizard();
+		const payload = await goodPayload();
+		(payload.db as Record<string, unknown>).definitions = { x: null };
+		expect(api.backupImportAll(payload)).rejects.toThrow('読めない記録があります');
+		expect((await api.summerChildren()).children).toHaveLength(1);
+
+		// 断ったあとも、いままでどおり読める（壊れかけで止まっていない）
+		expect((await api.summerState(CHILD)).child).toBe(CHILD);
 	});
 
 	it('新しいバージョンのファイルは断る', async () => {
