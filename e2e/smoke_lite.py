@@ -12,6 +12,7 @@
   ⑤ 管理画面まで行ける
   ⑥ 読み上げの欄が出ていない（lite には機能が無いので、出ると案内が嘘になる）
   ⑦ バックアップを取って、消して、戻せる（＝消えても取り返せる）
+  ⑧ Service Worker が入り、圏外でも各ページが開ける（ホーム画面に追加した先での想定）
 
 docker 版の smoke_child_page.py と対になる。あちらはサーバ権威の往復を見るが、
 こちらは「サーバが無くても同じことができる」を見る。
@@ -21,6 +22,7 @@ import asyncio
 import os
 import re
 import sys
+from urllib.parse import quote
 
 from playwright.async_api import async_playwright
 
@@ -144,6 +146,24 @@ async def main() -> int:
             restored = await page.inner_text("body")
             if CHILD not in restored:
                 problems.append("⑦ バックアップから戻せなかった")
+
+        # ⑧ 圏外でも開けるか（Service Worker が入っていること自体の確認でもある）
+        await page.goto(f"{BASE}/", wait_until="networkidle")
+        try:
+            await page.evaluate("navigator.serviceWorker.ready")
+        except Exception:
+            problems.append("⑧ Service Worker が有効にならなかった")
+        await page.wait_for_timeout(1500)
+        await context.set_offline(True)
+        for path in ["/", "/admin", "/admin/new", f"/admin/{quote(CHILD)}"]:
+            try:
+                await page.goto(f"{BASE}{path}", wait_until="domcontentloaded", timeout=10000)
+                await page.wait_for_timeout(600)
+                if not (await page.inner_text("body")).strip():
+                    problems.append(f"⑧ 圏外で {path} が空っぽ")
+            except Exception:
+                problems.append(f"⑧ 圏外で {path} が開けなかった")
+        await context.set_offline(False)
 
         await page.screenshot(path=SHOT, full_page=True)
         await browser.close()

@@ -6,11 +6,11 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"preview": "vite preview",
+		"preview": "vite build && vite preview",
 		"start": "node build",
 		"dev:lite": "NYB_TARGET=lite vite dev",
 		"build:lite": "NYB_TARGET=lite NYB_BASE=/natsuyasumi-board vite build",
-		"preview:lite": "NYB_TARGET=lite NYB_BASE=/natsuyasumi-board vite preview",
+		"preview:lite": "NYB_TARGET=lite NYB_BASE=/natsuyasumi-board vite build && NYB_TARGET=lite NYB_BASE=/natsuyasumi-board vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:lite": "NYB_TARGET=lite svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

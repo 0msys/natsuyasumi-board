@@ -272,7 +272,16 @@ export function setDecision(db: Db, child: string, itemKey: string, decision: Su
 		}
 	}
 
-	putFlag(db, child, itemKey, { decision });
+	// 「やらない」にしたら、済みの印も消す。ここを decision だけにすると、
+	// 画面には「できた」と出たまま「やらない」でもある、という状態が作れてしまう
+	// （buildState の done と、えらぶ宿題の satisfied は value から導いているため）。
+	// バックエンド側も同じことを1文の UPSERT でやっている（store.set_decision）。
+	putFlag(
+		db,
+		child,
+		itemKey,
+		decision === DECISION_SKIP ? { decision, value: 0 } : { decision }
+	);
 	return { decision };
 }
 

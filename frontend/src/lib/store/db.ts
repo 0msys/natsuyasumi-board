@@ -14,14 +14,31 @@ let loading: Promise<Db> | null = null;
 let chain: Promise<unknown> = Promise.resolve();
 let channel: BroadcastChannel | null = null;
 const watchers = new Set<(db: Db) => void>();
+/** この端末で IndexedDB が使えないと分かったか（プライベートブラウズなど）。 */
+let storageUnavailable = false;
 
 function pickPersistence(): Persistence {
 	if (persistence) return persistence;
-	// IndexedDB が使えない環境（プライベートブラウズ等）でも、その場かぎりで動かす。
-	// 記録は残らないが、白い画面よりはよい。残らないことは画面側が meta.persisted で気づける。
-	persistence = idbAvailable() ? idbPersistence() : memoryPersistence();
+	persistence = idbAvailable() ? idbPersistence() : fallbackToMemory();
 	return persistence;
 }
+
+/**
+ * IndexedDB が使えないと分かったので、その場かぎりの保存に切り替える。
+ *
+ * indexedDB という名前は生えているのに open すると拒否される環境がある
+ * （Safari のプライベートブラウズなど）。名前の有無だけで決めると、以降の読み書きが
+ * 全部失敗して画面がまったく出せなくなる。記録は残らないが、白い画面よりはよい
+ * （残らないことは meta.persisted が null のままなので画面側から分かる）。
+ */
+function fallbackToMemory(): Persistence {
+	storageUnavailable = true;
+	persistence = memoryPersistence();
+	return persistence;
+}
+
+/** この端末では記録が残らない（IndexedDB が使えなかった）。 */
+export const isStorageUnavailable = (): boolean => storageUnavailable;
 
 /** 保存の実体を差し替える（テスト用）。読み込み済みの内容も捨てる。 */
 export function setPersistence(next: Persistence | null): void {
@@ -29,15 +46,17 @@ export function setPersistence(next: Persistence | null): void {
 	loaded = null;
 	loading = null;
 	chain = Promise.resolve();
+	storageUnavailable = false;
 }
 
 function ensureChannel(): void {
 	if (channel || typeof BroadcastChannel === 'undefined') return;
 	channel = new BroadcastChannel(CHANNEL);
 	channel.onmessage = async () => {
-		// 別のタブが書いた。読み直して、見ている画面に知らせる。
+		// 別のタブが書いた。手元の写しは古いので捨てる。
 		loaded = null;
 		loading = null;
+		if (watchers.size === 0) return;
 		const db = await load();
 		for (const watch of watchers) watch(db);
 	};
@@ -50,16 +69,27 @@ export function watch(fn: (db: Db) => void): () => void {
 	return () => watchers.delete(fn);
 }
 
+/** 保存から読む（失敗したらメモリ保存へ退避して空で始める）。 */
+async function readPersisted(): Promise<Db> {
+	try {
+		const raw = await pickPersistence().load();
+		return raw === null || raw === undefined ? emptyDb() : normalizeDb(raw);
+	} catch {
+		return normalizeDb(await fallbackToMemory().load());
+	}
+}
+
 /** いまの内容（初回だけ保存から読む）。 */
 export function load(): Promise<Db> {
+	// 通路は読む前に開けておく。書いたあとに開くと、開くまでのあいだに別のタブが
+	// 書いた分を取りこぼし、そのまま古い写しを書き戻して相手の変更を消してしまう。
+	ensureChannel();
 	if (loaded) return Promise.resolve(loaded);
 	if (!loading) {
-		loading = pickPersistence()
-			.load()
-			.then((raw) => {
-				loaded = raw === null || raw === undefined ? emptyDb() : normalizeDb(raw);
-				return loaded;
-			});
+		loading = readPersisted().then((db) => {
+			loaded = db;
+			return db;
+		});
 	}
 	return loading;
 }
@@ -69,14 +99,20 @@ export function load(): Promise<Db> {
  *
  * 直列に実行されるので、fn の中では「読んで確かめてから書く」を安全に書ける
  * （楽観ロックの revision 比較がまさにそれ）。
+ *
+ * 書く直前に保存から読み直すのが要点。全体を1本のドキュメントとして書き戻す作りなので、
+ * 手元の写しが古いまま保存すると、別のタブが入れた記録ごと消える。読み直しは
+ * IndexedDB から数ミリ秒で、書き込みは人が押したときにしか起きないので、毎回やってよい。
  */
 export function mutate<T>(fn: (db: Db) => T): Promise<T> {
 	const next = chain.then(async () => {
-		const db = await load();
+		ensureChannel();
+		const db = await readPersisted();
+		loaded = db;
+		loading = Promise.resolve(db);
 		const result = fn(db);
 		db.meta.seq += 1;
 		await pickPersistence().save(db);
-		ensureChannel();
 		channel?.postMessage({ seq: db.meta.seq });
 		return result;
 	});

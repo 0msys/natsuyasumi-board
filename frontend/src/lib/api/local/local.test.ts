@@ -261,6 +261,67 @@ describe('来年ぶん', () => {
 	});
 });
 
+describe('やる／やらない', () => {
+	// 標準テンプレートには「えらぶ宿題」も任意の一回ものも入っていないので、ここで足す。
+	const doc = () => ({
+		child: CHILD,
+		child_kana: CHILD,
+		year: Number(today.slice(0, 4)),
+		grade: '小2',
+		period: PERIOD,
+		one_shot_homework: [{ key: 'os_free', label: 'じゆうけんきゅう', required: false }],
+		choice_homework: [
+			{
+				key: 'cg_a',
+				label: 'どれかひとつ',
+				min_required: 1,
+				options: [
+					{ key: 'o_1', label: 'こうさく' },
+					{ key: 'o_2', label: 'かんさつ' }
+				]
+			}
+		]
+	});
+
+	it('「やらない」にすると、済みの印も消える（できたと やらない が同居しない）', async () => {
+		await api.adminImportDefinition(doc());
+		const state0 = await api.summerState(CHILD);
+		const item = state0.one_shot[0];
+
+		await api.summerToggleFlag(CHILD, item.key);
+		expect((await api.summerState(CHILD)).one_shot[0].done).toBe(true);
+
+		await api.summerSetDecision(CHILD, item.key, 'skip');
+		const after = (await api.summerState(CHILD)).one_shot[0];
+		expect(after.decision).toBe('skip');
+		expect(after.done, '「やらない」なのに できた のまま').toBe(false);
+		expect(after.value).toBe(0);
+	});
+
+	it('えらぶ宿題も同じで、満たした判定が残らない', async () => {
+		await api.adminImportDefinition(doc());
+		const group0 = (await api.summerState(CHILD)).choice_groups[0];
+		const option = group0.options[0];
+
+		await api.summerToggleFlag(CHILD, option.key);
+		expect((await api.summerState(CHILD)).choice_groups[0].satisfied).toBe(true);
+
+		await api.summerSetDecision(CHILD, option.key, 'skip');
+		const group = (await api.summerState(CHILD)).choice_groups[0];
+		expect(group.options[0].done).toBe(false);
+		expect(group.satisfied, '「やらない」にしたのに満たしたまま').toBe(false);
+	});
+
+	it('全部「やらない」にはできない', async () => {
+		await api.adminImportDefinition(doc());
+		const group = (await api.summerState(CHILD)).choice_groups[0];
+		await api.summerSetDecision(CHILD, group.options[0].key, 'skip');
+		expect(api.summerSetDecision(CHILD, group.options[1].key, 'skip')).rejects.toThrow(
+			'どれか1つはえらんでね'
+		);
+	});
+});
+
 describe('テレビタイマー', () => {
 	beforeEach(async () => {
 		await wizard();
