@@ -25,6 +25,17 @@ mock.module('$app/navigation', () => ({
 	invalidateAll: async () => {}
 }));
 
+// リンクの組み立て（$app/paths の resolve）。テストでは base なしで動かす。
+// 本物はルート ID の [param] を params で埋めるだけで、URL エンコードはしない
+// （呼ぶ側が encodeURIComponent 済みの値を渡す約束）。ここも同じにしておく。
+mock.module('$app/paths', () => ({
+	base: '',
+	assets: '',
+	asset: (file: string) => file,
+	resolve: (route: string, params?: Record<string, string>) =>
+		route.replace(/\[(?:\.\.\.)?([^\]]+)\]/g, (_, name: string) => params?.[name] ?? '')
+}));
+
 mock.module('$app/state', () => ({
 	page: {
 		get url() {

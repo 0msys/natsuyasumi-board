@@ -1,0 +1,1203 @@
+{
+  "_note": "自動生成。手で編集しないこと。 作り直す: cd backend && uv run python tools/dump_golden.py",
+  "about": "初回ウィザードのテンプレート（学年ごとに文言だけ変わる）",
+  "cases": [
+    {
+      "name": "standard / 小1",
+      "input": {
+        "kind": "standard",
+        "child": "はな",
+        "childKana": "はな",
+        "grade": "小1",
+        "year": 2026,
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        }
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "year": 2026,
+        "grade": "小1",
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away": [],
+        "card_rules": {
+          "edges_window_days": 5
+        },
+        "media_timer": {
+          "limit_minutes": 120
+        },
+        "habits": [
+          {
+            "key": "hamigaki_asa",
+            "label": "はみがき（あさ）"
+          },
+          {
+            "key": "hamigaki_hiru",
+            "label": "はみがき（ひる）"
+          },
+          {
+            "key": "hamigaki_yoru",
+            "label": "はみがき（よる）"
+          },
+          {
+            "key": "hayaoki",
+            "label": "はやおきできた",
+            "window": "edges"
+          },
+          {
+            "key": "asagohan",
+            "label": "あさごはんを しっかりたべた",
+            "window": "edges"
+          },
+          {
+            "key": "hayane",
+            "label": "早《はや》ねできた",
+            "window": "edges"
+          },
+          {
+            "key": "outmedia",
+            "label": "テレビ・ゲーム・タブレットは 2じかんまで",
+            "window": "edges"
+          }
+        ],
+        "daily_homework": [
+          {
+            "key": "ondoku",
+            "label": "おんどく",
+            "meta": [
+              {
+                "key": "book",
+                "type": "text",
+                "label": "よんだ本《ほん》",
+                "placeholder": "本《ほん》のだいめいをかこう"
+              }
+            ]
+          },
+          {
+            "key": "nikki",
+            "label": "にっき"
+          }
+        ],
+        "practice_homework": [
+          {
+            "key": "keisan",
+            "label": "けいさんの れんしゅう"
+          },
+          {
+            "key": "drill",
+            "label": "ドリルを すすめる"
+          }
+        ],
+        "special_challenges": [
+          {
+            "key": "otetsudai",
+            "label": "お手《て》つだい"
+          },
+          {
+            "key": "undou",
+            "label": "うんどう"
+          }
+        ],
+        "rewards": [
+          {
+            "key": "c",
+            "label": "ランクC",
+            "avg": 80
+          },
+          {
+            "key": "b",
+            "label": "ランクB",
+            "avg": 100
+          },
+          {
+            "key": "a",
+            "label": "ランクA",
+            "avg": 150
+          },
+          {
+            "key": "s",
+            "label": "ランクS",
+            "avg": 180
+          }
+        ],
+        "one_shot_homework": [],
+        "choice_homework": [],
+        "school_start_items": []
+      }
+    },
+    {
+      "name": "standard / 小2",
+      "input": {
+        "kind": "standard",
+        "child": "はな",
+        "childKana": "はな",
+        "grade": "小2",
+        "year": 2026,
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        }
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "year": 2026,
+        "grade": "小2",
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away": [],
+        "card_rules": {
+          "edges_window_days": 5
+        },
+        "media_timer": {
+          "limit_minutes": 120
+        },
+        "habits": [
+          {
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）"
+          },
+          {
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）"
+          },
+          {
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）"
+          },
+          {
+            "key": "hayaoki",
+            "label": "はやおきできた",
+            "window": "edges"
+          },
+          {
+            "key": "asagohan",
+            "label": "朝《あさ》ごはんを しっかり食《た》べた",
+            "window": "edges"
+          },
+          {
+            "key": "hayane",
+            "label": "早《はや》ねできた",
+            "window": "edges"
+          },
+          {
+            "key": "outmedia",
+            "label": "テレビ・ゲーム・タブレットは 2時間《じかん》まで",
+            "window": "edges"
+          }
+        ],
+        "daily_homework": [
+          {
+            "key": "ondoku",
+            "label": "音読《おんどく》",
+            "meta": [
+              {
+                "key": "book",
+                "type": "text",
+                "label": "読《よ》んだ本《ほん》",
+                "placeholder": "本《ほん》のだいめいを書《か》こう"
+              }
+            ]
+          },
+          {
+            "key": "nikki",
+            "label": "日記《にっき》"
+          }
+        ],
+        "practice_homework": [
+          {
+            "key": "keisan",
+            "label": "計算《けいさん》の れんしゅう"
+          },
+          {
+            "key": "drill",
+            "label": "ドリルを すすめる"
+          }
+        ],
+        "special_challenges": [
+          {
+            "key": "otetsudai",
+            "label": "お手《て》つだい"
+          },
+          {
+            "key": "undou",
+            "label": "うんどう"
+          }
+        ],
+        "rewards": [
+          {
+            "key": "c",
+            "label": "ランクC",
+            "avg": 80
+          },
+          {
+            "key": "b",
+            "label": "ランクB",
+            "avg": 100
+          },
+          {
+            "key": "a",
+            "label": "ランクA",
+            "avg": 150
+          },
+          {
+            "key": "s",
+            "label": "ランクS",
+            "avg": 180
+          }
+        ],
+        "one_shot_homework": [],
+        "choice_homework": [],
+        "school_start_items": []
+      }
+    },
+    {
+      "name": "standard / 小3",
+      "input": {
+        "kind": "standard",
+        "child": "はな",
+        "childKana": "はな",
+        "grade": "小3",
+        "year": 2026,
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        }
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "year": 2026,
+        "grade": "小3",
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away": [],
+        "card_rules": {
+          "edges_window_days": 5
+        },
+        "media_timer": {
+          "limit_minutes": 120
+        },
+        "habits": [
+          {
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）"
+          },
+          {
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）"
+          },
+          {
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）"
+          },
+          {
+            "key": "hayaoki",
+            "label": "早起《はやお》きできた",
+            "window": "edges"
+          },
+          {
+            "key": "asagohan",
+            "label": "朝《あさ》ごはんを しっかり食《た》べた",
+            "window": "edges"
+          },
+          {
+            "key": "hayane",
+            "label": "早《はや》ねできた",
+            "window": "edges"
+          },
+          {
+            "key": "outmedia",
+            "label": "テレビ・ゲーム・タブレットは 2時間《じかん》まで",
+            "window": "edges"
+          }
+        ],
+        "daily_homework": [
+          {
+            "key": "ondoku",
+            "label": "音読《おんどく》",
+            "meta": [
+              {
+                "key": "book",
+                "type": "text",
+                "label": "読《よ》んだ本《ほん》",
+                "placeholder": "本《ほん》の題名《だいめい》を書《か》こう"
+              }
+            ]
+          },
+          {
+            "key": "nikki",
+            "label": "日記《にっき》"
+          }
+        ],
+        "practice_homework": [
+          {
+            "key": "keisan",
+            "label": "計算《けいさん》の 練習《れんしゅう》"
+          },
+          {
+            "key": "drill",
+            "label": "ドリルを 進《すす》める"
+          }
+        ],
+        "special_challenges": [
+          {
+            "key": "otetsudai",
+            "label": "お手《て》つだい"
+          },
+          {
+            "key": "undou",
+            "label": "運動《うんどう》"
+          }
+        ],
+        "rewards": [
+          {
+            "key": "c",
+            "label": "ランクC",
+            "avg": 80
+          },
+          {
+            "key": "b",
+            "label": "ランクB",
+            "avg": 100
+          },
+          {
+            "key": "a",
+            "label": "ランクA",
+            "avg": 150
+          },
+          {
+            "key": "s",
+            "label": "ランクS",
+            "avg": 180
+          }
+        ],
+        "one_shot_homework": [],
+        "choice_homework": [],
+        "school_start_items": []
+      }
+    },
+    {
+      "name": "standard / 小4",
+      "input": {
+        "kind": "standard",
+        "child": "はな",
+        "childKana": "はな",
+        "grade": "小4",
+        "year": 2026,
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        }
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "year": 2026,
+        "grade": "小4",
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away": [],
+        "card_rules": {
+          "edges_window_days": 5
+        },
+        "media_timer": {
+          "limit_minutes": 120
+        },
+        "habits": [
+          {
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）"
+          },
+          {
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）"
+          },
+          {
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）"
+          },
+          {
+            "key": "hayaoki",
+            "label": "早起《はやお》きできた",
+            "window": "edges"
+          },
+          {
+            "key": "asagohan",
+            "label": "朝《あさ》ご飯《はん》を しっかり食《た》べた",
+            "window": "edges"
+          },
+          {
+            "key": "hayane",
+            "label": "早《はや》ねできた",
+            "window": "edges"
+          },
+          {
+            "key": "outmedia",
+            "label": "テレビ・ゲーム・タブレットは 2時間《じかん》まで",
+            "window": "edges"
+          }
+        ],
+        "daily_homework": [
+          {
+            "key": "ondoku",
+            "label": "音読《おんどく》",
+            "meta": [
+              {
+                "key": "book",
+                "type": "text",
+                "label": "読《よ》んだ本《ほん》",
+                "placeholder": "本《ほん》の題名《だいめい》を書《か》こう"
+              }
+            ]
+          },
+          {
+            "key": "nikki",
+            "label": "日記《にっき》"
+          }
+        ],
+        "practice_homework": [
+          {
+            "key": "keisan",
+            "label": "計算《けいさん》の 練習《れんしゅう》"
+          },
+          {
+            "key": "drill",
+            "label": "ドリルを 進《すす》める"
+          }
+        ],
+        "special_challenges": [
+          {
+            "key": "otetsudai",
+            "label": "お手《て》伝《つだ》い"
+          },
+          {
+            "key": "undou",
+            "label": "運動《うんどう》"
+          }
+        ],
+        "rewards": [
+          {
+            "key": "c",
+            "label": "ランクC",
+            "avg": 80
+          },
+          {
+            "key": "b",
+            "label": "ランクB",
+            "avg": 100
+          },
+          {
+            "key": "a",
+            "label": "ランクA",
+            "avg": 150
+          },
+          {
+            "key": "s",
+            "label": "ランクS",
+            "avg": 180
+          }
+        ],
+        "one_shot_homework": [],
+        "choice_homework": [],
+        "school_start_items": []
+      }
+    },
+    {
+      "name": "standard / 小5",
+      "input": {
+        "kind": "standard",
+        "child": "はな",
+        "childKana": "はな",
+        "grade": "小5",
+        "year": 2026,
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        }
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "year": 2026,
+        "grade": "小5",
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away": [],
+        "card_rules": {
+          "edges_window_days": 5
+        },
+        "media_timer": {
+          "limit_minutes": 120
+        },
+        "habits": [
+          {
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）"
+          },
+          {
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）"
+          },
+          {
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）"
+          },
+          {
+            "key": "hayaoki",
+            "label": "早起《はやお》きできた",
+            "window": "edges"
+          },
+          {
+            "key": "asagohan",
+            "label": "朝《あさ》ご飯《はん》を しっかり食《た》べた",
+            "window": "edges"
+          },
+          {
+            "key": "hayane",
+            "label": "早《はや》ねできた",
+            "window": "edges"
+          },
+          {
+            "key": "outmedia",
+            "label": "テレビ・ゲーム・タブレットは 2時間《じかん》まで",
+            "window": "edges"
+          }
+        ],
+        "daily_homework": [
+          {
+            "key": "ondoku",
+            "label": "音読《おんどく》",
+            "meta": [
+              {
+                "key": "book",
+                "type": "text",
+                "label": "読《よ》んだ本《ほん》",
+                "placeholder": "本《ほん》の題名《だいめい》を書《か》こう"
+              }
+            ]
+          },
+          {
+            "key": "nikki",
+            "label": "日記《にっき》"
+          }
+        ],
+        "practice_homework": [
+          {
+            "key": "keisan",
+            "label": "計算《けいさん》の 練習《れんしゅう》"
+          },
+          {
+            "key": "drill",
+            "label": "ドリルを 進《すす》める"
+          }
+        ],
+        "special_challenges": [
+          {
+            "key": "otetsudai",
+            "label": "お手《て》伝《つだ》い"
+          },
+          {
+            "key": "undou",
+            "label": "運動《うんどう》"
+          }
+        ],
+        "rewards": [
+          {
+            "key": "c",
+            "label": "ランクC",
+            "avg": 80
+          },
+          {
+            "key": "b",
+            "label": "ランクB",
+            "avg": 100
+          },
+          {
+            "key": "a",
+            "label": "ランクA",
+            "avg": 150
+          },
+          {
+            "key": "s",
+            "label": "ランクS",
+            "avg": 180
+          }
+        ],
+        "one_shot_homework": [],
+        "choice_homework": [],
+        "school_start_items": []
+      }
+    },
+    {
+      "name": "standard / 小6",
+      "input": {
+        "kind": "standard",
+        "child": "はな",
+        "childKana": "はな",
+        "grade": "小6",
+        "year": 2026,
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        }
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "year": 2026,
+        "grade": "小6",
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away": [],
+        "card_rules": {
+          "edges_window_days": 5
+        },
+        "media_timer": {
+          "limit_minutes": 120
+        },
+        "habits": [
+          {
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）"
+          },
+          {
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）"
+          },
+          {
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）"
+          },
+          {
+            "key": "hayaoki",
+            "label": "早起《はやお》きできた",
+            "window": "edges"
+          },
+          {
+            "key": "asagohan",
+            "label": "朝《あさ》ご飯《はん》を しっかり食《た》べた",
+            "window": "edges"
+          },
+          {
+            "key": "hayane",
+            "label": "早《はや》ねできた",
+            "window": "edges"
+          },
+          {
+            "key": "outmedia",
+            "label": "テレビ・ゲーム・タブレットは 2時間《じかん》まで",
+            "window": "edges"
+          }
+        ],
+        "daily_homework": [
+          {
+            "key": "ondoku",
+            "label": "音読《おんどく》",
+            "meta": [
+              {
+                "key": "book",
+                "type": "text",
+                "label": "読《よ》んだ本《ほん》",
+                "placeholder": "本《ほん》の題名《だいめい》を書《か》こう"
+              }
+            ]
+          },
+          {
+            "key": "nikki",
+            "label": "日記《にっき》"
+          }
+        ],
+        "practice_homework": [
+          {
+            "key": "keisan",
+            "label": "計算《けいさん》の 練習《れんしゅう》"
+          },
+          {
+            "key": "drill",
+            "label": "ドリルを 進《すす》める"
+          }
+        ],
+        "special_challenges": [
+          {
+            "key": "otetsudai",
+            "label": "お手《て》伝《つだ》い"
+          },
+          {
+            "key": "undou",
+            "label": "運動《うんどう》"
+          }
+        ],
+        "rewards": [
+          {
+            "key": "c",
+            "label": "ランクC",
+            "avg": 80
+          },
+          {
+            "key": "b",
+            "label": "ランクB",
+            "avg": 100
+          },
+          {
+            "key": "a",
+            "label": "ランクA",
+            "avg": 150
+          },
+          {
+            "key": "s",
+            "label": "ランクS",
+            "avg": 180
+          }
+        ],
+        "one_shot_homework": [],
+        "choice_homework": [],
+        "school_start_items": []
+      }
+    },
+    {
+      "name": "standard / こわれた学年",
+      "input": {
+        "kind": "standard",
+        "child": "はな",
+        "childKana": "はな",
+        "grade": "こわれた学年",
+        "year": 2026,
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        }
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "year": 2026,
+        "grade": "こわれた学年",
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away": [],
+        "card_rules": {
+          "edges_window_days": 5
+        },
+        "media_timer": {
+          "limit_minutes": 120
+        },
+        "habits": [
+          {
+            "key": "hamigaki_asa",
+            "label": "はみがき（あさ）"
+          },
+          {
+            "key": "hamigaki_hiru",
+            "label": "はみがき（ひる）"
+          },
+          {
+            "key": "hamigaki_yoru",
+            "label": "はみがき（よる）"
+          },
+          {
+            "key": "hayaoki",
+            "label": "はやおきできた",
+            "window": "edges"
+          },
+          {
+            "key": "asagohan",
+            "label": "あさごはんを しっかりたべた",
+            "window": "edges"
+          },
+          {
+            "key": "hayane",
+            "label": "早《はや》ねできた",
+            "window": "edges"
+          },
+          {
+            "key": "outmedia",
+            "label": "テレビ・ゲーム・タブレットは 2じかんまで",
+            "window": "edges"
+          }
+        ],
+        "daily_homework": [
+          {
+            "key": "ondoku",
+            "label": "おんどく",
+            "meta": [
+              {
+                "key": "book",
+                "type": "text",
+                "label": "よんだ本《ほん》",
+                "placeholder": "本《ほん》のだいめいをかこう"
+              }
+            ]
+          },
+          {
+            "key": "nikki",
+            "label": "にっき"
+          }
+        ],
+        "practice_homework": [
+          {
+            "key": "keisan",
+            "label": "けいさんの れんしゅう"
+          },
+          {
+            "key": "drill",
+            "label": "ドリルを すすめる"
+          }
+        ],
+        "special_challenges": [
+          {
+            "key": "otetsudai",
+            "label": "お手《て》つだい"
+          },
+          {
+            "key": "undou",
+            "label": "うんどう"
+          }
+        ],
+        "rewards": [
+          {
+            "key": "c",
+            "label": "ランクC",
+            "avg": 80
+          },
+          {
+            "key": "b",
+            "label": "ランクB",
+            "avg": 100
+          },
+          {
+            "key": "a",
+            "label": "ランクA",
+            "avg": 150
+          },
+          {
+            "key": "s",
+            "label": "ランクS",
+            "avg": 180
+          }
+        ],
+        "one_shot_homework": [],
+        "choice_homework": [],
+        "school_start_items": []
+      }
+    },
+    {
+      "name": "empty / 小1",
+      "input": {
+        "kind": "empty",
+        "child": "はな",
+        "childKana": "はな",
+        "grade": "小1",
+        "year": 2026,
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        }
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "year": 2026,
+        "grade": "小1",
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away": [],
+        "card_rules": {
+          "edges_window_days": 5
+        },
+        "media_timer": {
+          "limit_minutes": 120
+        },
+        "habits": [],
+        "daily_homework": [],
+        "practice_homework": [],
+        "special_challenges": [],
+        "rewards": [],
+        "one_shot_homework": [],
+        "choice_homework": [],
+        "school_start_items": []
+      }
+    },
+    {
+      "name": "empty / 小2",
+      "input": {
+        "kind": "empty",
+        "child": "はな",
+        "childKana": "はな",
+        "grade": "小2",
+        "year": 2026,
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        }
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "year": 2026,
+        "grade": "小2",
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away": [],
+        "card_rules": {
+          "edges_window_days": 5
+        },
+        "media_timer": {
+          "limit_minutes": 120
+        },
+        "habits": [],
+        "daily_homework": [],
+        "practice_homework": [],
+        "special_challenges": [],
+        "rewards": [],
+        "one_shot_homework": [],
+        "choice_homework": [],
+        "school_start_items": []
+      }
+    },
+    {
+      "name": "empty / 小3",
+      "input": {
+        "kind": "empty",
+        "child": "はな",
+        "childKana": "はな",
+        "grade": "小3",
+        "year": 2026,
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        }
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "year": 2026,
+        "grade": "小3",
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away": [],
+        "card_rules": {
+          "edges_window_days": 5
+        },
+        "media_timer": {
+          "limit_minutes": 120
+        },
+        "habits": [],
+        "daily_homework": [],
+        "practice_homework": [],
+        "special_challenges": [],
+        "rewards": [],
+        "one_shot_homework": [],
+        "choice_homework": [],
+        "school_start_items": []
+      }
+    },
+    {
+      "name": "empty / 小4",
+      "input": {
+        "kind": "empty",
+        "child": "はな",
+        "childKana": "はな",
+        "grade": "小4",
+        "year": 2026,
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        }
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "year": 2026,
+        "grade": "小4",
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away": [],
+        "card_rules": {
+          "edges_window_days": 5
+        },
+        "media_timer": {
+          "limit_minutes": 120
+        },
+        "habits": [],
+        "daily_homework": [],
+        "practice_homework": [],
+        "special_challenges": [],
+        "rewards": [],
+        "one_shot_homework": [],
+        "choice_homework": [],
+        "school_start_items": []
+      }
+    },
+    {
+      "name": "empty / 小5",
+      "input": {
+        "kind": "empty",
+        "child": "はな",
+        "childKana": "はな",
+        "grade": "小5",
+        "year": 2026,
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        }
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "year": 2026,
+        "grade": "小5",
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away": [],
+        "card_rules": {
+          "edges_window_days": 5
+        },
+        "media_timer": {
+          "limit_minutes": 120
+        },
+        "habits": [],
+        "daily_homework": [],
+        "practice_homework": [],
+        "special_challenges": [],
+        "rewards": [],
+        "one_shot_homework": [],
+        "choice_homework": [],
+        "school_start_items": []
+      }
+    },
+    {
+      "name": "empty / 小6",
+      "input": {
+        "kind": "empty",
+        "child": "はな",
+        "childKana": "はな",
+        "grade": "小6",
+        "year": 2026,
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        }
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "year": 2026,
+        "grade": "小6",
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away": [],
+        "card_rules": {
+          "edges_window_days": 5
+        },
+        "media_timer": {
+          "limit_minutes": 120
+        },
+        "habits": [],
+        "daily_homework": [],
+        "practice_homework": [],
+        "special_challenges": [],
+        "rewards": [],
+        "one_shot_homework": [],
+        "choice_homework": [],
+        "school_start_items": []
+      }
+    },
+    {
+      "name": "empty / こわれた学年",
+      "input": {
+        "kind": "empty",
+        "child": "はな",
+        "childKana": "はな",
+        "grade": "こわれた学年",
+        "year": 2026,
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        }
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "year": 2026,
+        "grade": "こわれた学年",
+        "period": {
+          "start": "2026-07-21",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away": [],
+        "card_rules": {
+          "edges_window_days": 5
+        },
+        "media_timer": {
+          "limit_minutes": 120
+        },
+        "habits": [],
+        "daily_homework": [],
+        "practice_homework": [],
+        "special_challenges": [],
+        "rewards": [],
+        "one_shot_homework": [],
+        "choice_homework": [],
+        "school_start_items": []
+      }
+    }
+  ]
+}

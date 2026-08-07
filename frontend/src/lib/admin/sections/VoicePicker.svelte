@@ -26,6 +26,8 @@
 	// あるので、この2つを別々に持つ——一時的に一覧が引けないだけのときに
 	// 「VOICEVOX がうごいていません」と誤った案内を出さないため。
 	let engineUp = $state(false);
+	// この版に読み上げ機能そのものがあるか（lite 版は false）。engineUp とは別物。
+	let supported = $state(true);
 	let loading = $state(true);
 	let previewing = $state(false);
 	let previewError = $state<string | null>(null);
@@ -45,6 +47,7 @@
 				speakers = r.speakers;
 				defaultSpeaker = r.default_speaker;
 				engineUp = r.available;
+				supported = r.supported !== false;
 			})
 			.catch(() => (engineUp = false))
 			.finally(() => (loading = false));
@@ -121,6 +124,9 @@
 	}
 </script>
 
+<!-- この版に読み上げが無ければ、欄ごと出さない。
+     「VOICEVOX がうごいていません」という案内は、docker 版でしか意味を持たない。 -->
+{#if supported}
 <div class="flex flex-col gap-2 rounded-lg bg-surface2/60 p-3">
 	<div class="flex items-center justify-between gap-2">
 		<span class="text-sm font-bold text-text-base">よみあげの こえ</span>
@@ -217,3 +223,4 @@
 		<p class="text-xs text-danger">{previewError}</p>
 	{/if}
 </div>
+{/if}

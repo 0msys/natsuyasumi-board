@@ -10,6 +10,20 @@
 				matchMedia('(prefers-color-scheme: dark)').matches
 			);
 		</script>
+		<!-- ホーム画面に追加できるようにする。
+		     iOS Safari は「7日間ひらかなかったサイト」の保存データを消すことがあるが、
+		     ホーム画面から開くアプリはその対象外になる。lite（ブラウザ保存）では
+		     記録が消えるかどうかがここに掛かっているので、案内より先に土台を用意する。
+		     manifest の start_url / scope は相対なので、サブパス配信でもそのまま正しい。 -->
+		<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
+		<link rel="apple-touch-icon" href="%sveltekit.assets%/icons/apple-touch-icon.png" />
+		<link rel="icon" href="%sveltekit.assets%/icons/icon-192.png" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-title" content="なつやすみ" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+		<meta name="theme-color" content="#f4f6fb" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

@@ -1,0 +1,1506 @@
+{
+  "_note": "自動生成。手で編集しないこと。 作り直す: cd backend && uv run python tools/dump_golden.py",
+  "about": "「きょうやること」読み上げ文の組み立て",
+  "cases": [
+    {
+      "name": "残りあり/1/True/False",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "daily",
+            "key": "ondoku",
+            "label": "音読《おんどく》（カードに書《か》く）",
+            "note": null
+          },
+          {
+            "kind": "daily",
+            "key": "nikki",
+            "label": "一行《いちぎょう》日記《にっき》",
+            "note": null
+          },
+          {
+            "kind": "practice",
+            "key": "practice_any",
+            "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": true,
+        "awayLabel": null
+      },
+      "output": "はなさん。きょうはまだ、はみがき（朝《あさ》）と、はみがき（昼《ひる》）と、はみがき（夜《よる》）と、音読《おんどく》（カードに書《か》く）と、一行《いちぎょう》日記《にっき》の きろくがないよ。わすれずにやろうね。くりかえしのしゅくだいも、どれかひとつやろうね。"
+    },
+    {
+      "name": "残りあり/1/True/True",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "daily",
+            "key": "ondoku",
+            "label": "音読《おんどく》（カードに書《か》く）",
+            "note": null
+          },
+          {
+            "kind": "daily",
+            "key": "nikki",
+            "label": "一行《いちぎょう》日記《にっき》",
+            "note": null
+          },
+          {
+            "kind": "practice",
+            "key": "practice_any",
+            "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": true,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。きょうはお出《で》かけの日《ひ》だね。たのしんでね。きょうはまだ、はみがき（朝《あさ》）と、はみがき（昼《ひる》）と、はみがき（夜《よる》）と、音読《おんどく》（カードに書《か》く）と、一行《いちぎょう》日記《にっき》の きろくがないよ。わすれずにやろうね。くりかえしのしゅくだいも、どれかひとつやろうね。"
+    },
+    {
+      "name": "残りあり/1/False/False",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "daily",
+            "key": "ondoku",
+            "label": "音読《おんどく》（カードに書《か》く）",
+            "note": null
+          },
+          {
+            "kind": "daily",
+            "key": "nikki",
+            "label": "一行《いちぎょう》日記《にっき》",
+            "note": null
+          },
+          {
+            "kind": "practice",
+            "key": "practice_any",
+            "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": false,
+        "awayLabel": null
+      },
+      "output": "はなさん。きょうはまだ、はみがき（朝《あさ》）と、はみがき（昼《ひる》）と、はみがき（夜《よる》）と、音読《おんどく》（カードに書《か》く）と、一行《いちぎょう》日記《にっき》の きろくがないよ。わすれずにやろうね。くりかえしのしゅくだいも、どれかひとつやろうね。"
+    },
+    {
+      "name": "残りあり/1/False/True",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "daily",
+            "key": "ondoku",
+            "label": "音読《おんどく》（カードに書《か》く）",
+            "note": null
+          },
+          {
+            "kind": "daily",
+            "key": "nikki",
+            "label": "一行《いちぎょう》日記《にっき》",
+            "note": null
+          },
+          {
+            "kind": "practice",
+            "key": "practice_any",
+            "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": false,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。きょうはまだ、はみがき（朝《あさ》）と、はみがき（昼《ひる》）と、はみがき（夜《よる》）と、音読《おんどく》（カードに書《か》く）と、一行《いちぎょう》日記《にっき》の きろくがないよ。わすれずにやろうね。くりかえしのしゅくだいも、どれかひとつやろうね。"
+    },
+    {
+      "name": "残りあり/4/True/False",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "daily",
+            "key": "ondoku",
+            "label": "音読《おんどく》（カードに書《か》く）",
+            "note": null
+          },
+          {
+            "kind": "daily",
+            "key": "nikki",
+            "label": "一行《いちぎょう》日記《にっき》",
+            "note": null
+          },
+          {
+            "kind": "practice",
+            "key": "practice_any",
+            "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": true,
+        "awayLabel": null
+      },
+      "output": "はなさん。今日《きょう》はまだ、はみがき（朝《あさ》）と、はみがき（昼《ひる》）と、はみがき（夜《よる》）と、音読《おんどく》（カードに書《か》く）と、一行《いちぎょう》日記《にっき》の 記録《きろく》がないよ。わすれずにやろうね。くり返《かえ》しの宿題《しゅくだい》も、どれかひとつやろうね。"
+    },
+    {
+      "name": "残りあり/4/True/True",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "daily",
+            "key": "ondoku",
+            "label": "音読《おんどく》（カードに書《か》く）",
+            "note": null
+          },
+          {
+            "kind": "daily",
+            "key": "nikki",
+            "label": "一行《いちぎょう》日記《にっき》",
+            "note": null
+          },
+          {
+            "kind": "practice",
+            "key": "practice_any",
+            "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": true,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。今日《きょう》はお出《で》かけの日《ひ》だね。楽《たの》しんでね。今日《きょう》はまだ、はみがき（朝《あさ》）と、はみがき（昼《ひる》）と、はみがき（夜《よる》）と、音読《おんどく》（カードに書《か》く）と、一行《いちぎょう》日記《にっき》の 記録《きろく》がないよ。わすれずにやろうね。くり返《かえ》しの宿題《しゅくだい》も、どれかひとつやろうね。"
+    },
+    {
+      "name": "残りあり/4/False/False",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "daily",
+            "key": "ondoku",
+            "label": "音読《おんどく》（カードに書《か》く）",
+            "note": null
+          },
+          {
+            "kind": "daily",
+            "key": "nikki",
+            "label": "一行《いちぎょう》日記《にっき》",
+            "note": null
+          },
+          {
+            "kind": "practice",
+            "key": "practice_any",
+            "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": false,
+        "awayLabel": null
+      },
+      "output": "はなさん。今日《きょう》はまだ、はみがき（朝《あさ》）と、はみがき（昼《ひる》）と、はみがき（夜《よる》）と、音読《おんどく》（カードに書《か》く）と、一行《いちぎょう》日記《にっき》の 記録《きろく》がないよ。わすれずにやろうね。くり返《かえ》しの宿題《しゅくだい》も、どれかひとつやろうね。"
+    },
+    {
+      "name": "残りあり/4/False/True",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "daily",
+            "key": "ondoku",
+            "label": "音読《おんどく》（カードに書《か》く）",
+            "note": null
+          },
+          {
+            "kind": "daily",
+            "key": "nikki",
+            "label": "一行《いちぎょう》日記《にっき》",
+            "note": null
+          },
+          {
+            "kind": "practice",
+            "key": "practice_any",
+            "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": false,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。今日《きょう》はまだ、はみがき（朝《あさ》）と、はみがき（昼《ひる》）と、はみがき（夜《よる》）と、音読《おんどく》（カードに書《か》く）と、一行《いちぎょう》日記《にっき》の 記録《きろく》がないよ。わすれずにやろうね。くり返《かえ》しの宿題《しゅくだい》も、どれかひとつやろうね。"
+    },
+    {
+      "name": "残りあり/6/True/False",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "daily",
+            "key": "ondoku",
+            "label": "音読《おんどく》（カードに書《か》く）",
+            "note": null
+          },
+          {
+            "kind": "daily",
+            "key": "nikki",
+            "label": "一行《いちぎょう》日記《にっき》",
+            "note": null
+          },
+          {
+            "kind": "practice",
+            "key": "practice_any",
+            "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": true,
+        "awayLabel": null
+      },
+      "output": "はなさん。今日《きょう》はまだ、はみがき（朝《あさ》）と、はみがき（昼《ひる》）と、はみがき（夜《よる》）と、音読《おんどく》（カードに書《か》く）と、一行《いちぎょう》日記《にっき》の 記録《きろく》がないよ。わすれずにやろうね。くり返《かえ》しの宿題《しゅくだい》も、どれかひとつやろうね。"
+    },
+    {
+      "name": "残りあり/6/True/True",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "daily",
+            "key": "ondoku",
+            "label": "音読《おんどく》（カードに書《か》く）",
+            "note": null
+          },
+          {
+            "kind": "daily",
+            "key": "nikki",
+            "label": "一行《いちぎょう》日記《にっき》",
+            "note": null
+          },
+          {
+            "kind": "practice",
+            "key": "practice_any",
+            "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": true,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。今日《きょう》はお出《で》かけの日《ひ》だね。楽《たの》しんでね。今日《きょう》はまだ、はみがき（朝《あさ》）と、はみがき（昼《ひる》）と、はみがき（夜《よる》）と、音読《おんどく》（カードに書《か》く）と、一行《いちぎょう》日記《にっき》の 記録《きろく》がないよ。わすれずにやろうね。くり返《かえ》しの宿題《しゅくだい》も、どれかひとつやろうね。"
+    },
+    {
+      "name": "残りあり/6/False/False",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "daily",
+            "key": "ondoku",
+            "label": "音読《おんどく》（カードに書《か》く）",
+            "note": null
+          },
+          {
+            "kind": "daily",
+            "key": "nikki",
+            "label": "一行《いちぎょう》日記《にっき》",
+            "note": null
+          },
+          {
+            "kind": "practice",
+            "key": "practice_any",
+            "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": false,
+        "awayLabel": null
+      },
+      "output": "はなさん。今日《きょう》はまだ、はみがき（朝《あさ》）と、はみがき（昼《ひる》）と、はみがき（夜《よる》）と、音読《おんどく》（カードに書《か》く）と、一行《いちぎょう》日記《にっき》の 記録《きろく》がないよ。わすれずにやろうね。くり返《かえ》しの宿題《しゅくだい》も、どれかひとつやろうね。"
+    },
+    {
+      "name": "残りあり/6/False/True",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "habit",
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）",
+            "note": "きろくしよう"
+          },
+          {
+            "kind": "daily",
+            "key": "ondoku",
+            "label": "音読《おんどく》（カードに書《か》く）",
+            "note": null
+          },
+          {
+            "kind": "daily",
+            "key": "nikki",
+            "label": "一行《いちぎょう》日記《にっき》",
+            "note": null
+          },
+          {
+            "kind": "practice",
+            "key": "practice_any",
+            "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": false,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。今日《きょう》はまだ、はみがき（朝《あさ》）と、はみがき（昼《ひる》）と、はみがき（夜《よる》）と、音読《おんどく》（カードに書《か》く）と、一行《いちぎょう》日記《にっき》の 記録《きろく》がないよ。わすれずにやろうね。くり返《かえ》しの宿題《しゅくだい》も、どれかひとつやろうね。"
+    },
+    {
+      "name": "全部おわり/1/True/False",
+      "input": {
+        "items": [],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": true,
+        "awayLabel": null
+      },
+      "output": "はなさん。きょうのきろくとしゅくだいは、ぜんぶできているよ。すごいね。"
+    },
+    {
+      "name": "全部おわり/1/True/True",
+      "input": {
+        "items": [],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": true,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。きょうはお出《で》かけの日《ひ》だね。たのしんでね。きょうのきろくとしゅくだいは、ぜんぶできているよ。すごいね。"
+    },
+    {
+      "name": "全部おわり/1/False/False",
+      "input": {
+        "items": [],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": false,
+        "awayLabel": null
+      },
+      "output": "はなさん。"
+    },
+    {
+      "name": "全部おわり/1/False/True",
+      "input": {
+        "items": [],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": false,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。"
+    },
+    {
+      "name": "全部おわり/4/True/False",
+      "input": {
+        "items": [],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": true,
+        "awayLabel": null
+      },
+      "output": "はなさん。今日《きょう》の記録《きろく》と宿題《しゅくだい》は、全部《ぜんぶ》できているよ。すごいね。"
+    },
+    {
+      "name": "全部おわり/4/True/True",
+      "input": {
+        "items": [],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": true,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。今日《きょう》はお出《で》かけの日《ひ》だね。楽《たの》しんでね。今日《きょう》の記録《きろく》と宿題《しゅくだい》は、全部《ぜんぶ》できているよ。すごいね。"
+    },
+    {
+      "name": "全部おわり/4/False/False",
+      "input": {
+        "items": [],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": false,
+        "awayLabel": null
+      },
+      "output": "はなさん。"
+    },
+    {
+      "name": "全部おわり/4/False/True",
+      "input": {
+        "items": [],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": false,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。"
+    },
+    {
+      "name": "全部おわり/6/True/False",
+      "input": {
+        "items": [],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": true,
+        "awayLabel": null
+      },
+      "output": "はなさん。今日《きょう》の記録《きろく》と宿題《しゅくだい》は、全部《ぜんぶ》できているよ。すごいね。"
+    },
+    {
+      "name": "全部おわり/6/True/True",
+      "input": {
+        "items": [],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": true,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。今日《きょう》はお出《で》かけの日《ひ》だね。楽《たの》しんでね。今日《きょう》の記録《きろく》と宿題《しゅくだい》は、全部《ぜんぶ》できているよ。すごいね。"
+    },
+    {
+      "name": "全部おわり/6/False/False",
+      "input": {
+        "items": [],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": false,
+        "awayLabel": null
+      },
+      "output": "はなさん。"
+    },
+    {
+      "name": "全部おわり/6/False/True",
+      "input": {
+        "items": [],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": false,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。"
+    },
+    {
+      "name": "6件（上限超え）/1/True/False",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "h0",
+            "label": "こうもく0",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h1",
+            "label": "こうもく1",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h2",
+            "label": "こうもく2",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h3",
+            "label": "こうもく3",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h4",
+            "label": "こうもく4",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h5",
+            "label": "こうもく5",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": true,
+        "awayLabel": null
+      },
+      "output": "はなさん。きょうはまだ、こうもく0と、こうもく1と、こうもく2と、こうもく3と、こうもく4、そのほかもすこしの きろくがないよ。わすれずにやろうね。"
+    },
+    {
+      "name": "6件（上限超え）/1/True/True",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "h0",
+            "label": "こうもく0",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h1",
+            "label": "こうもく1",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h2",
+            "label": "こうもく2",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h3",
+            "label": "こうもく3",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h4",
+            "label": "こうもく4",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h5",
+            "label": "こうもく5",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": true,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。きょうはお出《で》かけの日《ひ》だね。たのしんでね。きょうはまだ、こうもく0と、こうもく1と、こうもく2と、こうもく3と、こうもく4、そのほかもすこしの きろくがないよ。わすれずにやろうね。"
+    },
+    {
+      "name": "6件（上限超え）/1/False/False",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "h0",
+            "label": "こうもく0",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h1",
+            "label": "こうもく1",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h2",
+            "label": "こうもく2",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h3",
+            "label": "こうもく3",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h4",
+            "label": "こうもく4",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h5",
+            "label": "こうもく5",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": false,
+        "awayLabel": null
+      },
+      "output": "はなさん。きょうはまだ、こうもく0と、こうもく1と、こうもく2と、こうもく3と、こうもく4、そのほかもすこしの きろくがないよ。わすれずにやろうね。"
+    },
+    {
+      "name": "6件（上限超え）/1/False/True",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "h0",
+            "label": "こうもく0",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h1",
+            "label": "こうもく1",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h2",
+            "label": "こうもく2",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h3",
+            "label": "こうもく3",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h4",
+            "label": "こうもく4",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h5",
+            "label": "こうもく5",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": false,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。きょうはまだ、こうもく0と、こうもく1と、こうもく2と、こうもく3と、こうもく4、そのほかもすこしの きろくがないよ。わすれずにやろうね。"
+    },
+    {
+      "name": "6件（上限超え）/4/True/False",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "h0",
+            "label": "こうもく0",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h1",
+            "label": "こうもく1",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h2",
+            "label": "こうもく2",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h3",
+            "label": "こうもく3",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h4",
+            "label": "こうもく4",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h5",
+            "label": "こうもく5",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": true,
+        "awayLabel": null
+      },
+      "output": "はなさん。今日《きょう》はまだ、こうもく0と、こうもく1と、こうもく2と、こうもく3と、こうもく4、そのほかも少《すこ》しの 記録《きろく》がないよ。わすれずにやろうね。"
+    },
+    {
+      "name": "6件（上限超え）/4/True/True",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "h0",
+            "label": "こうもく0",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h1",
+            "label": "こうもく1",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h2",
+            "label": "こうもく2",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h3",
+            "label": "こうもく3",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h4",
+            "label": "こうもく4",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h5",
+            "label": "こうもく5",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": true,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。今日《きょう》はお出《で》かけの日《ひ》だね。楽《たの》しんでね。今日《きょう》はまだ、こうもく0と、こうもく1と、こうもく2と、こうもく3と、こうもく4、そのほかも少《すこ》しの 記録《きろく》がないよ。わすれずにやろうね。"
+    },
+    {
+      "name": "6件（上限超え）/4/False/False",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "h0",
+            "label": "こうもく0",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h1",
+            "label": "こうもく1",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h2",
+            "label": "こうもく2",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h3",
+            "label": "こうもく3",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h4",
+            "label": "こうもく4",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h5",
+            "label": "こうもく5",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": false,
+        "awayLabel": null
+      },
+      "output": "はなさん。今日《きょう》はまだ、こうもく0と、こうもく1と、こうもく2と、こうもく3と、こうもく4、そのほかも少《すこ》しの 記録《きろく》がないよ。わすれずにやろうね。"
+    },
+    {
+      "name": "6件（上限超え）/4/False/True",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "h0",
+            "label": "こうもく0",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h1",
+            "label": "こうもく1",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h2",
+            "label": "こうもく2",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h3",
+            "label": "こうもく3",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h4",
+            "label": "こうもく4",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h5",
+            "label": "こうもく5",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": false,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。今日《きょう》はまだ、こうもく0と、こうもく1と、こうもく2と、こうもく3と、こうもく4、そのほかも少《すこ》しの 記録《きろく》がないよ。わすれずにやろうね。"
+    },
+    {
+      "name": "6件（上限超え）/6/True/False",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "h0",
+            "label": "こうもく0",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h1",
+            "label": "こうもく1",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h2",
+            "label": "こうもく2",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h3",
+            "label": "こうもく3",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h4",
+            "label": "こうもく4",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h5",
+            "label": "こうもく5",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": true,
+        "awayLabel": null
+      },
+      "output": "はなさん。今日《きょう》はまだ、こうもく0と、こうもく1と、こうもく2と、こうもく3と、こうもく4、そのほかも少《すこ》しの 記録《きろく》がないよ。わすれずにやろうね。"
+    },
+    {
+      "name": "6件（上限超え）/6/True/True",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "h0",
+            "label": "こうもく0",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h1",
+            "label": "こうもく1",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h2",
+            "label": "こうもく2",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h3",
+            "label": "こうもく3",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h4",
+            "label": "こうもく4",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h5",
+            "label": "こうもく5",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": true,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。今日《きょう》はお出《で》かけの日《ひ》だね。楽《たの》しんでね。今日《きょう》はまだ、こうもく0と、こうもく1と、こうもく2と、こうもく3と、こうもく4、そのほかも少《すこ》しの 記録《きろく》がないよ。わすれずにやろうね。"
+    },
+    {
+      "name": "6件（上限超え）/6/False/False",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "h0",
+            "label": "こうもく0",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h1",
+            "label": "こうもく1",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h2",
+            "label": "こうもく2",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h3",
+            "label": "こうもく3",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h4",
+            "label": "こうもく4",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h5",
+            "label": "こうもく5",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": false,
+        "awayLabel": null
+      },
+      "output": "はなさん。今日《きょう》はまだ、こうもく0と、こうもく1と、こうもく2と、こうもく3と、こうもく4、そのほかも少《すこ》しの 記録《きろく》がないよ。わすれずにやろうね。"
+    },
+    {
+      "name": "6件（上限超え）/6/False/True",
+      "input": {
+        "items": [
+          {
+            "kind": "habit",
+            "key": "h0",
+            "label": "こうもく0",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h1",
+            "label": "こうもく1",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h2",
+            "label": "こうもく2",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h3",
+            "label": "こうもく3",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h4",
+            "label": "こうもく4",
+            "note": null
+          },
+          {
+            "kind": "habit",
+            "key": "h5",
+            "label": "こうもく5",
+            "note": null
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": false,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。今日《きょう》はまだ、こうもく0と、こうもく1と、こうもく2と、こうもく3と、こうもく4、そのほかも少《すこ》しの 記録《きろく》がないよ。わすれずにやろうね。"
+    },
+    {
+      "name": "じゅんびだけ/1/True/False",
+      "input": {
+        "items": [
+          {
+            "kind": "school_start",
+            "key": "ss",
+            "label": "ぼうしをもっていく",
+            "note": "9/1まで"
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": true,
+        "awayLabel": null
+      },
+      "output": "はなさん。きょうのきろくとしゅくだいは、ぜんぶできているよ。すごいね。しんがっきのじゅんび、ぼうしをもっていく（9/1まで）も わすれずにね。"
+    },
+    {
+      "name": "じゅんびだけ/1/True/True",
+      "input": {
+        "items": [
+          {
+            "kind": "school_start",
+            "key": "ss",
+            "label": "ぼうしをもっていく",
+            "note": "9/1まで"
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": true,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。きょうはお出《で》かけの日《ひ》だね。たのしんでね。きょうのきろくとしゅくだいは、ぜんぶできているよ。すごいね。しんがっきのじゅんび、ぼうしをもっていく（9/1まで）も わすれずにね。"
+    },
+    {
+      "name": "じゅんびだけ/1/False/False",
+      "input": {
+        "items": [
+          {
+            "kind": "school_start",
+            "key": "ss",
+            "label": "ぼうしをもっていく",
+            "note": "9/1まで"
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": false,
+        "awayLabel": null
+      },
+      "output": "はなさん。しんがっきのじゅんび、ぼうしをもっていく（9/1まで）も わすれずにね。"
+    },
+    {
+      "name": "じゅんびだけ/1/False/True",
+      "input": {
+        "items": [
+          {
+            "kind": "school_start",
+            "key": "ss",
+            "label": "ぼうしをもっていく",
+            "note": "9/1まで"
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 1,
+        "inPeriod": false,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。しんがっきのじゅんび、ぼうしをもっていく（9/1まで）も わすれずにね。"
+    },
+    {
+      "name": "じゅんびだけ/4/True/False",
+      "input": {
+        "items": [
+          {
+            "kind": "school_start",
+            "key": "ss",
+            "label": "ぼうしをもっていく",
+            "note": "9/1まで"
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": true,
+        "awayLabel": null
+      },
+      "output": "はなさん。今日《きょう》の記録《きろく》と宿題《しゅくだい》は、全部《ぜんぶ》できているよ。すごいね。新学期《しんがっき》のじゅんび、ぼうしをもっていく（9/1まで）も わすれずにね。"
+    },
+    {
+      "name": "じゅんびだけ/4/True/True",
+      "input": {
+        "items": [
+          {
+            "kind": "school_start",
+            "key": "ss",
+            "label": "ぼうしをもっていく",
+            "note": "9/1まで"
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": true,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。今日《きょう》はお出《で》かけの日《ひ》だね。楽《たの》しんでね。今日《きょう》の記録《きろく》と宿題《しゅくだい》は、全部《ぜんぶ》できているよ。すごいね。新学期《しんがっき》のじゅんび、ぼうしをもっていく（9/1まで）も わすれずにね。"
+    },
+    {
+      "name": "じゅんびだけ/4/False/False",
+      "input": {
+        "items": [
+          {
+            "kind": "school_start",
+            "key": "ss",
+            "label": "ぼうしをもっていく",
+            "note": "9/1まで"
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": false,
+        "awayLabel": null
+      },
+      "output": "はなさん。新学期《しんがっき》のじゅんび、ぼうしをもっていく（9/1まで）も わすれずにね。"
+    },
+    {
+      "name": "じゅんびだけ/4/False/True",
+      "input": {
+        "items": [
+          {
+            "kind": "school_start",
+            "key": "ss",
+            "label": "ぼうしをもっていく",
+            "note": "9/1まで"
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 4,
+        "inPeriod": false,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。新学期《しんがっき》のじゅんび、ぼうしをもっていく（9/1まで）も わすれずにね。"
+    },
+    {
+      "name": "じゅんびだけ/6/True/False",
+      "input": {
+        "items": [
+          {
+            "kind": "school_start",
+            "key": "ss",
+            "label": "ぼうしをもっていく",
+            "note": "9/1まで"
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": true,
+        "awayLabel": null
+      },
+      "output": "はなさん。今日《きょう》の記録《きろく》と宿題《しゅくだい》は、全部《ぜんぶ》できているよ。すごいね。新学期《しんがっき》のじゅんび、ぼうしをもっていく（9/1まで）も わすれずにね。"
+    },
+    {
+      "name": "じゅんびだけ/6/True/True",
+      "input": {
+        "items": [
+          {
+            "kind": "school_start",
+            "key": "ss",
+            "label": "ぼうしをもっていく",
+            "note": "9/1まで"
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": true,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。今日《きょう》はお出《で》かけの日《ひ》だね。楽《たの》しんでね。今日《きょう》の記録《きろく》と宿題《しゅくだい》は、全部《ぜんぶ》できているよ。すごいね。新学期《しんがっき》のじゅんび、ぼうしをもっていく（9/1まで）も わすれずにね。"
+    },
+    {
+      "name": "じゅんびだけ/6/False/False",
+      "input": {
+        "items": [
+          {
+            "kind": "school_start",
+            "key": "ss",
+            "label": "ぼうしをもっていく",
+            "note": "9/1まで"
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": false,
+        "awayLabel": null
+      },
+      "output": "はなさん。新学期《しんがっき》のじゅんび、ぼうしをもっていく（9/1まで）も わすれずにね。"
+    },
+    {
+      "name": "じゅんびだけ/6/False/True",
+      "input": {
+        "items": [
+          {
+            "kind": "school_start",
+            "key": "ss",
+            "label": "ぼうしをもっていく",
+            "note": "9/1まで"
+          }
+        ],
+        "childKana": "はな",
+        "gradeLevel": 6,
+        "inPeriod": false,
+        "awayLabel": "りょこう"
+      },
+      "output": "はなさん。新学期《しんがっき》のじゅんび、ぼうしをもっていく（9/1まで）も わすれずにね。"
+    }
+  ]
+}

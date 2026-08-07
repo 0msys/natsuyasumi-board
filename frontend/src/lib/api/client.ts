@@ -1,4 +1,6 @@
-// fetch クライアント。全 API 呼び出しの単一窓口（$lib/api の api 名前空間）。
+// fetch クライアント。docker 版の api 実装（$lib/api → $apiImpl の片側）。
+// lite 版の実装は local/index.ts。両方が contract.ts の Api を満たす。
+import { ApiError, type Api } from './contract';
 import type {
 	AdminDefinitionEntry,
 	AdminDocument,
@@ -21,7 +23,7 @@ async function get<T>(path: string): Promise<T> {
 	const res = await fetch(path, { credentials: 'same-origin' });
 	if (!res.ok) {
 		const detail = await res.text().catch(() => '');
-		throw new Error(`${path} → ${res.status} ${detail}`);
+		throw new ApiError(res.status, detail, path);
 	}
 	return res.json();
 }
@@ -35,7 +37,7 @@ async function send<T>(method: string, path: string, body: unknown): Promise<T> 
 	});
 	if (!res.ok) {
 		const detail = await res.text().catch(() => '');
-		throw new Error(`${path} → ${res.status} ${detail}`);
+		throw new ApiError(res.status, detail, path);
 	}
 	return res.json();
 }
@@ -47,7 +49,7 @@ const q = (child: string) => `child=${encodeURIComponent(child)}`;
 // 管理 API の ?year=。省略時はサーバが「いま子どもページに出ている年」を選ぶ。
 const yearQuery = (year?: number) => (year == null ? '' : `?year=${year}`);
 
-export const api = {
+export const api: Api = {
 	// ── 子どもページ（チェックはサーバ権威＝複数端末で共有） ──
 	summerChildren: () => get<{ children: ChildInfo[] }>('/api/summer/children'),
 	summerState: (child: string) => get<SummerState>(`/api/summer/state?${q(child)}`),
@@ -107,7 +109,7 @@ export const api = {
 		// までしか分からず、「この声では鳴らせない」と「VOICEVOX が居ない」を書き分けられない。
 		if (!res.ok) {
 			const detail = await res.text().catch(() => '');
-			throw new Error(`/api/tts → ${res.status} ${detail}`);
+			throw new ApiError(res.status, detail, '/api/tts');
 		}
 		return res.blob();
 	},
@@ -159,5 +161,30 @@ export const api = {
 		),
 	adminImportDefinition: (doc: AdminDocument) =>
 		post<AdminDefinitionEntry>('/api/admin/definitions/import', { doc }),
-	adminKanji: () => get<KanjiGrades>('/api/admin/kanji')
+	adminKanji: () => get<KanjiGrades>('/api/admin/kanji'),
+	// バックエンドの /export と同じファイル名（{年}-{名前}.json）を組み立てる。
+	// 専用エンドポイントを叩かないのは、応答を Content-Disposition から読み戻すより
+	// 既存の取得を使い回すほうが素直なため。
+	adminExportDoc: async (child: string, year?: number) => {
+		const entry = await api.adminGetDefinition(child, year);
+		return { filename: `${entry.year}-${entry.child}.json`, doc: entry.doc };
+	},
+
+	// まるごとバックアップは lite の話。こちらの記録はサーバの ./data にあるので、
+	// バックアップはそのディレクトリをコピーする（README のとおり）。
+	// supported:false を返すと、画面はバックアップのカードごと出さない。
+	backupStatus: async () => ({
+		supported: false,
+		last_backup_at: null,
+		changes_since_backup: 0,
+		persisted: null,
+		home_hint_dismissed: true
+	}),
+	backupExportAll: () => {
+		throw new ApiError(501, 'この版にまるごとバックアップはありません（./data をコピーしてください）');
+	},
+	backupImportAll: () => {
+		throw new ApiError(501, 'この版にまるごとバックアップはありません');
+	},
+	backupDismissHomeHint: async () => {}
 };

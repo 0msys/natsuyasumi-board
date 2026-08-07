@@ -1,0 +1,850 @@
+{
+  "_note": "自動生成。手で編集しないこと。 作り直す: cd backend && uv run python tools/dump_golden.py",
+  "about": "複数年から「いま出す年」を選ぶ規則",
+  "cases": [
+    {
+      "name": "2年ぶん / 2026-07-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2027,
+            [
+              "2027-07-20",
+              "2027-08-30"
+            ]
+          ]
+        ],
+        "today": "2026-07-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "2年ぶん / 2026-08-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2027,
+            [
+              "2027-07-20",
+              "2027-08-30"
+            ]
+          ]
+        ],
+        "today": "2026-08-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "2年ぶん / 2026-09-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2027,
+            [
+              "2027-07-20",
+              "2027-08-30"
+            ]
+          ]
+        ],
+        "today": "2026-09-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "2年ぶん / 2027-08-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2027,
+            [
+              "2027-07-20",
+              "2027-08-30"
+            ]
+          ]
+        ],
+        "today": "2027-08-01"
+      },
+      "output": 2027
+    },
+    {
+      "name": "2年ぶん / 2028-01-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2027,
+            [
+              "2027-07-20",
+              "2027-08-30"
+            ]
+          ]
+        ],
+        "today": "2028-01-01"
+      },
+      "output": 2027
+    },
+    {
+      "name": "期間が読めない年つき / 2026-07-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2027,
+            null
+          ]
+        ],
+        "today": "2026-07-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "期間が読めない年つき / 2026-08-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2027,
+            null
+          ]
+        ],
+        "today": "2026-08-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "期間が読めない年つき / 2026-09-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2027,
+            null
+          ]
+        ],
+        "today": "2026-09-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "期間が読めない年つき / 2027-08-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2027,
+            null
+          ]
+        ],
+        "today": "2027-08-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "期間が読めない年つき / 2028-01-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2027,
+            null
+          ]
+        ],
+        "today": "2028-01-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "全部読めない / 2026-07-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            null
+          ],
+          [
+            2027,
+            null
+          ]
+        ],
+        "today": "2026-07-01"
+      },
+      "output": 2027
+    },
+    {
+      "name": "全部読めない / 2026-08-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            null
+          ],
+          [
+            2027,
+            null
+          ]
+        ],
+        "today": "2026-08-01"
+      },
+      "output": 2027
+    },
+    {
+      "name": "全部読めない / 2026-09-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            null
+          ],
+          [
+            2027,
+            null
+          ]
+        ],
+        "today": "2026-09-01"
+      },
+      "output": 2027
+    },
+    {
+      "name": "全部読めない / 2027-08-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            null
+          ],
+          [
+            2027,
+            null
+          ]
+        ],
+        "today": "2027-08-01"
+      },
+      "output": 2027
+    },
+    {
+      "name": "全部読めない / 2028-01-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            null
+          ],
+          [
+            2027,
+            null
+          ]
+        ],
+        "today": "2028-01-01"
+      },
+      "output": 2027
+    },
+    {
+      "name": "1年だけ / 2026-07-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ]
+        ],
+        "today": "2026-07-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "1年だけ / 2026-08-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ]
+        ],
+        "today": "2026-08-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "1年だけ / 2026-09-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ]
+        ],
+        "today": "2026-09-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "1年だけ / 2027-08-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ]
+        ],
+        "today": "2027-08-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "1年だけ / 2028-01-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ]
+        ],
+        "today": "2028-01-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "終わりが同じ / 2026-07-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2025,
+            [
+              "2025-07-21",
+              "2026-08-31"
+            ]
+          ]
+        ],
+        "today": "2026-07-01"
+      },
+      "output": 2025
+    },
+    {
+      "name": "終わりが同じ / 2026-08-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2025,
+            [
+              "2025-07-21",
+              "2026-08-31"
+            ]
+          ]
+        ],
+        "today": "2026-08-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "終わりが同じ / 2026-09-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2025,
+            [
+              "2025-07-21",
+              "2026-08-31"
+            ]
+          ]
+        ],
+        "today": "2026-09-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "終わりが同じ / 2027-08-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2025,
+            [
+              "2025-07-21",
+              "2026-08-31"
+            ]
+          ]
+        ],
+        "today": "2027-08-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "終わりが同じ / 2028-01-01",
+      "input": {
+        "candidates": [
+          [
+            2026,
+            [
+              "2026-07-21",
+              "2026-08-31"
+            ]
+          ],
+          [
+            2025,
+            [
+              "2025-07-21",
+              "2026-08-31"
+            ]
+          ]
+        ],
+        "today": "2028-01-01"
+      },
+      "output": 2026
+    },
+    {
+      "name": "periodBounds({\"child\": \"はな\", \"child_kana\": \"はな\", \"yea)",
+      "input": {
+        "kind": "periodBounds",
+        "doc": {
+          "child": "はな",
+          "child_kana": "はな",
+          "year": 2026,
+          "grade": "小2",
+          "period": {
+            "start": "2026-07-18",
+            "end": "2026-08-31",
+            "first_day_of_school": "2026-09-01"
+          },
+          "away": [
+            {
+              "start": "2026-08-07",
+              "end": "2026-08-14",
+              "label": "おばあちゃんのいえ"
+            }
+          ],
+          "card_rules": {
+            "edges_window_days": 5
+          },
+          "media_timer": {
+            "limit_minutes": 120
+          },
+          "voice": {
+            "speaker": 3,
+            "label": "ずんだもん（ノーマル）"
+          },
+          "habits": [
+            {
+              "key": "hamigaki_asa",
+              "label": "はみがき（朝《あさ》）"
+            },
+            {
+              "key": "hamigaki_hiru",
+              "label": "はみがき（昼《ひる》）"
+            },
+            {
+              "key": "hamigaki_yoru",
+              "label": "はみがき（夜《よる》）"
+            },
+            {
+              "key": "hayaoki",
+              "label": "7時《じ》30分《ぷん》までにおきた",
+              "window": "edges"
+            },
+            {
+              "key": "asagohan",
+              "label": "朝《あさ》ごはんをしっかり食《た》べた",
+              "window": "edges"
+            },
+            {
+              "key": "hayane",
+              "label": "9時《じ》30分《ぷん》までにねた",
+              "window": "edges"
+            },
+            {
+              "key": "outmedia",
+              "label": "テレビ・ゲーム・タブレットは2時間《じかん》まで",
+              "window": "edges"
+            },
+            {
+              "key": "radio_taisou",
+              "label": "ラジオたいそう",
+              "window": "range",
+              "window_start": "2026-07-21",
+              "window_end": "2026-07-24",
+              "cancelable": true
+            }
+          ],
+          "daily_homework": [
+            {
+              "key": "ondoku",
+              "label": "音読《おんどく》（カードに書《か》く）",
+              "meta": [
+                {
+                  "key": "book",
+                  "type": "text",
+                  "label": "読《よ》んだ本《ほん》",
+                  "placeholder": "本《ほん》のだいめいを書《か》こう"
+                }
+              ]
+            },
+            {
+              "key": "nikki",
+              "label": "一行《いちぎょう》日記《にっき》"
+            }
+          ],
+          "practice_homework": [
+            {
+              "key": "keisan",
+              "label": "計算《けいさん》カードのれんしゅう",
+              "meta": [
+                {
+                  "key": "calc_type",
+                  "type": "choice",
+                  "label": "しゅるい",
+                  "options": [
+                    {
+                      "key": "tashizan",
+                      "label": "足《た》し算《ざん》"
+                    },
+                    {
+                      "key": "hikizan",
+                      "label": "引《ひ》き算《ざん》"
+                    }
+                  ]
+                },
+                {
+                  "key": "seconds",
+                  "type": "duration",
+                  "label": "タイム"
+                }
+              ]
+            },
+            {
+              "key": "kenban",
+              "label": "けんばんハーモニカ"
+            },
+            {
+              "key": "drill",
+              "label": "なつやすみのドリルをすすめる"
+            },
+            {
+              "key": "jishu",
+              "label": "じしゅがくしゅう"
+            }
+          ],
+          "special_challenges": [
+            {
+              "key": "gakki",
+              "label": "がっきのれんしゅう"
+            },
+            {
+              "key": "otetsudai",
+              "label": "おてつだい"
+            },
+            {
+              "key": "eigo",
+              "label": "えいごのうた"
+            },
+            {
+              "key": "tairyoku_ch",
+              "label": "体力《たいりょく》づくり"
+            }
+          ],
+          "rewards": [
+            {
+              "key": "c",
+              "label": "ランクC",
+              "avg": 80
+            },
+            {
+              "key": "b",
+              "label": "ランクB",
+              "avg": 100
+            },
+            {
+              "key": "a",
+              "label": "ランクA",
+              "avg": 150
+            },
+            {
+              "key": "s",
+              "label": "ランクS",
+              "avg": 180
+            }
+          ],
+          "one_shot_homework": [
+            {
+              "key": "enikki",
+              "label": "絵《え》日記《にっき》（絵《え》に色《いろ》をぬる）",
+              "required": true
+            },
+            {
+              "key": "kansatsu",
+              "label": "あさがおのかんさつカード1まい",
+              "required": true
+            },
+            {
+              "key": "dokusho",
+              "label": "読書《どくしょ》（カードにだいめいを書《か》く）",
+              "type": "count",
+              "target": 5,
+              "required": true
+            },
+            {
+              "key": "drill_marutsuke",
+              "label": "ドリルの丸《まる》つけ・やり直《なお》し",
+              "required": true
+            },
+            {
+              "key": "jiyu_kenkyu",
+              "label": "じゆうけんきゅう",
+              "required": false
+            },
+            {
+              "key": "tairyoku",
+              "label": "体力《たいりょく》づくり（すいえいなど）",
+              "required": false
+            }
+          ],
+          "choice_homework": [
+            {
+              "key": "sakuhin",
+              "label": "国語《こくご》か図工《ずこう》のさくひん（1点《てん》いじょう作《つく》る）",
+              "min_required": 1,
+              "options": [
+                {
+                  "key": "kansobun",
+                  "label": "読書《どくしょ》かんそうぶん",
+                  "category": "国語《こくご》"
+                },
+                {
+                  "key": "shi",
+                  "label": "しやたんかを作《つく》る",
+                  "category": "国語《こくご》"
+                },
+                {
+                  "key": "shodou",
+                  "label": "書道《しょどう》のさくひん",
+                  "category": "国語《こくご》"
+                },
+                {
+                  "key": "kaiga",
+                  "label": "絵《え》をかく",
+                  "category": "図工《ずこう》"
+                },
+                {
+                  "key": "kousaku",
+                  "label": "こうさく",
+                  "category": "図工《ずこう》"
+                },
+                {
+                  "key": "poster",
+                  "label": "ポスター",
+                  "category": "図工《ずこう》"
+                }
+              ]
+            }
+          ],
+          "school_start_items": [
+            {
+              "key": "uwabaki",
+              "label": "うわばきをあらう",
+              "due": "2026-08-31"
+            },
+            {
+              "key": "teishutsu",
+              "label": "ていしゅつぶつをそろえる（ドリル・日記《にっき》・カードるい）",
+              "due": "2026-09-01"
+            },
+            {
+              "key": "fudebako",
+              "label": "れんらくちょう・ふでばこ",
+              "due": "2026-09-01"
+            },
+            {
+              "key": "zoukin",
+              "label": "ぞうきん1まい（名前《なまえ》を書《か》く）",
+              "due": "2026-09-01"
+            }
+          ]
+        }
+      },
+      "output": [
+        "2026-07-18",
+        "2026-08-31"
+      ]
+    },
+    {
+      "name": "periodBounds({\"period\": {\"start\": \"2026-07-21\", \"end\")",
+      "input": {
+        "kind": "periodBounds",
+        "doc": {
+          "period": {
+            "start": "2026-07-21",
+            "end": "2026-08-31"
+          }
+        }
+      },
+      "output": [
+        "2026-07-21",
+        "2026-08-31"
+      ]
+    },
+    {
+      "name": "periodBounds({\"period\": {\"start\": \"2026-09-01\", \"end\")",
+      "input": {
+        "kind": "periodBounds",
+        "doc": {
+          "period": {
+            "start": "2026-09-01",
+            "end": "2026-08-31"
+          }
+        }
+      },
+      "output": null
+    },
+    {
+      "name": "periodBounds({\"period\": {\"start\": 1, \"end\": \"2026-08-)",
+      "input": {
+        "kind": "periodBounds",
+        "doc": {
+          "period": {
+            "start": 1,
+            "end": "2026-08-31"
+          }
+        }
+      },
+      "output": null
+    },
+    {
+      "name": "periodBounds({\"period\": \"こわれている\"})",
+      "input": {
+        "kind": "periodBounds",
+        "doc": {
+          "period": "こわれている"
+        }
+      },
+      "output": null
+    },
+    {
+      "name": "periodBounds({})",
+      "input": {
+        "kind": "periodBounds",
+        "doc": {}
+      },
+      "output": null
+    },
+    {
+      "name": "periodBounds([])",
+      "input": {
+        "kind": "periodBounds",
+        "doc": []
+      },
+      "output": null
+    },
+    {
+      "name": "periodBounds(\"もじ\")",
+      "input": {
+        "kind": "periodBounds",
+        "doc": "もじ"
+      },
+      "output": null
+    }
+  ]
+}

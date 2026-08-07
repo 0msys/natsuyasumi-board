@@ -1,0 +1,287 @@
+// 管理画面の api（lite 版）。backend/app/admin/definition_store.py の移植。
+//
+// 保存は「キー採番 → 検証 → 楽観ロック → 履歴に退避」を、書き込みの直列化のなかで
+// まとめて行う（バックエンドが1トランザクションでやっていたのと同じ範囲）。
+import { todayJst } from '$lib/core/clock';
+import { SummerDefinitionError, parseDefinition, parseGrade } from '$lib/core/definition';
+import { GRADE_KANJI_SOURCE } from '$lib/core/generated/kanjiTable';
+import { assignKeys, shiftDocToNextYear, stripKeys } from '$lib/core/keys';
+import { TEMPLATES, type Period } from '$lib/core/template';
+import { validateDocument } from '$lib/core/validate';
+import { mutate, read } from '$lib/store/db';
+import {
+	HISTORY_KEEP,
+	defKey,
+	joinKey,
+	splitKey,
+	type Db,
+	type DefinitionRow
+} from '$lib/store/model';
+import { ApiError } from '../contract';
+import { nowEpochSec, rowFor, yearsOf } from './shared';
+import { listChildren } from './summer';
+
+type Doc = Record<string, unknown>;
+
+const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
+
+const entryOf = (db: Db, row: DefinitionRow) => ({
+	child: row.child,
+	year: row.year,
+	years: yearsOf(db, row.child),
+	revision: row.revision,
+	updated_at: row.updated_at,
+	doc: row.doc
+});
+
+/** 定義を検証して受け取る（壊れていれば 422）。 */
+function parseOr422(doc: Doc, source: string) {
+	try {
+		return parseDefinition(doc, source);
+	} catch (e) {
+		if (e instanceof SummerDefinitionError) throw new ApiError(422, e.message);
+		throw e;
+	}
+}
+
+/**
+ * 新しい定義を作る（ウィザード・インポート共用）。同じ子の同じ年が居れば 409。
+ *
+ * 年が違えば同じ子でも作れる（来年ぶん）。ただし記録側のフラグは年を持たないので、
+ * **別の年の定義は必ず別のキー空間**でなければならない（去年の「絵日記できた」が
+ * 今年も済み扱いになる）。ウィザードと来年コピーはキーを持たない doc を渡すので
+ * 採番で新しくなる。エクスポート JSON の取り込みだけはキーを持ったまま来るので、
+ * ここで年が既存と違えば振り直す。
+ */
+export function createDefinition(db: Db, incoming: Doc) {
+	const doc = clone(incoming);
+	assignKeys(doc);
+	let definition = parseOr422(doc, String(doc.child ?? '定義'));
+
+	if (db.definitions[defKey(definition.child, definition.year)]) {
+		throw new ApiError(
+			409,
+			`「${definition.child}」の${definition.year}年ぶんはもう登録されています`
+		);
+	}
+	const hasOtherYear = Object.values(db.definitions).some(
+		(r) => r.child === definition.child && r.year !== definition.year
+	);
+	if (hasOtherYear) {
+		stripKeys(doc);
+		assignKeys(doc);
+		definition = parseOr422(doc, definition.child);
+	}
+
+	const row: DefinitionRow = {
+		child: definition.child,
+		year: definition.year,
+		doc,
+		revision: 1,
+		updated_at: nowEpochSec()
+	};
+	db.definitions[defKey(row.child, row.year)] = row;
+	return { child: row.child, year: row.year, years: yearsOf(db, row.child), revision: 1, updated_at: row.updated_at, doc };
+}
+
+export function saveDocument(
+	db: Db,
+	child: string,
+	incoming: Doc,
+	expectedRevision: number,
+	year: number | undefined
+) {
+	const doc = clone(incoming);
+	assignKeys(doc);
+	const definition = parseOr422(doc, child);
+	if (definition.child !== child) {
+		throw new ApiError(400, 'child は変更できません（名前の変更は rename を使ってください）');
+	}
+	const row = rowFor(db, child, year, todayJst());
+	if (!row) throw new ApiError(404, `「${child}」の定義がありません`);
+	if (definition.year !== row.year) throw new ApiError(400, 'year は変更できません');
+	if (row.revision !== expectedRevision) {
+		throw new ApiError(409, 'ほかの画面で変更されています。読み直してから保存してください');
+	}
+
+	const key = defKey(child, row.year);
+	const history = (db.definition_history[key] ??= []);
+	history.unshift({ revision: row.revision, doc: row.doc, saved_at: nowEpochSec() });
+	history.length = Math.min(history.length, HISTORY_KEEP);
+
+	row.doc = doc;
+	row.revision += 1;
+	row.updated_at = nowEpochSec();
+	return entryOf(db, row);
+}
+
+export function createNextYear(db: Db, child: string) {
+	const years = yearsOf(db, child);
+	if (!years.length) throw new ApiError(404, `「${child}」の定義がありません`);
+	const latest = db.definitions[defKey(child, years[years.length - 1])];
+	const doc = clone(latest.doc);
+	try {
+		parseDefinition(doc, `${child}（${latest.year}年）`);
+	} catch (e) {
+		if (e instanceof SummerDefinitionError) {
+			throw new ApiError(422, `元の定義が壊れているのでコピーできません: ${e.message}`);
+		}
+		throw e;
+	}
+	const [, level] = parseGrade(doc.grade, child);
+	if (level >= 6) {
+		throw new ApiError(
+			400,
+			'小6の次の学年はありません（このアプリは小学生のなつやすみ用です）'
+		);
+	}
+	shiftDocToNextYear(doc, `小${level + 1}`, latest.year + 1);
+	return createDefinition(db, doc);
+}
+
+export function renameChild(db: Db, child: string, next: string) {
+	const trimmed = String(next ?? '').trim();
+	if (!trimmed) throw new ApiError(400, '新しい名前を入れてください');
+	if (trimmed === child) return { ok: true, child: trimmed };
+	if (Object.values(db.definitions).some((r) => r.child === trimmed)) {
+		throw new ApiError(409, `「${trimmed}」はもう居ます`);
+	}
+	if (!Object.values(db.definitions).some((r) => r.child === child)) {
+		throw new ApiError(404, `「${child}」の定義がありません`);
+	}
+
+	// 記録は子どもの名前をキーの先頭に持っているので、5つとも付け替える。
+	// どれか1つでも忘れると、その子の記録だけが行方不明になる。
+	const rekey = <T>(table: Record<string, T>, patch?: (row: T) => void) => {
+		for (const [key, row] of Object.entries(table)) {
+			const parts = splitKey(key);
+			if (parts[0] !== child) continue;
+			delete table[key];
+			parts[0] = trimmed;
+			table[joinKey(...parts)] = row;
+			patch?.(row);
+		}
+	};
+	rekey(db.definitions, (row) => {
+		row.child = trimmed;
+		(row.doc as Doc).child = trimmed;
+	});
+	rekey(db.definition_history);
+	rekey(db.daily_checks);
+	rekey(db.flags);
+	rekey(db.media_timer);
+	return { ok: true, child: trimmed };
+}
+
+export function deleteDefinition(db: Db, child: string, year: number | undefined) {
+	// 記録（チェック・フラグ・タイマー）は消さない。復活登録すれば戻る。
+	for (const key of Object.keys(db.definitions)) {
+		const [owner, y] = splitKey(key);
+		if (owner !== child) continue;
+		if (year !== undefined && Number(y) !== year) continue;
+		delete db.definitions[key];
+		delete db.definition_history[key];
+	}
+	return { ok: true };
+}
+
+/** その子の記録件数を項目キーごとに数える（項目を消すときの警告に使う）。 */
+export function usageOf(db: Db, child: string): Record<string, number> {
+	const usage: Record<string, number> = {};
+	for (const key of Object.keys(db.daily_checks)) {
+		const [owner, , itemKey] = splitKey(key);
+		if (owner !== child) continue;
+		usage[itemKey] = (usage[itemKey] ?? 0) + 1;
+	}
+	for (const [key, row] of Object.entries(db.flags)) {
+		const [owner, itemKey] = splitKey(key);
+		if (owner !== child) continue;
+		if (row.value > 0 || row.decision !== null) usage[itemKey] = (usage[itemKey] ?? 0) + 1;
+	}
+	return usage;
+}
+
+/** その子の記録がある日の範囲（無ければ null）。期間を縮めたときの警告に使う。 */
+function recordDayRange(db: Db, child: string, year?: number): [string, string] | null {
+	const days: string[] = [];
+	for (const key of Object.keys(db.daily_checks)) {
+		const [owner, day] = splitKey(key);
+		if (owner !== child) continue;
+		if (year !== undefined && !day.startsWith(`${year}-`)) continue;
+		days.push(day);
+	}
+	if (!days.length) return null;
+	days.sort();
+	return [days[0], days[days.length - 1]];
+}
+
+export function validateFor(db: Db, child: string, doc: Doc) {
+	const today = todayJst();
+	const row = rowFor(db, child, undefined, today);
+	return validateDocument(doc, {
+		prevDoc: row ? (row.doc as Doc) : null,
+		usage: usageOf(db, child),
+		recordDays: recordDayRange(db, child, row?.year),
+		today
+	});
+}
+
+export const adminApi = {
+	// PIN はサーバ側の仕掛けだった。ブラウザだけの lite では飾りにしかならないので置かない
+	// （README にもそう書く）。ゲートを通さない値を返して、3ページの分岐を素通りさせる。
+	adminSession: async () => ({ pin_required: false, authenticated: true, admin_disabled: false }),
+	adminLogin: async () => ({ ok: true }),
+
+	adminListDefinitions: () => read((db) => ({ definitions: listChildren(db, todayJst()) })),
+
+	adminCreateDefinition: (body: {
+		child: string;
+		child_kana: string;
+		grade: string;
+		year: number;
+		period: Period;
+		template: 'standard' | 'empty';
+	}) =>
+		mutate((db) => {
+			const build = TEMPLATES[body.template] ?? TEMPLATES.standard;
+			const doc = build(body.child, body.child_kana, body.grade, body.year, body.period);
+			return createDefinition(db, doc);
+		}),
+
+	adminGetDefinition: (child: string, year?: number) =>
+		read((db) => {
+			const row = rowFor(db, child, year, todayJst());
+			if (!row) throw new ApiError(404, `「${child}」の定義がみつかりませんでした`);
+			return entryOf(db, row);
+		}),
+
+	adminSaveDefinition: (child: string, doc: Doc, revision: number, year?: number) =>
+		mutate((db) => saveDocument(db, child, doc, revision, year)),
+
+	adminCreateNextYear: (child: string) => mutate((db) => createNextYear(db, child)),
+
+	adminValidateDefinition: (child: string, doc: Doc) =>
+		read((db) => validateFor(db, child, doc)),
+
+	adminRenameChild: (child: string, next: string) =>
+		mutate((db) => renameChild(db, child, next)),
+
+	adminDeleteDefinition: (child: string, year?: number) =>
+		mutate((db) => deleteDefinition(db, child, year)),
+
+	adminUsage: (child: string) => read((db) => ({ usage: usageOf(db, child) })),
+
+	adminImportDefinition: (doc: Doc) => mutate((db) => createDefinition(db, doc)),
+
+	// 学年配当漢字は画面側にも同じ表があるので、そこから返す（往復が1本減る）。
+	adminKanji: async () => ({
+		grades: Object.fromEntries(GRADE_KANJI_SOURCE.map((chars, i) => [String(i + 1), chars]))
+	}),
+
+	adminExportDoc: (child: string, year?: number) =>
+		read((db) => {
+			const row = rowFor(db, child, year, todayJst());
+			if (!row) throw new ApiError(404, `「${child}」の定義がみつかりませんでした`);
+			return { filename: `${row.year}-${row.child}.json`, doc: row.doc };
+		})
+};

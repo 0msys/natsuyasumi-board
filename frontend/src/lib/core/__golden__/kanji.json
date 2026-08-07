@@ -1,0 +1,693 @@
+{
+  "_note": "自動生成。手で編集しないこと。 作り直す: cd backend && uv run python tools/dump_golden.py",
+  "about": "openForGrade / validateRubySource / 配当の字数",
+  "cases": [
+    {
+      "name": "字数の錠",
+      "input": {
+        "kind": "counts"
+      },
+      "output": [
+        80,
+        160,
+        200,
+        202,
+        193,
+        191
+      ]
+    },
+    {
+      "name": "openForGrade('新学期《しんがっき》のじゅんび', 1)",
+      "input": {
+        "kind": "open",
+        "text": "新学期《しんがっき》のじゅんび",
+        "grade": 1
+      },
+      "output": "しんがっきのじゅんび"
+    },
+    {
+      "name": "openForGrade('新学期《しんがっき》のじゅんび', 2)",
+      "input": {
+        "kind": "open",
+        "text": "新学期《しんがっき》のじゅんび",
+        "grade": 2
+      },
+      "output": "しんがっきのじゅんび"
+    },
+    {
+      "name": "openForGrade('新学期《しんがっき》のじゅんび', 3)",
+      "input": {
+        "kind": "open",
+        "text": "新学期《しんがっき》のじゅんび",
+        "grade": 3
+      },
+      "output": "新学期《しんがっき》のじゅんび"
+    },
+    {
+      "name": "openForGrade('新学期《しんがっき》のじゅんび', 4)",
+      "input": {
+        "kind": "open",
+        "text": "新学期《しんがっき》のじゅんび",
+        "grade": 4
+      },
+      "output": "新学期《しんがっき》のじゅんび"
+    },
+    {
+      "name": "openForGrade('新学期《しんがっき》のじゅんび', 5)",
+      "input": {
+        "kind": "open",
+        "text": "新学期《しんがっき》のじゅんび",
+        "grade": 5
+      },
+      "output": "新学期《しんがっき》のじゅんび"
+    },
+    {
+      "name": "openForGrade('新学期《しんがっき》のじゅんび', 6)",
+      "input": {
+        "kind": "open",
+        "text": "新学期《しんがっき》のじゅんび",
+        "grade": 6
+      },
+      "output": "新学期《しんがっき》のじゅんび"
+    },
+    {
+      "name": "openForGrade('音読《おんどく》カード', 1)",
+      "input": {
+        "kind": "open",
+        "text": "音読《おんどく》カード",
+        "grade": 1
+      },
+      "output": "おんどくカード"
+    },
+    {
+      "name": "openForGrade('音読《おんどく》カード', 2)",
+      "input": {
+        "kind": "open",
+        "text": "音読《おんどく》カード",
+        "grade": 2
+      },
+      "output": "音読《おんどく》カード"
+    },
+    {
+      "name": "openForGrade('音読《おんどく》カード', 3)",
+      "input": {
+        "kind": "open",
+        "text": "音読《おんどく》カード",
+        "grade": 3
+      },
+      "output": "音読《おんどく》カード"
+    },
+    {
+      "name": "openForGrade('音読《おんどく》カード', 4)",
+      "input": {
+        "kind": "open",
+        "text": "音読《おんどく》カード",
+        "grade": 4
+      },
+      "output": "音読《おんどく》カード"
+    },
+    {
+      "name": "openForGrade('音読《おんどく》カード', 5)",
+      "input": {
+        "kind": "open",
+        "text": "音読《おんどく》カード",
+        "grade": 5
+      },
+      "output": "音読《おんどく》カード"
+    },
+    {
+      "name": "openForGrade('音読《おんどく》カード', 6)",
+      "input": {
+        "kind": "open",
+        "text": "音読《おんどく》カード",
+        "grade": 6
+      },
+      "output": "音読《おんどく》カード"
+    },
+    {
+      "name": "openForGrade('今日《きょう》は 100点《てん》だよ。', 1)",
+      "input": {
+        "kind": "open",
+        "text": "今日《きょう》は 100点《てん》だよ。",
+        "grade": 1
+      },
+      "output": "きょうは 100てんだよ。"
+    },
+    {
+      "name": "openForGrade('今日《きょう》は 100点《てん》だよ。', 2)",
+      "input": {
+        "kind": "open",
+        "text": "今日《きょう》は 100点《てん》だよ。",
+        "grade": 2
+      },
+      "output": "今日《きょう》は 100点《てん》だよ。"
+    },
+    {
+      "name": "openForGrade('今日《きょう》は 100点《てん》だよ。', 3)",
+      "input": {
+        "kind": "open",
+        "text": "今日《きょう》は 100点《てん》だよ。",
+        "grade": 3
+      },
+      "output": "今日《きょう》は 100点《てん》だよ。"
+    },
+    {
+      "name": "openForGrade('今日《きょう》は 100点《てん》だよ。', 4)",
+      "input": {
+        "kind": "open",
+        "text": "今日《きょう》は 100点《てん》だよ。",
+        "grade": 4
+      },
+      "output": "今日《きょう》は 100点《てん》だよ。"
+    },
+    {
+      "name": "openForGrade('今日《きょう》は 100点《てん》だよ。', 5)",
+      "input": {
+        "kind": "open",
+        "text": "今日《きょう》は 100点《てん》だよ。",
+        "grade": 5
+      },
+      "output": "今日《きょう》は 100点《てん》だよ。"
+    },
+    {
+      "name": "openForGrade('今日《きょう》は 100点《てん》だよ。', 6)",
+      "input": {
+        "kind": "open",
+        "text": "今日《きょう》は 100点《てん》だよ。",
+        "grade": 6
+      },
+      "output": "今日《きょう》は 100点《てん》だよ。"
+    },
+    {
+      "name": "openForGrade('時々《ときどき》お手伝《てつだ》いをする', 1)",
+      "input": {
+        "kind": "open",
+        "text": "時々《ときどき》お手伝《てつだ》いをする",
+        "grade": 1
+      },
+      "output": "ときどきおてつだいをする"
+    },
+    {
+      "name": "openForGrade('時々《ときどき》お手伝《てつだ》いをする', 2)",
+      "input": {
+        "kind": "open",
+        "text": "時々《ときどき》お手伝《てつだ》いをする",
+        "grade": 2
+      },
+      "output": "時々《ときどき》おてつだいをする"
+    },
+    {
+      "name": "openForGrade('時々《ときどき》お手伝《てつだ》いをする', 3)",
+      "input": {
+        "kind": "open",
+        "text": "時々《ときどき》お手伝《てつだ》いをする",
+        "grade": 3
+      },
+      "output": "時々《ときどき》おてつだいをする"
+    },
+    {
+      "name": "openForGrade('時々《ときどき》お手伝《てつだ》いをする', 4)",
+      "input": {
+        "kind": "open",
+        "text": "時々《ときどき》お手伝《てつだ》いをする",
+        "grade": 4
+      },
+      "output": "時々《ときどき》お手伝《てつだ》いをする"
+    },
+    {
+      "name": "openForGrade('時々《ときどき》お手伝《てつだ》いをする', 5)",
+      "input": {
+        "kind": "open",
+        "text": "時々《ときどき》お手伝《てつだ》いをする",
+        "grade": 5
+      },
+      "output": "時々《ときどき》お手伝《てつだ》いをする"
+    },
+    {
+      "name": "openForGrade('時々《ときどき》お手伝《てつだ》いをする', 6)",
+      "input": {
+        "kind": "open",
+        "text": "時々《ときどき》お手伝《てつだ》いをする",
+        "grade": 6
+      },
+      "output": "時々《ときどき》お手伝《てつだ》いをする"
+    },
+    {
+      "name": "openForGrade('夏休《なつやす》みのおわり', 1)",
+      "input": {
+        "kind": "open",
+        "text": "夏休《なつやす》みのおわり",
+        "grade": 1
+      },
+      "output": "なつやすみのおわり"
+    },
+    {
+      "name": "openForGrade('夏休《なつやす》みのおわり', 2)",
+      "input": {
+        "kind": "open",
+        "text": "夏休《なつやす》みのおわり",
+        "grade": 2
+      },
+      "output": "夏休《なつやす》みのおわり"
+    },
+    {
+      "name": "openForGrade('夏休《なつやす》みのおわり', 3)",
+      "input": {
+        "kind": "open",
+        "text": "夏休《なつやす》みのおわり",
+        "grade": 3
+      },
+      "output": "夏休《なつやす》みのおわり"
+    },
+    {
+      "name": "openForGrade('夏休《なつやす》みのおわり', 4)",
+      "input": {
+        "kind": "open",
+        "text": "夏休《なつやす》みのおわり",
+        "grade": 4
+      },
+      "output": "夏休《なつやす》みのおわり"
+    },
+    {
+      "name": "openForGrade('夏休《なつやす》みのおわり', 5)",
+      "input": {
+        "kind": "open",
+        "text": "夏休《なつやす》みのおわり",
+        "grade": 5
+      },
+      "output": "夏休《なつやす》みのおわり"
+    },
+    {
+      "name": "openForGrade('夏休《なつやす》みのおわり', 6)",
+      "input": {
+        "kind": "open",
+        "text": "夏休《なつやす》みのおわり",
+        "grade": 6
+      },
+      "output": "夏休《なつやす》みのおわり"
+    },
+    {
+      "name": "openForGrade('計算《けいさん》カード', 1)",
+      "input": {
+        "kind": "open",
+        "text": "計算《けいさん》カード",
+        "grade": 1
+      },
+      "output": "けいさんカード"
+    },
+    {
+      "name": "openForGrade('計算《けいさん》カード', 2)",
+      "input": {
+        "kind": "open",
+        "text": "計算《けいさん》カード",
+        "grade": 2
+      },
+      "output": "計算《けいさん》カード"
+    },
+    {
+      "name": "openForGrade('計算《けいさん》カード', 3)",
+      "input": {
+        "kind": "open",
+        "text": "計算《けいさん》カード",
+        "grade": 3
+      },
+      "output": "計算《けいさん》カード"
+    },
+    {
+      "name": "openForGrade('計算《けいさん》カード', 4)",
+      "input": {
+        "kind": "open",
+        "text": "計算《けいさん》カード",
+        "grade": 4
+      },
+      "output": "計算《けいさん》カード"
+    },
+    {
+      "name": "openForGrade('計算《けいさん》カード', 5)",
+      "input": {
+        "kind": "open",
+        "text": "計算《けいさん》カード",
+        "grade": 5
+      },
+      "output": "計算《けいさん》カード"
+    },
+    {
+      "name": "openForGrade('計算《けいさん》カード', 6)",
+      "input": {
+        "kind": "open",
+        "text": "計算《けいさん》カード",
+        "grade": 6
+      },
+      "output": "計算《けいさん》カード"
+    },
+    {
+      "name": "openForGrade('早寝《はやね》早起《はやお》き朝《あさ》ごはん', 1)",
+      "input": {
+        "kind": "open",
+        "text": "早寝《はやね》早起《はやお》き朝《あさ》ごはん",
+        "grade": 1
+      },
+      "output": "はやねはやおきあさごはん"
+    },
+    {
+      "name": "openForGrade('早寝《はやね》早起《はやお》き朝《あさ》ごはん', 2)",
+      "input": {
+        "kind": "open",
+        "text": "早寝《はやね》早起《はやお》き朝《あさ》ごはん",
+        "grade": 2
+      },
+      "output": "はやねはやおき朝《あさ》ごはん"
+    },
+    {
+      "name": "openForGrade('早寝《はやね》早起《はやお》き朝《あさ》ごはん', 3)",
+      "input": {
+        "kind": "open",
+        "text": "早寝《はやね》早起《はやお》き朝《あさ》ごはん",
+        "grade": 3
+      },
+      "output": "はやね早起《はやお》き朝《あさ》ごはん"
+    },
+    {
+      "name": "openForGrade('早寝《はやね》早起《はやお》き朝《あさ》ごはん', 4)",
+      "input": {
+        "kind": "open",
+        "text": "早寝《はやね》早起《はやお》き朝《あさ》ごはん",
+        "grade": 4
+      },
+      "output": "はやね早起《はやお》き朝《あさ》ごはん"
+    },
+    {
+      "name": "openForGrade('早寝《はやね》早起《はやお》き朝《あさ》ごはん', 5)",
+      "input": {
+        "kind": "open",
+        "text": "早寝《はやね》早起《はやお》き朝《あさ》ごはん",
+        "grade": 5
+      },
+      "output": "はやね早起《はやお》き朝《あさ》ごはん"
+    },
+    {
+      "name": "openForGrade('早寝《はやね》早起《はやお》き朝《あさ》ごはん', 6)",
+      "input": {
+        "kind": "open",
+        "text": "早寝《はやね》早起《はやお》き朝《あさ》ごはん",
+        "grade": 6
+      },
+      "output": "はやね早起《はやお》き朝《あさ》ごはん"
+    },
+    {
+      "name": "openForGrade('読書《どくしょ》の記録《きろく》', 1)",
+      "input": {
+        "kind": "open",
+        "text": "読書《どくしょ》の記録《きろく》",
+        "grade": 1
+      },
+      "output": "どくしょのきろく"
+    },
+    {
+      "name": "openForGrade('読書《どくしょ》の記録《きろく》', 2)",
+      "input": {
+        "kind": "open",
+        "text": "読書《どくしょ》の記録《きろく》",
+        "grade": 2
+      },
+      "output": "読書《どくしょ》のきろく"
+    },
+    {
+      "name": "openForGrade('読書《どくしょ》の記録《きろく》', 3)",
+      "input": {
+        "kind": "open",
+        "text": "読書《どくしょ》の記録《きろく》",
+        "grade": 3
+      },
+      "output": "読書《どくしょ》のきろく"
+    },
+    {
+      "name": "openForGrade('読書《どくしょ》の記録《きろく》', 4)",
+      "input": {
+        "kind": "open",
+        "text": "読書《どくしょ》の記録《きろく》",
+        "grade": 4
+      },
+      "output": "読書《どくしょ》の記録《きろく》"
+    },
+    {
+      "name": "openForGrade('読書《どくしょ》の記録《きろく》', 5)",
+      "input": {
+        "kind": "open",
+        "text": "読書《どくしょ》の記録《きろく》",
+        "grade": 5
+      },
+      "output": "読書《どくしょ》の記録《きろく》"
+    },
+    {
+      "name": "openForGrade('読書《どくしょ》の記録《きろく》', 6)",
+      "input": {
+        "kind": "open",
+        "text": "読書《どくしょ》の記録《きろく》",
+        "grade": 6
+      },
+      "output": "読書《どくしょ》の記録《きろく》"
+    },
+    {
+      "name": "openForGrade('自由《じゆう》研究《けんきゅう》', 1)",
+      "input": {
+        "kind": "open",
+        "text": "自由《じゆう》研究《けんきゅう》",
+        "grade": 1
+      },
+      "output": "じゆうけんきゅう"
+    },
+    {
+      "name": "openForGrade('自由《じゆう》研究《けんきゅう》', 2)",
+      "input": {
+        "kind": "open",
+        "text": "自由《じゆう》研究《けんきゅう》",
+        "grade": 2
+      },
+      "output": "じゆうけんきゅう"
+    },
+    {
+      "name": "openForGrade('自由《じゆう》研究《けんきゅう》', 3)",
+      "input": {
+        "kind": "open",
+        "text": "自由《じゆう》研究《けんきゅう》",
+        "grade": 3
+      },
+      "output": "自由《じゆう》研究《けんきゅう》"
+    },
+    {
+      "name": "openForGrade('自由《じゆう》研究《けんきゅう》', 4)",
+      "input": {
+        "kind": "open",
+        "text": "自由《じゆう》研究《けんきゅう》",
+        "grade": 4
+      },
+      "output": "自由《じゆう》研究《けんきゅう》"
+    },
+    {
+      "name": "openForGrade('自由《じゆう》研究《けんきゅう》', 5)",
+      "input": {
+        "kind": "open",
+        "text": "自由《じゆう》研究《けんきゅう》",
+        "grade": 5
+      },
+      "output": "自由《じゆう》研究《けんきゅう》"
+    },
+    {
+      "name": "openForGrade('自由《じゆう》研究《けんきゅう》', 6)",
+      "input": {
+        "kind": "open",
+        "text": "自由《じゆう》研究《けんきゅう》",
+        "grade": 6
+      },
+      "output": "自由《じゆう》研究《けんきゅう》"
+    },
+    {
+      "name": "openForGrade('絵日記《えにっき》', 1)",
+      "input": {
+        "kind": "open",
+        "text": "絵日記《えにっき》",
+        "grade": 1
+      },
+      "output": "えにっき"
+    },
+    {
+      "name": "openForGrade('絵日記《えにっき》', 2)",
+      "input": {
+        "kind": "open",
+        "text": "絵日記《えにっき》",
+        "grade": 2
+      },
+      "output": "絵日記《えにっき》"
+    },
+    {
+      "name": "openForGrade('絵日記《えにっき》', 3)",
+      "input": {
+        "kind": "open",
+        "text": "絵日記《えにっき》",
+        "grade": 3
+      },
+      "output": "絵日記《えにっき》"
+    },
+    {
+      "name": "openForGrade('絵日記《えにっき》', 4)",
+      "input": {
+        "kind": "open",
+        "text": "絵日記《えにっき》",
+        "grade": 4
+      },
+      "output": "絵日記《えにっき》"
+    },
+    {
+      "name": "openForGrade('絵日記《えにっき》', 5)",
+      "input": {
+        "kind": "open",
+        "text": "絵日記《えにっき》",
+        "grade": 5
+      },
+      "output": "絵日記《えにっき》"
+    },
+    {
+      "name": "openForGrade('絵日記《えにっき》', 6)",
+      "input": {
+        "kind": "open",
+        "text": "絵日記《えにっき》",
+        "grade": 6
+      },
+      "output": "絵日記《えにっき》"
+    },
+    {
+      "name": "validateRubySource('新学期《しんがっき》のじゅんび')",
+      "input": {
+        "kind": "validate",
+        "text": "新学期《しんがっき》のじゅんび"
+      },
+      "output": []
+    },
+    {
+      "name": "validateRubySource('音読《おんどく》カード')",
+      "input": {
+        "kind": "validate",
+        "text": "音読《おんどく》カード"
+      },
+      "output": []
+    },
+    {
+      "name": "validateRubySource('今日《きょう》は 100点《てん》だよ。')",
+      "input": {
+        "kind": "validate",
+        "text": "今日《きょう》は 100点《てん》だよ。"
+      },
+      "output": []
+    },
+    {
+      "name": "validateRubySource('時々《ときどき》お手伝《てつだ》いをする')",
+      "input": {
+        "kind": "validate",
+        "text": "時々《ときどき》お手伝《てつだ》いをする"
+      },
+      "output": []
+    },
+    {
+      "name": "validateRubySource('夏休《なつやす》みのおわり')",
+      "input": {
+        "kind": "validate",
+        "text": "夏休《なつやす》みのおわり"
+      },
+      "output": []
+    },
+    {
+      "name": "validateRubySource('計算《けいさん》カード')",
+      "input": {
+        "kind": "validate",
+        "text": "計算《けいさん》カード"
+      },
+      "output": []
+    },
+    {
+      "name": "validateRubySource('早寝《はやね》早起《はやお》き朝《あさ》ごはん')",
+      "input": {
+        "kind": "validate",
+        "text": "早寝《はやね》早起《はやお》き朝《あさ》ごはん"
+      },
+      "output": []
+    },
+    {
+      "name": "validateRubySource('読書《どくしょ》の記録《きろく》')",
+      "input": {
+        "kind": "validate",
+        "text": "読書《どくしょ》の記録《きろく》"
+      },
+      "output": []
+    },
+    {
+      "name": "validateRubySource('自由《じゆう》研究《けんきゅう》')",
+      "input": {
+        "kind": "validate",
+        "text": "自由《じゆう》研究《けんきゅう》"
+      },
+      "output": []
+    },
+    {
+      "name": "validateRubySource('絵日記《えにっき》')",
+      "input": {
+        "kind": "validate",
+        "text": "絵日記《えにっき》"
+      },
+      "output": []
+    },
+    {
+      "name": "validateRubySource('お｜手《て》つだい')",
+      "input": {
+        "kind": "validate",
+        "text": "お｜手《て》つだい"
+      },
+      "output": [
+        "｜ は使わない（基底は漢字だけにする）"
+      ]
+    },
+    {
+      "name": "validateRubySource('こわれた《')",
+      "input": {
+        "kind": "validate",
+        "text": "こわれた《"
+      },
+      "output": [
+        "《》 の対応が取れていない",
+        "ルビにならない《》がある: 'こわれた《'"
+      ]
+    },
+    {
+      "name": "validateRubySource('音読《おんどく')",
+      "input": {
+        "kind": "validate",
+        "text": "音読《おんどく"
+      },
+      "output": [
+        "《》 の対応が取れていない",
+        "ルビにならない《》がある: '音読《おんどく'",
+        "ルビの付いていない漢字がある: 読音"
+      ]
+    },
+    {
+      "name": "validateRubySource('漢字がむき出し')",
+      "input": {
+        "kind": "validate",
+        "text": "漢字がむき出し"
+      },
+      "output": [
+        "ルビの付いていない漢字がある: 出字漢"
+      ]
+    },
+    {
+      "name": "validateRubySource('空《》')",
+      "input": {
+        "kind": "validate",
+        "text": "空《》"
+      },
+      "output": [
+        "よみが空: '空'《》"
+      ]
+    }
+  ]
+}

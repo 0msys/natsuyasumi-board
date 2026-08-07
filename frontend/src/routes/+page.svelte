@@ -4,6 +4,7 @@
 	// 書き込みは confirm-before-update（サーバ成功後に全再取得。LAN では体感即時）。
 	import { onDestroy, onMount } from 'svelte';
 	import { Settings, Sun, TriangleAlert } from '@lucide/svelte';
+	import { resolve } from '$app/paths';
 	import { api } from '$lib/api';
 	import type {
 		SummerCheckStatus,
@@ -54,6 +55,9 @@
 	let editDay = $state<SummerHistoryDay | null>(null);
 	let anchorY = $state<number | null>(null);
 	let ttsAvailable = $state(false);
+	// バックアップが要りそうか（ブラウザ保存の版だけ true になりうる）。
+	// 子どもを急かしたくないので画面に文言は出さず、せっていの歯車に小さな印だけ付ける。
+	let backupNeeded = $state(false);
 	let errorTimer: ReturnType<typeof setTimeout> | null = null;
 	// base100 花火と同時のランク演出は遅延実行する。ページ離脱時に未発火だと音声が残るため
 	// id を保持して cleanup で必ず解除する。
@@ -168,6 +172,15 @@
 		const t = setInterval(refresh, 60_000);
 		// アウトメディア視聴タイマー: ストアを購読（setup は $effect が child 付きで行う）
 		const unsub = mediaTimerStore.subscribe((s) => (mediaTimer = s));
+		// バックアップの状態を1回だけ確認（この版に出番が無ければ supported:false）
+		void api
+			.backupStatus()
+			.then((s) => {
+				if (!s.supported) return;
+				const days = s.last_backup_at ? (Date.now() / 1000 - s.last_backup_at) / 86400 : Infinity;
+				backupNeeded = days > 7 || s.changes_since_backup > 50;
+			})
+			.catch(() => {});
 		// VOICEVOX の死活を1回だけ確認（無ければ音声ボタンを出さない）
 		void api
 			.ttsStatus(data.child)
@@ -282,7 +295,7 @@
 				<nav class="flex items-center gap-1">
 					{#each data.children as c (c.child)}
 						<a
-							href={`/?child=${encodeURIComponent(c.child)}`}
+							href={`${resolve('/')}?child=${encodeURIComponent(c.child)}`}
 							class="rounded-full px-3 py-1 text-xs font-bold lg:text-sm {c.child === data.child
 								? 'bg-accent text-white'
 								: 'bg-surface2 text-text-dim'}"
@@ -306,8 +319,17 @@
 					/>
 				</span>
 			{/if}
-			<a href="/admin" aria-label="せってい" title="せってい" class="text-text-dim/60">
+			<a
+				href={resolve('/admin')}
+				aria-label={backupNeeded ? 'せってい（バックアップをおすすめします）' : 'せってい'}
+				title={backupNeeded ? 'せってい（バックアップをおすすめします）' : 'せってい'}
+				class="relative text-text-dim/60"
+			>
 				<Settings size={16} />
+				{#if backupNeeded}
+					<span class="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-danger" aria-hidden="true"
+					></span>
+				{/if}
 			</a>
 		</div>
 	</header>

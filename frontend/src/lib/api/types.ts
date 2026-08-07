@@ -283,7 +283,16 @@ export type TtsStatus = { available: boolean; speaker: number };
 // ある。この2つを混ぜると「一覧が引けなかっただけ」を「VOICEVOX が居ない」と誤って案内する。
 export type TtsStyle = { id: number; name: string };
 export type TtsSpeaker = { name: string; styles: TtsStyle[] };
-export type TtsSpeakers = { available: boolean; speakers: TtsSpeaker[]; default_speaker: number };
+// supported は「この版に読み上げ機能があるか」。available（VOICEVOX の死活）とは別で、
+// lite 版だけが false になる。両方を1つにまとめると、機能ごと無い lite で
+// 「VOICEVOX がうごいていません（--profile voice で起動してください）」という
+// 嘘の案内が出てしまう（lite に docker は無い）。
+export type TtsSpeakers = {
+	available: boolean;
+	supported?: boolean;
+	speakers: TtsSpeaker[];
+	default_speaker: number;
+};
 
 // ── 管理画面 ──
 // admin_disabled: ADMIN_PIN も ADMIN_NO_AUTH も未設定＝管理 API が丸ごと無効。

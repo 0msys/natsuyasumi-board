@@ -2,6 +2,7 @@
 	// 管理画面トップ: 子ども一覧＋あたらしくつくる＋インポート／エクスポート・名前の変更・削除。
 	// 一覧の再読込は invalidateAll（load を再実行）で行う。
 	import { goto, invalidateAll } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import {
 		ArrowLeft,
 		CalendarPlus,
@@ -16,6 +17,9 @@
 	import type { AdminDocument, ChildInfo } from '$lib/api';
 	import Modal from '$lib/Modal.svelte';
 	import { errorDetail } from '$lib/admin/apiError';
+	import { downloadJson } from '$lib/admin/download';
+	import BackupCard from '$lib/backup/BackupCard.svelte';
+	import { looksLikeBackup } from '$lib/backup/format';
 	import PinGate from '$lib/admin/PinGate.svelte';
 	import AdminDisabledNotice from '$lib/admin/AdminDisabledNotice.svelte';
 	import type { PageData } from './$types';
@@ -29,6 +33,21 @@
 	let deleteName = $state('');
 	let deleteBusy = $state(false);
 	let nextYearBusy = $state<string | null>(null);
+	let exportBusy = $state<string | null>(null);
+
+	// 設定を JSON で書き出す（兄弟への流用・他のご家庭との共有・バックアップ）。
+	async function exportDoc(c: ChildInfo) {
+		exportBusy = c.child;
+		actionError = null;
+		try {
+			const { filename, doc } = await api.adminExportDoc(c.child);
+			downloadJson(filename, doc);
+		} catch (e) {
+			actionError = errorDetail(e);
+		} finally {
+			exportBusy = null;
+		}
+	}
 
 	// 来年ぶんの設定を、いちばん新しい年からコピーして作る。
 	// 項目はそのまま・日付と学年は1年ぶん進み、記録は引きつがれない（サーバ側で決めている）。
@@ -46,7 +65,7 @@
 		actionError = null;
 		try {
 			const entry = await api.adminCreateNextYear(c.child);
-			await goto(`/admin/${encodeURIComponent(c.child)}?year=${entry.year}`, {
+			await goto(`${resolve('/admin/[child]', { child: encodeURIComponent(c.child) })}?year=${entry.year}`, {
 				invalidateAll: true
 			});
 		} catch (e) {
@@ -110,7 +129,23 @@
 		}
 		importBusy = true;
 		try {
-			await api.adminImportDefinition(doc as AdminDocument);
+			// 取り込み口を2つ覚えてもらうのは酷なので、中身を見て振り分ける。
+			// まるごとバックアップは全部を置きかえるので、必ず確認を挟む。
+			if (looksLikeBackup(doc)) {
+				if (
+					!confirm(
+						'これはまるごとバックアップのファイルです。\n' +
+							'いまこの端末に入っている記録と設定は、すべて置きかわります。\n\n' +
+							'続けますか？'
+					)
+				) {
+					importBusy = false;
+					return;
+				}
+				await api.backupImportAll(doc);
+			} else {
+				await api.adminImportDefinition(doc as AdminDocument);
+			}
 			await invalidateAll();
 		} catch (err) {
 			actionError = errorDetail(err);
@@ -125,7 +160,10 @@
 <div class="mx-auto max-w-3xl p-3 lg:p-6">
 	<header class="mb-4 flex items-center justify-between">
 		<h1 class="text-lg font-bold text-text-base lg:text-xl">せってい</h1>
-		<a href="/" class="flex items-center gap-1 text-sm text-text-dim hover:text-text-base">
+		<a
+			href={resolve('/')}
+			class="flex items-center gap-1 text-sm text-text-dim hover:text-text-base"
+		>
 			<ArrowLeft size={16} />子どもページへ
 		</a>
 	</header>
@@ -151,6 +189,9 @@
 				{data.loadError}
 			</div>
 		{/if}
+
+		<!-- ブラウザ保存の版だけ出る（記録がこの端末の中にしか無いので） -->
+		<BackupCard onImported={() => invalidateAll()} />
 
 		<div class="flex flex-col gap-3">
 			{#each data.definitions as c (c.child)}
@@ -186,7 +227,7 @@
 					</div>
 					<div class="flex shrink-0 flex-wrap items-center gap-1.5">
 						<a
-							href={`/admin/${encodeURIComponent(c.child)}`}
+							href={resolve('/admin/[child]', { child: encodeURIComponent(c.child) })}
 							class="rounded-lg bg-accent px-4 py-2 text-sm font-bold text-white"
 						>
 							ひらく
@@ -203,15 +244,16 @@
 								<CalendarPlus size={16} />
 							</button>
 						{/if}
-						<a
-							href={`/api/admin/definitions/${encodeURIComponent(c.child)}/export`}
-							download
+						<button
+							type="button"
+							disabled={exportBusy === c.child}
+							onclick={() => exportDoc(c)}
 							title="エクスポート（JSON）"
 							aria-label="エクスポート（JSON）"
-							class="rounded-md p-2 text-text-dim hover:bg-surface2"
+							class="rounded-md p-2 text-text-dim hover:bg-surface2 disabled:opacity-50"
 						>
 							<Download size={16} />
-						</a>
+						</button>
 						<button
 							type="button"
 							onclick={() => rename(c)}
@@ -245,7 +287,7 @@
 
 		<div class="mt-4 flex flex-wrap gap-2">
 			<a
-				href="/admin/new"
+				href={resolve('/admin/new')}
 				class="flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-bold text-white"
 			>
 				<Plus size={16} />あたらしくつくる

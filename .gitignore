@@ -23,6 +23,8 @@ __pycache__/
 node_modules/
 frontend/.svelte-kit/
 frontend/build/
+# lite（静的サイト）の出力。docker 版の build と混ざらないよう別ディレクトリにしている
+frontend/build-lite/
 
 # OS
 .DS_Store

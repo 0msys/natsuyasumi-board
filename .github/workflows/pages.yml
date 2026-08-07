@@ -1,0 +1,45 @@
+name: lite 版を GitHub Pages へ
+
+# lite 版（バックエンド無し・ブラウザ保存）を https://0msys.github.io/natsuyasumi-board/ に出す。
+# docker が無くても使えるようにするのがこの版の目的なので、main に入ったら自動で反映する。
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同時に走らせない（後から来たほうを待たせる。デプロイの取り違えを避ける）
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run test
+      # NYB_BASE はリポジトリ名のサブパス。独自ドメインに移すときはここを空にする。
+      - run: bun run build:lite
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/build-lite
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

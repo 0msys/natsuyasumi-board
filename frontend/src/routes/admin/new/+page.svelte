@@ -3,6 +3,7 @@
 	// ①名前・よみがな ②学年 ③期間（start/end/始業式） ④テンプレート → 作成。
 	// year は period.start の西暦から自動導出する（入力させない）。
 	import { goto, invalidateAll } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { ArrowLeft, ArrowRight, Check, TriangleAlert } from '@lucide/svelte';
 	import { api } from '$lib/api';
 	import { errorDetail } from '$lib/admin/apiError';
@@ -47,7 +48,7 @@
 				period: { start, end, first_day_of_school: firstDay },
 				template
 			});
-			await goto(`/admin/${encodeURIComponent(name)}`);
+			await goto(resolve('/admin/[child]', { child: encodeURIComponent(name) }));
 		} catch (e) {
 			error = errorDetail(e);
 		} finally {
@@ -61,7 +62,10 @@
 <div class="mx-auto max-w-xl p-3 lg:p-6">
 	<header class="mb-4 flex items-center justify-between">
 		<h1 class="text-lg font-bold text-text-base lg:text-xl">あたらしくつくる</h1>
-		<a href="/admin" class="flex items-center gap-1 text-sm text-text-dim hover:text-text-base">
+		<a
+			href={resolve('/admin')}
+			class="flex items-center gap-1 text-sm text-text-dim hover:text-text-base"
+		>
 			<ArrowLeft size={16} />一覧へ
 		</a>
 	</header>

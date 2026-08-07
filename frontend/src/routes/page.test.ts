@@ -15,6 +15,7 @@ import { render } from '@testing-library/svelte';
 import type { SummerState } from '$lib/api';
 import { stripRuby } from '$lib/summer/ruby';
 import { setApi } from '../test-support/apiMock';
+import '../test-support/appMocks'; // ページが $app/paths（resolve）を使うので差し替えが要る
 import { resetBrowserMocks } from '../test-support/browserMocks';
 import fixtures from './__fixtures__/summerState.json';
 
@@ -96,7 +97,15 @@ beforeEach(() => {
 			accumulated_seconds: 0, elapsed_seconds: 0, server_now: 1_785_000_000,
 			limit_seconds: 7200, limit_label: '2時間《じかん》', over_limit: false
 		}),
-		ttsStatus: async () => ({ available: false, speaker: 3 })
+		ttsStatus: async () => ({ available: false, speaker: 3 }),
+		// ブラウザ保存の版だけが使う。ここでは出番なし＝歯車に印は付かない。
+		backupStatus: async () => ({
+			supported: false,
+			last_backup_at: null,
+			changes_since_backup: 0,
+			persisted: null,
+			home_hint_dismissed: true
+		})
 	});
 });
 

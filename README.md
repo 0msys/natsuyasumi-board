@@ -7,6 +7,27 @@
 
 ![ホーム画面](docs/screenshots/home.png)
 
+## まずは開いてみる（インストール不要）
+
+**https://0msys.github.io/natsuyasumi-board/**
+
+ブラウザだけで動く lite 版です。サーバもインストールも要りません。記録はその端末の
+ブラウザの中に保存され、どこにも送信されません。
+
+使うタブレット・スマホでは、**「ホーム画面に追加」しておいてください。** ブラウザのままだと、
+しばらく開かなかったときに端末側の掃除で記録が消えることがあります（iOS Safari は
+7日間ひらかなかったサイトの保存データを消します）。ホーム画面から開くアプリはその対象外です。
+
+念のため、ときどき管理画面（右上の歯車）から「バックアップする」を押して、ファイルに
+出しておいてください。端末を替えるときも、そのファイルから「もどす」で引き継げます。
+
+lite 版に無いものは2つだけです。
+
+- **複数の端末で記録が同期しません**（リビングのタブレットと親のスマホは、それぞれ別の記録になります）
+- **音声読み上げがありません**（VOICEVOX はサーバ側の機能のため）
+
+この2つが要るなら、下の Docker 版を使ってください。中身の採点・画面・管理機能は同じものです。
+
 ## 機能
 
 - **きょうのチェック** — 生活習慣（はみがき・早寝早起きなど）と宿題を3値（やった／やらなかった／未記入）で記録。大きなボタン・スタンプ演出・効果音つき
@@ -37,7 +58,25 @@ frontend（SvelteKit）──/api──▶ backend（FastAPI）──▶ SQLite�
 - チェック記録はサーバ権威なので、リビングのタブレットと親のスマホで同じ状態が見えます
 - 採点は決定的（LLM・外部サービス不使用）。インターネット接続なしで動きます
 
-## クイックスタート（Docker）
+lite 版はここからサーバを外し、同じ計算を画面側で行います。
+
+```
+ブラウザ（タブレット・スマホ）
+   │ https://0msys.github.io/natsuyasumi-board/
+   ▼
+frontend（SvelteKit・静的サイト）──▶ IndexedDB（その端末の中）
+   採点・文言・検証も画面側で行う          定義＋チェック記録
+```
+
+採点や画面文言のもとになる計算は、バックエンドの Python と画面側の TypeScript の
+両方にあります。同じ答えを返すことは、Python の実際の出力を金型として固め、
+TypeScript 側のテストで突き合わせて担保しています（`frontend/src/lib/core/__golden__/`）。
+
+## Docker で動かす（複数端末で記録を共有したいとき）
+
+常時つけっぱなしにできる PC がある場合の動かしかたです。家の中の端末から同じ記録が見え、
+VOICEVOX を足せば読み上げも使えます。
+
 
 起動時に管理API(`/api/admin/*`)の保護方針を必ず選びます。次のどちらかで起動してください。
 どちらも指定しないと、無防備な管理APIを黙って公開しないよう起動が中止されます。
@@ -154,7 +193,18 @@ backend を直接公開しないほうが安全です。
 
 ## セキュリティについて（重要）
 
-このアプリは**家庭内 LAN 専用**です。ログイン機構はありません。
+### lite 版（https://0msys.github.io/natsuyasumi-board/）
+
+記録はその端末のブラウザの中だけにあり、どこにも送信されません。サーバが無いので、
+外から見られることも書き換えられることもありません。
+
+**lite 版に PIN はありません。** docker 版の PIN は「サーバが受け付けない」ことで効いていた
+仕掛けで、画面だけの lite では隠しても意味がないため置いていません。子どもがさわる端末では、
+端末側の機能（スクリーンタイム・アプリのロックなど）で制限してください。
+
+### Docker 版
+
+こちらは**家庭内 LAN 専用**です。ログイン機構はありません。
 
 - 起動時に `ADMIN_PIN`（PIN ゲート）か `ADMIN_NO_AUTH=1`（PIN なし運用の明示オプトイン）の
   どちらかを必ず選びます。どちらも未指定だと起動が中止され、無防備な管理APIが公開ポート 8082
@@ -171,9 +221,23 @@ backend を直接公開しないほうが安全です。
 
 ```bash
 cd backend && uv run pytest        # バックエンドのテスト
-cd backend && uv run ruff check app tests
-cd frontend && bun run check       # svelte-check
-cd frontend && bun run test        # 単体テスト＋コンポーネントテスト
+cd backend && uv run ruff check app tests tools
+cd frontend && bun run check       # svelte-check（docker 版のビルド設定で）
+cd frontend && bun run check:lite  # svelte-check（lite 版のビルド設定で）
+cd frontend && bun run test        # 単体・コンポーネント・金型のテスト
+cd frontend && bun run dev         # docker 版の開発サーバ（要 backend）
+cd frontend && bun run dev:lite    # lite 版の開発サーバ（backend 不要）
+cd frontend && bun run build       # docker 版（build/ へ・adapter-node）
+cd frontend && bun run build:lite  # lite 版（build-lite/ へ・静的サイト）
+```
+
+通しで動かすスモークが2本あります（Playwright）。
+
+```bash
+# docker 版（backend + frontend を起動しておく）
+BASE=http://127.0.0.1:8082 CHILD=はな uv run --with playwright python e2e/smoke_child_page.py
+# lite 版（bun run build:lite && bun run preview:lite しておく）
+uv run --with playwright python e2e/smoke_lite.py
 ```
 
 フロントのテストは `bun run test` で実行してください（素の `bun test` では動きません）。
@@ -181,6 +245,29 @@ cd frontend && bun run test        # 単体テスト＋コンポーネントテ�
 bunfig.toml では効かず `package.json` の `test` スクリプトが `--conditions browser` を
 渡しています。間違えた場合は理由を書いたエラーで止まります（`src/test-setup.ts`）。
 1本だけ走らせるときも同じで、`bun run test src/lib/summer/ruby.test.ts` のように渡します。
+
+### 2つの版があること
+
+画面（`frontend/src/`）は1つで、保存と計算のやりかただけを差し替えています。
+
+- `frontend/src/lib/api/client.ts` — docker 版。`/api` を叩く（計算はバックエンド）
+- `frontend/src/lib/api/local/` — lite 版。`frontend/src/lib/core/` で計算し `frontend/src/lib/store/` に保存する
+
+どちらが入るかは `svelte.config.js` の `kit.alias.$apiImpl` が決めます（環境変数 `NYB_TARGET`）。
+両方が `frontend/src/lib/api/contract.ts` の `Api` 型を満たすので、片方だけ足したりずらしたりすると
+`bun run check` / `check:lite` が落ちます。
+
+**採点・文言・検証の挙動を変えるときは、必ずバックエンド（Python）から直してください。**
+生成物と金型を作り直して差分を反映するのが正しい順序です。
+
+```bash
+cd backend && uv run python tools/dump_core_data.py  # 配当漢字・画面文言などのデータ
+cd backend && uv run python tools/dump_golden.py     # 入力と出力の金型
+cd frontend && bun run test                          # TS 側が金型と一致するか
+```
+
+CI はこの2つを再生成して `git diff --exit-code` します。つまり「Python を直して TS を忘れた」は
+止まりますが、**逆（TS だけ直す）は止まりません**。順序を守るのは人間側の約束です。
 
 定義データの JSON 形式（エクスポート/インポート）は [docs/definition-format.md](docs/definition-format.md) を参照してください。
 

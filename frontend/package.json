@@ -8,13 +8,18 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"start": "node build",
+		"dev:lite": "NYB_TARGET=lite vite dev",
+		"build:lite": "NYB_TARGET=lite NYB_BASE=/natsuyasumi-board vite build",
+		"preview:lite": "NYB_TARGET=lite NYB_BASE=/natsuyasumi-board vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:lite": "NYB_TARGET=lite svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"test": "bun test --conditions browser"
 	},
 	"devDependencies": {
 		"@happy-dom/global-registrator": "^20.11.1",
 		"@sveltejs/adapter-node": "^5.5.7",
+		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.69.2",
 		"@sveltejs/vite-plugin-svelte": "^7.2.0",
 		"@tailwindcss/vite": "^4.3.2",
