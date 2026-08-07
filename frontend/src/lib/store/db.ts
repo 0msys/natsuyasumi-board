@@ -172,8 +172,25 @@ export async function replaceAll(raw: unknown): Promise<void> {
 	await mutate((db) => {
 		// mutate が既に1つ進めた通番。復元で戻すと、他のタブが「古い」と誤解する。
 		const seq = db.meta.seq;
+		// この端末の事情であって、記録ではないもの。バックアップの出どころの端末の
+		// 値を持ち込むと、いちばん要る場面で守りが外れる:
+		//   persisted           … 元の端末で許可済みだと、こちらでは保存の持続を頼まなくなる
+		//   home_hint_dismissed … 元の端末で閉じてあると、ホーム画面に追加していない
+		//                         こちらでも案内が出ない
+		//   last_seen_day       … 日付の巻き戻り検知は、この端末の時計の話
+		// バックアップは「端末を替えるときの引き継ぎ」として案内しているので、
+		// ここは移行先の値を残す。
+		const local = {
+			persisted: db.meta.persisted,
+			home_hint_dismissed: db.meta.home_hint_dismissed,
+			last_seen_day: db.meta.last_seen_day
+		};
 		for (const key of Object.keys(db)) delete (db as Record<string, unknown>)[key];
 		Object.assign(db, next);
+		Object.assign(db.meta, local);
 		db.meta.seq = Math.max(seq, next.meta.seq + 1);
+		// 中身は「そのバックアップを取った時点」のもの。復元した直後に
+		// 「そのあと N件」と出ないよう、いまの通番を基準にし直す。
+		db.meta.last_backup_seq = db.meta.seq;
 	});
 }

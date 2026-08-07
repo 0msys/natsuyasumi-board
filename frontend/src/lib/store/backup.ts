@@ -6,7 +6,7 @@
 // 出せて、そこから丸ごと戻せるようにしておく。
 import { todayJst } from '$lib/core/clock';
 import { BACKUP_FORMAT, looksLikeBackup } from '$lib/backup/format';
-import { SCHEMA_VERSION, normalizeDb, type Db } from './model';
+import { SCHEMA_VERSION, normalizeDb, splitKey, type Db } from './model';
 
 export { BACKUP_FORMAT };
 export const BACKUP_VERSION = 1;
@@ -77,8 +77,46 @@ export function parseBackup(raw: unknown): Db {
 			throw new Error('バックアップの中身が足りません（途中で切れたファイルかもしれません）');
 		}
 	}
+
+	// キーそのものの形も見る。
+	//
+	// 記録のキーは決まった数の部品を区切りでつないだもの。名前や項目キーに区切りが
+	// 混ざっていると部品の数が変わり、読むときに別のものとして切り分けられる
+	// ＝復元は成功したのに、その子の記録が出てこない。定義を取り込む道には
+	// 同じ検査を入れてあるが（api/local/admin.ts）、バックアップからの復元は
+	// キーを直接持ち込むので、こちらにも要る。
+	for (const [section, parts] of Object.entries(KEY_PARTS)) {
+		const table = (db as Record<string, unknown>)[section];
+		if (!isMap(table)) continue;
+		for (const key of Object.keys(table)) {
+			const split = splitKey(key);
+			if (split.length !== parts || split.some((part) => part === '')) {
+				throw new Error(`バックアップの「${section}」に、読めないキーがあります`);
+			}
+		}
+	}
+	// 定義はキーと中身の両方に子ども名と年を持つ。食い違っていると、
+	// 一覧には出るのに開けない（またはその逆）という states になる。
+	const definitions = (db as Record<string, unknown>).definitions as Record<string, DefinitionLike>;
+	for (const [key, row] of Object.entries(definitions)) {
+		const [child, year] = splitKey(key);
+		if (row.child !== child || String(row.year) !== year) {
+			throw new Error('バックアップの「definitions」で、キーと中身が食い違っています');
+		}
+	}
 	return normalizeDb(db);
 }
+
+type DefinitionLike = { child: string; year: number };
+
+/** 区画ごとの、キーを区切りで割ったときの部品の数。 */
+const KEY_PARTS: Record<string, number> = {
+	definitions: 2, // 名前・年
+	definition_history: 2, // 名前・年
+	daily_checks: 3, // 名前・日付・項目キー
+	flags: 2, // 名前・項目キー
+	media_timer: 2 // 名前・日付
+};
 
 const isInt = (v: unknown): boolean => typeof v === 'number' && Number.isInteger(v);
 
