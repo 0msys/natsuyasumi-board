@@ -4,6 +4,7 @@
 	// doc を直接ミューテート＋markDirty。dirty のとき粘着フッターの「ほぞんする」で
 	// validate → save（エラーは IssueList＋タブバッジに出す）。
 	import { beforeNavigate, goto, invalidateAll } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { ArrowLeft, RefreshCw, Save, TriangleAlert } from '@lucide/svelte';
 	import { api } from '$lib/api';
@@ -117,9 +118,8 @@
 		try {
 			await api.adminDeleteDefinition(data.child, draft.year);
 			const rest = draft.years.filter((y) => y !== draft.year);
-			await goto(`/admin/${encodeURIComponent(data.child)}?year=${rest[rest.length - 1]}`, {
-				invalidateAll: true
-			});
+			const href = resolve('/admin/[child]', { child: encodeURIComponent(data.child) });
+			await goto(`${href}?year=${rest[rest.length - 1]}`, { invalidateAll: true });
 		} catch (e) {
 			draft.saveError = errorDetail(e);
 		}
@@ -131,7 +131,7 @@
 <div class="mx-auto max-w-3xl p-3 pb-48 lg:p-6 lg:pb-48">
 	<header class="mb-4 flex items-center gap-3">
 		<a
-			href="/admin"
+			href={resolve('/admin')}
 			class="flex shrink-0 items-center gap-1 text-sm text-text-dim hover:text-text-base"
 		>
 			<ArrowLeft size={16} />一覧
@@ -149,7 +149,9 @@
 		<nav class="mb-4 flex flex-wrap items-center gap-1.5">
 			{#each draft.years as y (y)}
 				<a
-					href={`/admin/${encodeURIComponent(data.child)}?year=${y}&section=${section}`}
+					href={`${resolve('/admin/[child]', {
+						child: encodeURIComponent(data.child)
+					})}?year=${y}&section=${section}`}
 					class="rounded-full px-3 py-1.5 text-xs font-bold lg:text-sm {y === draft.year
 						? 'bg-accent text-white'
 						: 'bg-surface2 text-text-dim'}"

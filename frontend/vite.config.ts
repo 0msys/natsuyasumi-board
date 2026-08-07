@@ -4,6 +4,11 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
+	// lite ビルドかどうかを、コードから見えるようにする（svelte.config.js の NYB_TARGET と同じ旗）。
+	// いまの用途は +layout.ts の prerender の出し分けだけ。
+	define: {
+		__NYB_LITE__: JSON.stringify(process.env.NYB_TARGET === 'lite')
+	},
 	// /api の中継は hooks.server.ts に一本化する（vite の proxy は置かない）。
 	// vite の proxy は SvelteKit の handle より先に横取りするため、置くと dev だけ
 	// hooks を通らず、プロキシが付ける x-real-client も落ちる。その結果 backend からは

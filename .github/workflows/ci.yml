@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    name: バックエンド（pytest / ruff）
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync
+      - run: uv run pytest -q
+      - run: uv run ruff check app tests tools
+
+  frontend:
+    name: フロントエンド（型・テスト・2種類のビルド）
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      # docker 版と lite 版で、片方だけ型が通らない状態を作らない
+      - run: bun run check
+      - run: bun run check:lite
+      # 素の `bun test` では動かない（--conditions browser が要る）ので run 経由で
+      - run: bun run test
+      - run: bun run build
+      - run: bun run build:lite
+      # lite のバンドルに、サーバを叩く実装が混ざっていないこと。
+      # 混ざっても画面はしばらく動いてしまう（呼ぶまで気づけない）ので機械で見る。
+      - name: lite に remote 実装が混入していないか
+        run: |
+          if grep -rq "api/summer/state" build-lite/; then
+            echo "lite のバンドルに remote の api クライアントが入っています"
+            exit 1
+          fi
+
+  golden:
+    name: 金型がバックエンドと合っているか
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      # 生成物（配当漢字・画面文言・金型）を作り直して差分が出ないことを見る。
+      # ここが落ちるのは「Python を直したのに TS 側を更新していない」とき。
+      # 逆向き（TS だけ直す）はこの検査では止められないので、
+      # 挙動を変えるときは必ず Python から直すこと（README の「開発」節）。
+      - run: uv sync
+        working-directory: backend
+      - run: uv run python tools/dump_core_data.py
+        working-directory: backend
+      - run: uv run python tools/dump_golden.py
+        working-directory: backend
+      - name: 生成物に差分が無いこと
+        run: git diff --exit-code -- frontend/src/lib/core/generated frontend/src/lib/core/__golden__
