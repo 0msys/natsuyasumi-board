@@ -110,11 +110,23 @@ export function mutate<T>(fn: (db: Db) => T): Promise<T> {
 		const db = await readPersisted();
 		loaded = db;
 		loading = Promise.resolve(db);
-		const result = fn(db);
+		// 通番は fn を呼ぶ**前**に上げる。あとから上げると、fn の中で
+		// 「この書き込みが終わったときの通番」を知る手段が無くなる。
+		// 実際それでバックアップが自分の書き込みを数えてしまい、書き出した直後に
+		// 「そのあと 1件」と出ていた。
 		db.meta.seq += 1;
-		await pickPersistence().save(db);
-		channel?.postMessage({ seq: db.meta.seq });
-		return result;
+		try {
+			const result = fn(db);
+			await pickPersistence().save(db);
+			channel?.postMessage({ seq: db.meta.seq });
+			return result;
+		} catch (e) {
+			// 保存しなかったのに、手元の写しだけ通番が進んだ状態になっている。
+			// 次に読むときに保存から取り直させる。
+			loaded = null;
+			loading = null;
+			throw e;
+		}
 	});
 	// 失敗しても鎖は続ける（1回の失敗で以降の書き込みが全部詰まらないように）。
 	chain = next.catch(() => undefined);

@@ -446,6 +446,24 @@ describe('バックアップの取り込み', () => {
 	});
 });
 
+describe('バックアップの催促', () => {
+	it('書き出した直後は「そのあと0件」（自分の書き込みを数えない）', async () => {
+		await wizard();
+		await api.backupExportAll();
+		const status = await api.backupStatus();
+		expect(status.changes_since_backup, '書き出しただけで「変わった」と言っている').toBe(0);
+		expect(status.last_backup_at).not.toBeNull();
+	});
+
+	it('そのあとチェックすると数が増える', async () => {
+		await wizard();
+		await api.backupExportAll();
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		expect((await api.backupStatus()).changes_since_backup).toBe(1);
+	});
+});
+
 describe('検証は編集中の年で比べる', () => {
 	it('去年を開いて直しても、今年の記録を根拠にした警告は出ない', async () => {
 		await wizard();

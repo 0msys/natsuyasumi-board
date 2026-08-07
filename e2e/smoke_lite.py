@@ -13,6 +13,7 @@
   ⑥ 読み上げの欄が出ていない（lite には機能が無いので、出ると案内が嘘になる）
   ⑦ バックアップを取って、消して、戻せる（＝消えても取り返せる）
   ⑧ Service Worker が入り、圏外でも各ページが開ける（ホーム画面に追加した先での想定）
+  ⑨ 保存が使えない端末（プライベートブラウズ相当）では、設定を入れる前に警告が出る
 
 docker 版の smoke_child_page.py と対になる。あちらはサーバ権威の往復を見るが、
 こちらは「サーバが無くても同じことができる」を見る。
@@ -166,6 +167,26 @@ async def main() -> int:
         await context.set_offline(False)
 
         await page.screenshot(path=SHOT, full_page=True)
+
+        # ⑨ 保存が使えない端末での警告。定義がゼロだと入口はウィザードへ直行し、
+        #    登録が終わると編集画面へ移るので、一覧を一度も通らずに設定を終えられる。
+        #    そこに警告が出ないと、閉じた瞬間に全部消えたことにあとから気づくことになる。
+        warn = "この画面では記録が保存されません"
+        broken = await browser.new_context()
+        await broken.add_init_script(
+            "indexedDB.open = function () { throw new DOMException('denied', 'SecurityError'); };"
+        )
+        bp = await broken.new_page()
+        await bp.goto(f"{BASE}/", wait_until="networkidle")
+        await bp.wait_for_timeout(1200)
+        if warn not in await bp.inner_text("body"):
+            problems.append(f"⑨ ウィザード（{bp.url}）に警告が出ていない")
+        await broken.close()
+
+        # 保存できる端末では出しっぱなしにしない
+        if warn in await page.inner_text("body"):
+            problems.append("⑨ 保存できる端末なのに警告が出ている")
+
         await browser.close()
 
     if problems:
