@@ -14,6 +14,7 @@
   ⑦ バックアップを取って、消して、戻せる（＝消えても取り返せる）
   ⑧ Service Worker が入り、圏外でも各ページが開ける（ホーム画面に追加した先での想定）
   ⑨ 保存が使えない端末（プライベートブラウズ相当）では、設定を入れる前に警告が出る
+  ⑩ 要るものが揃わないときは Service Worker を入れない（古いキャッシュを消さない）
 
 docker 版の smoke_child_page.py と対になる。あちらはサーバ権威の往復を見るが、
 こちらは「サーバが無くても同じことができる」を見る。
@@ -186,6 +187,23 @@ async def main() -> int:
         # 保存できる端末では出しっぱなしにしない
         if warn in await page.inner_text("body"):
             problems.append("⑨ 保存できる端末なのに警告が出ている")
+
+        # ⑩ 要るもの（JS）が欠けたら Service Worker を入れない。
+        #    中途半端に入ると、次の activate が「完全だった古いキャッシュ」を消してしまい、
+        #    圏外で入れ物だけ返って中身が読めない、という前より悪い状態になる。
+        #    ここは addAll と allSettled のあいだで2回ひっくり返っているので固定しておく。
+        broken_sw = await browser.new_context()
+        await broken_sw.route("**/_app/immutable/chunks/*", lambda route: route.abort())
+        bsp = await broken_sw.new_page()
+        try:
+            await bsp.goto(f"{BASE}/", wait_until="domcontentloaded", timeout=15000)
+        except Exception:
+            pass  # JS が読めないので描画は失敗してよい。見たいのは登録の有無だけ
+        await bsp.wait_for_timeout(2500)
+        n = await bsp.evaluate("navigator.serviceWorker.getRegistrations().then(r => r.length)")
+        if n != 0:
+            problems.append("⑩ 要るものが揃っていないのに Service Worker が入っている")
+        await broken_sw.close()
 
         await browser.close()
 

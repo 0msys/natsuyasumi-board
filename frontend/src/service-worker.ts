@@ -22,17 +22,39 @@ const CACHE = `nyb-v${version}`;
 // 静的サイトの出力なので build にも files にも入らない＝名指しで控える必要がある。
 const FALLBACK = `${base}/404.html`;
 
+// 圏外で1ページでも開くのに、どうしても要るもの。
+//   build       … その版の JS と CSS（欠けると画面が組み立たない）
+//   入れ物 1枚  … prerendered の先頭（サブパス直下＝ / のページ）
 // prerendered を入れ忘れると、控えてあるのは JS と CSS だけになり、
 // 圏外で開いたときに肝心の HTML が無くて何も出せない。
-const ASSETS = [...build, ...files, ...prerendered, FALLBACK];
+const SHELL = prerendered[0];
+const ESSENTIAL = SHELL ? [...build, SHELL] : [...build];
+
+// 無くても「開けなくなる」ことはないもの。アイコン・manifest・ほかのページ、
+// それに 404.html（動的ルートの入れ物。GitHub Pages には在るが、ローカルの
+// preview では配られない＝ここで必須にすると開発中だけ Service Worker が入らない）。
+const OPTIONAL = [...files, ...prerendered.slice(1), FALLBACK].filter((url) => url !== SHELL);
+
+/** 控える対象ぜんぶ（fetch 側が「内容ごとに名前が変わるもの」を見分けるのに使う）。 */
+const ASSETS = [...ESSENTIAL, ...OPTIONAL];
 
 sw.addEventListener('install', (event) => {
-	// 1つずつ控える。cache.addAll() は1本でも取れないと全部を巻き戻すので、
-	// そのとき install ごと失敗して Service Worker が登録されないまま消える
-	// （＝「ホーム画面に追加すれば圏外でも開ける」が黙って成り立たなくなる）。
-	// 取れなかったものは、そのとき取りにいけばよい。
+	// 要るものは addAll で「ぜんぶ揃ったときだけ」入れる。
+	//
+	// ここを allSettled にすると、電波の悪いところで更新したときに、中途半端に控えた
+	// まま install が成功してしまう。そのあと activate が**完全だった古いキャッシュを
+	// 消す**ので、次に圏外で開いたときに入れ物だけ返って中身が読めない、という
+	// 前より悪い状態になる。揃わなければ install ごと失敗させれば、古い版がそのまま
+	// 残って動き続ける。
+	//
+	// 逆に、無くても開ける類まで addAll に混ぜてはいけない。1本でも取れないと
+	// 全部が巻き戻り、Service Worker が登録されないまま消える（それで実際に
+	// 「ホーム画面に追加すれば圏外でも開ける」が黙って成り立たなくなっていた）。
 	event.waitUntil(
-		caches.open(CACHE).then((cache) => Promise.allSettled(ASSETS.map((url) => cache.add(url))))
+		caches.open(CACHE).then(async (cache) => {
+			await cache.addAll(ESSENTIAL);
+			await Promise.allSettled(OPTIONAL.map((url) => cache.add(url)));
+		})
 	);
 });
 
