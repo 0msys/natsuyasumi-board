@@ -136,5 +136,10 @@ export type BackupStatus = {
 	changes_since_backup: number;
 	/** navigator.storage.persist() の結果（まだ聞いていなければ null）。 */
 	persisted: boolean | null;
+	/** この端末では記録がまったく残らない（IndexedDB が使えなかった）。
+	 *
+	 *  プライベートブラウズなどで起きる。黙って受け付けると、夏休みぶんの設定を
+	 *  入れ終わったあとタブを閉じた瞬間に全部消える。画面はこれを見て強く警告する。 */
+	storage_ephemeral: boolean;
 	home_hint_dismissed: boolean;
 };

@@ -104,6 +104,7 @@ beforeEach(() => {
 			last_backup_at: null,
 			changes_since_backup: 0,
 			persisted: null,
+			storage_ephemeral: false,
 			home_hint_dismissed: true
 		})
 	});

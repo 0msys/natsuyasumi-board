@@ -353,6 +353,88 @@ describe('読み上げは入っていない', () => {
 	});
 });
 
+describe('バックアップの取り込み', () => {
+	// 登録済みの状態から書き出す（呼ぶ側が先に wizard() すること）
+	const goodPayload = async () => {
+		const { payload } = await api.backupExportAll();
+		return payload as Record<string, unknown>;
+	};
+
+	it('往復できる', async () => {
+		await wizard();
+		const payload = await goodPayload();
+		await api.adminDeleteDefinition(CHILD);
+		expect((await api.summerChildren()).children).toHaveLength(0);
+
+		await api.backupImportAll(payload);
+		expect((await api.summerChildren()).children).toHaveLength(1);
+	});
+
+	// 目印だけ合っていて中身が無いファイルで、いまの記録を空にしてはいけない。
+	// 置きかえてしまうと、元の記録はもうどこにも無い。
+	it('中身の無いファイルでは置きかえない', async () => {
+		await wizard();
+		const broken = { format: 'natsuyasumi-board/backup' };
+		expect(api.backupImportAll(broken)).rejects.toThrow(/形式が読み取れません|中身が足りません/);
+		expect((await api.summerChildren()).children, '記録が消えている').toHaveLength(1);
+	});
+
+	it('区画が欠けたファイルでも置きかえない', async () => {
+		await wizard();
+		const payload = await goodPayload();
+		delete (payload.db as Record<string, unknown>).daily_checks;
+		expect(api.backupImportAll(payload)).rejects.toThrow('中身が足りません');
+		expect((await api.summerChildren()).children).toHaveLength(1);
+	});
+
+	it('新しいバージョンのファイルは断る', async () => {
+		await wizard();
+		const payload = await goodPayload();
+		payload.version = 99;
+		expect(api.backupImportAll(payload)).rejects.toThrow('新しいバージョン');
+		expect((await api.summerChildren()).children).toHaveLength(1);
+	});
+
+	it('そもそもバックアップでないものは断る', async () => {
+		await wizard();
+		expect(api.backupImportAll({ child: 'はな' })).rejects.toThrow('バックアップのファイルではない');
+	});
+});
+
+describe('検証は編集中の年で比べる', () => {
+	it('去年を開いて直しても、今年の記録を根拠にした警告は出ない', async () => {
+		await wizard();
+		const thisYear = Number(today.slice(0, 4));
+
+		// 今年ぶんに記録を1つ入れておく（この記録が去年の検証に混ざると誤警告になる）
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+
+		// 去年ぶんの定義を別に作る（期間も去年）
+		const lastYear = thisYear - 1;
+		await api.adminImportDefinition({
+			child: CHILD,
+			child_kana: CHILD,
+			year: lastYear,
+			grade: '小1',
+			period: {
+				start: `${lastYear}-07-21`,
+				end: `${lastYear}-08-31`,
+				first_day_of_school: `${lastYear}-09-01`
+			},
+			habits: [{ key: 'h_old', label: 'はみがき' }]
+		});
+
+		const lastYearDoc = (await api.adminGetDefinition(CHILD, lastYear)).doc;
+		const result = await api.adminValidateDefinition(CHILD, lastYearDoc);
+		const codes = result.warnings.map((w) => w.code);
+		expect(codes, '今年の記録や項目を根拠にした警告が混ざっている').not.toContain(
+			'records_outside_period'
+		);
+		expect(codes).not.toContain('delete_with_records');
+	});
+});
+
 describe('エクスポート', () => {
 	it('ファイル名は {年}-{名前}.json', async () => {
 		await wizard();

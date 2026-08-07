@@ -1,7 +1,7 @@
 // まるごとバックアップの api（lite だけ）。
 import { nowEpochSec } from '$lib/core/clock';
-import { mutate, read, replaceAll } from '$lib/store/db';
-import { buildBackup, isBackupPayload, migrate } from '$lib/store/backup';
+import { isStorageUnavailable, mutate, read, replaceAll } from '$lib/store/db';
+import { buildBackup, parseBackup } from '$lib/store/backup';
 import { ApiError } from '../contract';
 
 /** 保存の持続をブラウザに頼む。断られても案内は出さない（親に打つ手が無い）。 */
@@ -38,6 +38,7 @@ export const backupApi = {
 			// 「6日前」より「そのあと32件つけた」のほうが、催促として効く
 			changes_since_backup: Math.max(0, db.meta.seq - db.meta.last_backup_seq),
 			persisted: db.meta.persisted,
+			storage_ephemeral: isStorageUnavailable(),
 			home_hint_dismissed: db.meta.home_hint_dismissed
 		}));
 	},
@@ -53,16 +54,15 @@ export const backupApi = {
 		}),
 
 	backupImportAll: async (payload: unknown) => {
-		if (!isBackupPayload(payload)) {
-			throw new ApiError(400, 'これはバックアップのファイルではないようです');
-		}
+		// 置きかえる前に中身を確かめる。壊れたファイルで空にしてしまうと、
+		// 元の記録はもうどこにも無い。
 		let db;
 		try {
-			db = migrate(payload);
+			db = parseBackup(payload);
 		} catch (e) {
 			throw new ApiError(400, e instanceof Error ? e.message : String(e));
 		}
-		// 取り込みは丸ごと置き換え。呼ぶ前に画面側で確認を取ること。
+		// ここから先は丸ごと置き換え。呼ぶ前に画面側で確認を取ること。
 		await replaceAll(db);
 		return { ok: true };
 	},

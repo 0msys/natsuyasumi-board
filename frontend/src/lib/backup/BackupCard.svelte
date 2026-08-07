@@ -5,7 +5,7 @@
 	// 出す理由: iOS Safari は「7日間ひらかなかったサイト」の保存データを消すことがある。
 	// ホーム画面に追加したものは対象外になるので、まずそれを勧め、そのうえで
 	// 「消えても戻せる」ようバックアップを促す。
-	import { Download, HousePlus, Upload, X } from '@lucide/svelte';
+	import { Download, HousePlus, TriangleAlert, Upload, X } from '@lucide/svelte';
 	import { api, type BackupStatus } from '$lib/api';
 	import { downloadJson } from '$lib/admin/download';
 	import { errorDetail } from '$lib/admin/apiError';
@@ -98,7 +98,24 @@
 
 {#if status?.supported}
 	<div class="mb-4 flex flex-col gap-3">
-		{#if !installed && !status.home_hint_dismissed}
+		{#if status.storage_ephemeral}
+			<!-- この端末では保存そのものが使えない（プライベートブラウズなど）。
+			     黙って受け付けると、設定を入れ終わってタブを閉じた瞬間に全部消える。
+			     何より先に、いちばん強く出す。 -->
+			<div class="flex items-start gap-2 rounded-lg border-2 border-danger bg-danger/10 p-3">
+				<TriangleAlert size={20} class="mt-0.5 shrink-0 text-danger" />
+				<div class="text-sm text-text-base">
+					<p class="font-bold text-danger">この画面では記録が保存されません</p>
+					<p class="mt-0.5 text-xs text-text-dim">
+						タブを閉じるか、ひらきなおすと、入れた設定も記録も消えます。
+						プライベートブラウズ（シークレットモード）で開いていないか確かめてください。
+						ふつうのウィンドウで開きなおすと保存できるようになります。
+					</p>
+				</div>
+			</div>
+		{/if}
+
+		{#if !installed && !status.home_hint_dismissed && !status.storage_ephemeral}
 			<div class="flex items-start gap-2 rounded-lg border border-accent/40 bg-accent/5 p-3">
 				<HousePlus size={18} class="mt-0.5 shrink-0 text-accent" />
 				<div class="flex-1 text-sm text-text-base">

@@ -178,7 +178,9 @@
 			.then((s) => {
 				if (!s.supported) return;
 				const days = s.last_backup_at ? (Date.now() / 1000 - s.last_backup_at) / 86400 : Infinity;
-				backupNeeded = days > 7 || s.changes_since_backup > 50;
+				// 保存そのものが効いていない端末でも印を点ける。子どもの画面に文言は出さないが、
+				// 親がせっていを開けば理由が書いてある。
+				backupNeeded = s.storage_ephemeral || days > 7 || s.changes_since_backup > 50;
 			})
 			.catch(() => {});
 		// VOICEVOX の死活を1回だけ確認（無ければ音声ボタンを出さない）

@@ -215,13 +215,23 @@ function recordDayRange(db: Db, child: string, year?: number): [string, string] 
 	return [days[0], days[days.length - 1]];
 }
 
+/** 検証中のドキュメントの年（数字でなければ undefined＝年で絞らない）。 */
+function docYear(doc: Doc): number | undefined {
+	const year = doc.year;
+	return typeof year === 'number' && Number.isInteger(year) ? year : undefined;
+}
+
 export function validateFor(db: Db, child: string, doc: Doc) {
 	const today = todayJst();
-	const row = rowFor(db, child, undefined, today);
+	// 比較相手（前の定義）と記録の範囲は「編集中のドキュメントと同じ年」で取る。
+	// 今の年で取ると、年タブで去年を開いて直しているときに、今年の定義や記録と
+	// 比べた警告（項目を消した・期間の外に記録がある）が出てしまう。
+	const year = docYear(doc);
+	const row = rowFor(db, child, year, today);
 	return validateDocument(doc, {
 		prevDoc: row ? (row.doc as Doc) : null,
 		usage: usageOf(db, child),
-		recordDays: recordDayRange(db, child, row?.year),
+		recordDays: recordDayRange(db, child, year),
 		today
 	});
 }
