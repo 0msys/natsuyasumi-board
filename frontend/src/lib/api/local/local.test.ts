@@ -464,6 +464,49 @@ describe('バックアップの催促', () => {
 	});
 });
 
+describe('編集用に渡す定義は写しであること', () => {
+	// 管理画面は受け取った doc を直接書き換える作り。実体をそのまま渡すと、
+	// 保存を押す前の編集が生きているデータに入る。
+	it('受け取った doc を書き換えても、保存されている中身は変わらない', async () => {
+		await wizard();
+		// 触る前の数を先に控える（比べる相手も書き換わっていては検査にならない）
+		const before = ((await api.adminGetDefinition(CHILD)).doc as Record<string, unknown[]>).habits
+			.length;
+
+		const entry = await api.adminGetDefinition(CHILD);
+		(entry.doc as Record<string, unknown[]>).habits = [];
+
+		const again = (await api.adminGetDefinition(CHILD)).doc as Record<string, unknown[]>;
+		expect(again.habits.length, '保存していない編集が残っている').toBe(before);
+	});
+
+	it('子どもの画面が、保存していない編集を先に映さない', async () => {
+		await wizard();
+		const before = (await api.summerState(CHILD)).habits.length;
+		const entry = await api.adminGetDefinition(CHILD);
+		(entry.doc as Record<string, unknown[]>).habits = [];
+
+		expect((await api.summerState(CHILD)).habits.length, '子どもの画面から項目が消えた').toBe(
+			before
+		);
+	});
+
+	// いちばん重い症状。比較相手まで編集後の姿になると、警告が鳴らないまま保存できる。
+	it('記録のある項目を消すと、ちゃんと警告が出る', async () => {
+		await wizard();
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+
+		const entry = await api.adminGetDefinition(CHILD);
+		const doc = entry.doc as Record<string, { key: string }[]>;
+		doc.habits = doc.habits.filter((h) => h.key !== k.habits[0]);
+
+		const result = await api.adminValidateDefinition(CHILD, entry.doc);
+		const codes = result.warnings.map((w) => w.code);
+		expect(codes, '記録のある項目を消したのに警告が出ない').toContain('delete_with_records');
+	});
+});
+
 describe('検証は編集中の年で比べる', () => {
 	it('去年を開いて直しても、今年の記録を根拠にした警告は出ない', async () => {
 		await wizard();

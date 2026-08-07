@@ -25,13 +25,23 @@ type Doc = Record<string, unknown>;
 
 const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
 
+/** 編集用の1件を返す。
+ *
+ *  doc は**必ず写しを返す**。管理画面はこの doc を直接書き換える作りなので、
+ *  保存中の実体をそのまま渡すと、保存を押す前の編集が生きているデータに入ってしまう。
+ *  そうなると:
+ *    - 検証の比較相手（前の定義）が編集後の姿になり、「記録のある項目を消した」
+ *      「期間の途中で足した」の警告が鳴らなくなる
+ *    - 保存せずに離れても編集が残り、開き直すと出てくる
+ *    - 子どもの画面が、保存していない設定を先に映す
+ *  docker 版は HTTP の JSON を挟むので毎回別物になる。その境目をこちらでも作る。 */
 const entryOf = (db: Db, row: DefinitionRow) => ({
 	child: row.child,
 	year: row.year,
 	years: yearsOf(db, row.child),
 	revision: row.revision,
 	updated_at: row.updated_at,
-	doc: row.doc
+	doc: clone(row.doc)
 });
 
 /** 定義を検証して受け取る（壊れていれば 422）。 */
@@ -81,7 +91,7 @@ export function createDefinition(db: Db, incoming: Doc) {
 		updated_at: nowEpochSec()
 	};
 	db.definitions[defKey(row.child, row.year)] = row;
-	return { child: row.child, year: row.year, years: yearsOf(db, row.child), revision: 1, updated_at: row.updated_at, doc };
+	return entryOf(db, row);
 }
 
 export function saveDocument(
@@ -309,6 +319,6 @@ export const adminApi = {
 		read((db) => {
 			const row = rowFor(db, child, year, todayJst());
 			if (!row) throw new ApiError(404, `「${child}」の定義がみつかりませんでした`);
-			return { filename: `${row.year}-${row.child}.json`, doc: row.doc };
+			return { filename: `${row.year}-${row.child}.json`, doc: clone(row.doc) };
 		})
 };
