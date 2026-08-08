@@ -42,7 +42,6 @@ async function keysOf(child = CHILD) {
 		year: entry.year,
 		habits: doc.habits.map((h) => h.key),
 		daily: doc.daily_homework.map((h) => h.key),
-		practice: doc.practice_homework.map((h) => h.key),
 		challenges: doc.special_challenges.map((h) => h.key)
 	};
 }
@@ -128,7 +127,7 @@ describe('日次3値の記録', () => {
 		const state0 = await api.summerState(CHILD);
 		// その日に記録欄がある習慣だけを埋める（edges の窓の外は分母に入らない）
 		const due = state0.habits.filter((h) => h.window_active).map((h) => h.key);
-		for (const key of [...due, ...k.daily, ...k.practice]) {
+		for (const key of [...due, ...k.daily]) {
 			await api.summerSetCheck(CHILD, today, key, 'done');
 		}
 		const state = await api.summerState(CHILD);
@@ -272,7 +271,7 @@ describe('来年ぶん', () => {
 		const nextDoc = next.doc as Record<string, { key: string }[]>;
 		expect((next.doc as { grade: string }).grade).toBe('小3');
 		// 同じキーが1つも残っていないこと
-		const beforeKeys = new Set([...before.habits, ...before.daily, ...before.practice]);
+		const beforeKeys = new Set([...before.habits, ...before.daily]);
 		for (const item of [...nextDoc.habits, ...nextDoc.daily_homework]) {
 			expect(beforeKeys.has(item.key)).toBe(false);
 		}

@@ -102,7 +102,6 @@ export function buildState(args: {
 		meta: todayMeta[i.key] ?? null
 	});
 	const dailyOut = definition.daily_homework.map(withMeta);
-	const practiceOut = definition.practice_homework.map(withMeta);
 
 	// スペシャルチャレンジ（宿題で100点をとると解放されるごほうび枠）。done のみの単純トグル。
 	const challengesOut = definition.special_challenges.map((c) => ({
@@ -224,7 +223,6 @@ export function buildState(args: {
 		away: definition.away.map((a) => ({ start: a.start, end: a.end, label: a.label })),
 		habits: habitsOut,
 		daily_homework: dailyOut,
-		practice_homework: practiceOut,
 		special_challenges: challengesOut,
 		score_max: scoreMax,
 		rewards: rewardsOut,
@@ -234,6 +232,10 @@ export function buildState(args: {
 		// 「今日カードにぬる色」を消したあとの互換スタブ。古い画面が guide === null で
 		// 期間外を描き分けるので、キーごと消すと undefined が else 枝に落ちて壊れる。
 		card_guide: null,
+		// 「くりかえしの宿題」を daily_homework へ統合したあとの互換スタブ（同上）。
+		// 旧画面は practice を配列として展開するので、キーごと消すと壊れる。
+		// docker 版と同じ形を保つ（この state は両版のゴールデンで突き合わせる）。
+		practice_homework: [],
 		history,
 		streaks: {
 			perfect_current: streaks.perfect_current,

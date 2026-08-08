@@ -127,7 +127,6 @@ def test_assign_keys_接頭辞つきで採番し既存キーと衝突しない()
     doc = {
         "habits": [{"label": "しんき"}, {"key": "hamigaki_asa", "label": "きぞん"}],
         "daily_homework": [{"label": "しんき", "meta": [{"type": "text", "label": "めも"}]}],
-        "practice_homework": [{"label": "しんき", "key": None}],
         "special_challenges": [{"label": "しんき", "key": ""}],
         "one_shot_homework": [{"label": "しんき"}],
         "school_start_items": [{"label": "しんき"}],
@@ -141,7 +140,6 @@ def test_assign_keys_接頭辞つきで採番し既存キーと衝突しない()
     prefix_by_section = {
         "habits": "h_",
         "daily_homework": "dh_",
-        "practice_homework": "ph_",
         "special_challenges": "sc_",
         "one_shot_homework": "os_",
         "school_start_items": "ss_",
@@ -167,6 +165,22 @@ def test_assign_keys_接頭辞つきで採番し既存キーと衝突しない()
     all_keys.extend(o["key"] for o in doc["choice_homework"][0]["options"])
     all_keys.append(doc["daily_homework"][0]["meta"][0]["key"])
     assert len(all_keys) == len(set(all_keys))
+
+
+def test_assign_keys_旧形式のくりかえし宿題はまいにちへ畳まれキーは変わらない():
+    # 宿題の2区分（まいにち30点／くりかえし20点）は しゅくだい50点 の1区分へ統合した。
+    # 旧 practice_homework の項目は key を保ったまま daily_homework の後ろへ移る
+    # ＝ summer_daily_checks の過去の記録が切れない（キーが記録の同一性）。
+    doc = {
+        "daily_homework": [{"key": "dh_ondoku", "label": "おんどく"}],
+        "practice_homework": [{"key": "ph_keisan", "label": "けいさん"}, {"label": "しんき"}],
+    }
+    assign_keys(doc)
+
+    assert "practice_homework" not in doc
+    assert [i["label"] for i in doc["daily_homework"]] == ["おんどく", "けいさん", "しんき"]
+    assert [i["key"] for i in doc["daily_homework"][:2]] == ["dh_ondoku", "ph_keisan"]
+    assert doc["daily_homework"][2]["key"].startswith("dh_")  # 畳んだあとの新規は daily の接頭辞
 
 
 def test_assign_keys_採番済みdocは不変(sample_doc):

@@ -36,8 +36,7 @@
 | `media_timer` | object | テレビタイマーの1日の上限（下記。省略可） |
 | `voice` | object | 読み上げの声（VOICEVOX の話者。下記。省略可） |
 | `habits` | array | 生活習慣（日次3値。下記） |
-| `daily_homework` | array | 毎日の宿題（日次3値・メモ欄定義可） |
-| `practice_homework` | array | くりかえしの宿題（日次3値・メモ欄定義可） |
+| `daily_homework` | array | 宿題（日次3値・メモ欄定義可） |
 | `special_challenges` | array | スペシャルチャレンジ（`{key, label}` のみ） |
 | `rewards` | array | ごほうびランク（下記） |
 | `one_shot_homework` | array | 一回ものの宿題（下記） |
@@ -90,7 +89,7 @@
   落とすのは話者一覧を実際に確認できたときだけで、一覧が引けなかったときは設定どおりに読み上げます
   （VOICEVOX が一瞬詰まった隙に別人の声になる、を避けるため）
 
-## habits / daily_homework / practice_homework の項目
+## habits / daily_homework の項目
 
 | キー | 説明 |
 |---|---|
@@ -99,7 +98,7 @@
 | `window` | habits のみ。省略=毎日 / `"edges"`=はじめとおわりの n 日だけ / `"range"`=期間限定 |
 | `window_start` / `window_end` | `window: "range"` のときの期間 |
 | `cancelable` | true にすると「中止」を記録できる（中止の日は満点扱い。ラジオ体操など） |
-| `meta` | daily/practice のみ。「やった」の日に開くメモ欄の定義（下記） |
+| `meta` | daily_homework のみ。「やった」の日に開くメモ欄の定義（下記） |
 
 meta フィールド: `{key, type, label, placeholder?, options?}`。
 `type` は `text`（自由記述）/ `choice`（選択。`options: [{key, label}]` 必須）/ `duration`（秒で保存するタイム）。
@@ -134,3 +133,17 @@ meta フィールド: `{key, type, label, placeholder?, options?}`。
 
 - 「options のうち `min_required` 点以上つくる」宿題。全部を「やらない」にはできません
 - 記録上のキーは `グループkey.オプションkey` のドット連結になります
+
+## 旧形式（practice_homework）からの移行
+
+宿題はもともと `daily_homework`（まいにち・30点）と `practice_homework`（くりかえし・20点）の
+2区分でしたが、**設定する側からどちらに置くべきか判別できない**うえ、実質の差は1項目あたりの
+重みだけだったので、`daily_homework` 1本（しゅくだい50点）に統合しました。
+
+`practice_homework` を持つ古い JSON はそのまま読めます。読み込み時に項目が
+`daily_homework` の後ろへ移され、`practice_homework` のキーは落ちます。**`key` は変えない**ので
+過去のチェック記録は切れません。次に管理画面から保存した時点で、保存側の JSON からも消えます。
+
+ただし点数は保存しておらず毎回計算し直すため、**過去の日の点数は新しい重みで再計算されます**
+（旧くりかえしの項目を落とした日は下がり、旧まいにちの項目を落とした日は上がる方向に動きます）。
+連続満点ストリークとごほうびランクの積み上げも同じだけ動きます。

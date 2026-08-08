@@ -211,9 +211,7 @@
 		{:else if section === 'habits'}
 			<HabitsSection {draft} {gradeLevel} {nameExceptions} {usage} />
 		{:else if section === 'daily'}
-			<DailyHomeworkSection {draft} sectionKey="daily_homework" {gradeLevel} {nameExceptions} {usage} />
-		{:else if section === 'practice'}
-			<DailyHomeworkSection {draft} sectionKey="practice_homework" {gradeLevel} {nameExceptions} {usage} />
+			<DailyHomeworkSection {draft} {gradeLevel} {nameExceptions} {usage} />
 		{:else if section === 'challenges'}
 			<ChallengesSection {draft} {gradeLevel} {nameExceptions} {usage} />
 		{:else if section === 'rewards'}

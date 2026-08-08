@@ -3,7 +3,7 @@
   "about": "採点・窓・ストリーク・ごほうび進捗・残り列挙",
   "cases": [
     {
-      "name": "dailyScore 2026-07-21 (0, 0, 0, 0)",
+      "name": "dailyScore 2026-07-21 (0, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {},
@@ -22,19 +22,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -65,7 +57,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-21 (1, 0, 0, 0)",
+      "name": "dailyScore 2026-07-21 (1, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -86,19 +78,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -129,7 +113,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-21 (2, 0, 0, 0)",
+      "name": "dailyScore 2026-07-21 (2, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -151,19 +135,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -194,7 +170,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-21 (3, 0, 0, 0)",
+      "name": "dailyScore 2026-07-21 (3, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -217,19 +193,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -260,7 +228,297 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-21 (8, 2, 4, 0)",
+      "name": "dailyScore 2026-07-21 (0, 1, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done"
+        },
+        "day": "2026-07-21"
+      },
+      "output": {
+        "score": 8,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 8
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 8,
+            "max_points": 50,
+            "done": 1,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 8,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-21 (0, 2, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done"
+        },
+        "day": "2026-07-21"
+      },
+      "output": {
+        "score": 17,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 8
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 17,
+            "max_points": 50,
+            "done": 2,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 17,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-21 (0, 3, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done"
+        },
+        "day": "2026-07-21"
+      },
+      "output": {
+        "score": 25,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 8
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 25,
+            "max_points": 50,
+            "done": 3,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 25,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-21 (0, 4, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done"
+        },
+        "day": "2026-07-21"
+      },
+      "output": {
+        "score": 33,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 8
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 33,
+            "max_points": 50,
+            "done": 4,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 33,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-21 (0, 5, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done"
+        },
+        "day": "2026-07-21"
+      },
+      "output": {
+        "score": 42,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 8
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 42,
+            "max_points": 50,
+            "done": 5,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 42,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-21 (8, 6, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -294,19 +552,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -337,7 +587,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-21 (8, 2, 4, 1)",
+      "name": "dailyScore 2026-07-21 (8, 6, 1)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -372,19 +622,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 25,
@@ -415,7 +657,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-21 (8, 2, 4, 4)",
+      "name": "dailyScore 2026-07-21 (8, 6, 4)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -453,19 +695,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 100,
@@ -496,7 +730,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-21 (7, 2, 4, 1)",
+      "name": "dailyScore 2026-07-21 (7, 6, 1)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -530,19 +764,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -573,147 +799,87 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-21 (0, 1, 0, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "ondoku": "done"
-        },
-        "day": "2026-07-21"
-      },
-      "output": {
-        "score": 15,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 0,
-            "max_points": 50,
-            "done": 0,
-            "total": 8
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 15,
-            "max_points": 30,
-            "done": 1,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 15,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-07-21 (0, 0, 1, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "keisan": "done"
-        },
-        "day": "2026-07-21"
-      },
-      "output": {
-        "score": 5,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 0,
-            "max_points": 50,
-            "done": 0,
-            "total": 8
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 0,
-            "max_points": 30,
-            "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 5,
-            "max_points": 20,
-            "done": 1,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 5,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-07-21 (1, 1, 1, 1)",
+      "name": "dailyScore 2026-07-21 (8, 5, 1)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
           "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done",
+          "hayaoki": "done",
+          "asagohan": "done",
+          "hayane": "done",
+          "outmedia": "done",
+          "radio_taisou": "done",
           "ondoku": "done",
+          "nikki": "done",
           "keisan": "done",
+          "kenban": "done",
+          "drill": "done",
           "gakki": "done"
         },
         "day": "2026-07-21"
       },
       "output": {
-        "score": 26,
+        "score": 92,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 50,
+            "max_points": 50,
+            "done": 8,
+            "total": 8
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 42,
+            "max_points": 50,
+            "done": 5,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 92,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": true
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-21 (1, 1, 1)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "ondoku": "done",
+          "gakki": "done"
+        },
+        "day": "2026-07-21"
+      },
+      "output": {
+        "score": 14,
         "parts": [
           {
             "name": "habits",
@@ -725,23 +891,15 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 15,
-            "max_points": 30,
+            "label": "しゅくだい",
+            "points": 8,
+            "max_points": 50,
             "done": 1,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 5,
-            "max_points": 20,
-            "done": 1,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
-        "total": 26,
+        "total": 14,
         "challenges": [
           {
             "key": "gakki",
@@ -768,7 +926,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-25 (0, 0, 0, 0)",
+      "name": "dailyScore 2026-07-25 (0, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {},
@@ -787,19 +945,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -830,7 +980,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-25 (1, 0, 0, 0)",
+      "name": "dailyScore 2026-07-25 (1, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -851,19 +1001,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -894,7 +1036,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-25 (2, 0, 0, 0)",
+      "name": "dailyScore 2026-07-25 (2, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -916,19 +1058,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -959,7 +1093,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-25 (3, 0, 0, 0)",
+      "name": "dailyScore 2026-07-25 (3, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -982,19 +1116,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -1025,7 +1151,297 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-25 (8, 2, 4, 0)",
+      "name": "dailyScore 2026-07-25 (0, 1, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done"
+        },
+        "day": "2026-07-25"
+      },
+      "output": {
+        "score": 8,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 8,
+            "max_points": 50,
+            "done": 1,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 8,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-25 (0, 2, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done"
+        },
+        "day": "2026-07-25"
+      },
+      "output": {
+        "score": 17,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 17,
+            "max_points": 50,
+            "done": 2,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 17,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-25 (0, 3, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done"
+        },
+        "day": "2026-07-25"
+      },
+      "output": {
+        "score": 25,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 25,
+            "max_points": 50,
+            "done": 3,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 25,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-25 (0, 4, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done"
+        },
+        "day": "2026-07-25"
+      },
+      "output": {
+        "score": 33,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 33,
+            "max_points": 50,
+            "done": 4,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 33,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-25 (0, 5, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done"
+        },
+        "day": "2026-07-25"
+      },
+      "output": {
+        "score": 42,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 42,
+            "max_points": 50,
+            "done": 5,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 42,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-25 (8, 6, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -1059,19 +1475,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -1102,7 +1510,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-25 (8, 2, 4, 1)",
+      "name": "dailyScore 2026-07-25 (8, 6, 1)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -1137,19 +1545,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 25,
@@ -1180,7 +1580,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-25 (8, 2, 4, 4)",
+      "name": "dailyScore 2026-07-25 (8, 6, 4)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -1218,19 +1618,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 100,
@@ -1261,7 +1653,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-25 (7, 2, 4, 1)",
+      "name": "dailyScore 2026-07-25 (7, 6, 1)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -1295,19 +1687,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 25,
@@ -1338,175 +1722,49 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-25 (0, 1, 0, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "ondoku": "done"
-        },
-        "day": "2026-07-25"
-      },
-      "output": {
-        "score": 15,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 0,
-            "max_points": 50,
-            "done": 0,
-            "total": 3
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 15,
-            "max_points": 30,
-            "done": 1,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 15,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-07-25 (0, 0, 1, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "keisan": "done"
-        },
-        "day": "2026-07-25"
-      },
-      "output": {
-        "score": 5,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 0,
-            "max_points": 50,
-            "done": 0,
-            "total": 3
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 0,
-            "max_points": 30,
-            "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 5,
-            "max_points": 20,
-            "done": 1,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 5,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-07-25 (1, 1, 1, 1)",
+      "name": "dailyScore 2026-07-25 (8, 5, 1)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
           "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done",
+          "hayaoki": "done",
+          "asagohan": "done",
+          "hayane": "done",
+          "outmedia": "done",
+          "radio_taisou": "done",
           "ondoku": "done",
+          "nikki": "done",
           "keisan": "done",
+          "kenban": "done",
+          "drill": "done",
           "gakki": "done"
         },
         "day": "2026-07-25"
       },
       "output": {
-        "score": 37,
+        "score": 92,
         "parts": [
           {
             "name": "habits",
             "label": "せいかつ",
-            "points": 17,
+            "points": 50,
             "max_points": 50,
-            "done": 1,
+            "done": 3,
             "total": 3
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 15,
-            "max_points": 30,
-            "done": 1,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 5,
-            "max_points": 20,
-            "done": 1,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 42,
+            "max_points": 50,
+            "done": 5,
+            "total": 6
           }
         ],
         "bonus": 0,
-        "total": 37,
+        "total": 92,
         "challenges": [
           {
             "key": "gakki",
@@ -1533,7 +1791,65 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-26 (0, 0, 0, 0)",
+      "name": "dailyScore 2026-07-25 (1, 1, 1)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "ondoku": "done",
+          "gakki": "done"
+        },
+        "day": "2026-07-25"
+      },
+      "output": {
+        "score": 25,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 17,
+            "max_points": 50,
+            "done": 1,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 8,
+            "max_points": 50,
+            "done": 1,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 25,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": true
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-26 (0, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {},
@@ -1552,19 +1868,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -1595,7 +1903,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-26 (1, 0, 0, 0)",
+      "name": "dailyScore 2026-07-26 (1, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -1616,19 +1924,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -1659,7 +1959,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-26 (2, 0, 0, 0)",
+      "name": "dailyScore 2026-07-26 (2, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -1681,19 +1981,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -1724,7 +2016,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-26 (3, 0, 0, 0)",
+      "name": "dailyScore 2026-07-26 (3, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -1747,19 +2039,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -1790,7 +2074,297 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-26 (8, 2, 4, 0)",
+      "name": "dailyScore 2026-07-26 (0, 1, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done"
+        },
+        "day": "2026-07-26"
+      },
+      "output": {
+        "score": 8,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 8,
+            "max_points": 50,
+            "done": 1,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 8,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-26 (0, 2, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done"
+        },
+        "day": "2026-07-26"
+      },
+      "output": {
+        "score": 17,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 17,
+            "max_points": 50,
+            "done": 2,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 17,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-26 (0, 3, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done"
+        },
+        "day": "2026-07-26"
+      },
+      "output": {
+        "score": 25,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 25,
+            "max_points": 50,
+            "done": 3,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 25,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-26 (0, 4, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done"
+        },
+        "day": "2026-07-26"
+      },
+      "output": {
+        "score": 33,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 33,
+            "max_points": 50,
+            "done": 4,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 33,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-26 (0, 5, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done"
+        },
+        "day": "2026-07-26"
+      },
+      "output": {
+        "score": 42,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 42,
+            "max_points": 50,
+            "done": 5,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 42,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-07-26 (8, 6, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -1824,19 +2398,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -1867,7 +2433,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-26 (8, 2, 4, 1)",
+      "name": "dailyScore 2026-07-26 (8, 6, 1)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -1902,19 +2468,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 25,
@@ -1945,7 +2503,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-26 (8, 2, 4, 4)",
+      "name": "dailyScore 2026-07-26 (8, 6, 4)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -1983,19 +2541,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 100,
@@ -2026,7 +2576,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-26 (7, 2, 4, 1)",
+      "name": "dailyScore 2026-07-26 (7, 6, 1)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -2060,19 +2610,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 25,
@@ -2103,175 +2645,49 @@
       }
     },
     {
-      "name": "dailyScore 2026-07-26 (0, 1, 0, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "ondoku": "done"
-        },
-        "day": "2026-07-26"
-      },
-      "output": {
-        "score": 15,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 0,
-            "max_points": 50,
-            "done": 0,
-            "total": 3
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 15,
-            "max_points": 30,
-            "done": 1,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 15,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-07-26 (0, 0, 1, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "keisan": "done"
-        },
-        "day": "2026-07-26"
-      },
-      "output": {
-        "score": 5,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 0,
-            "max_points": 50,
-            "done": 0,
-            "total": 3
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 0,
-            "max_points": 30,
-            "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 5,
-            "max_points": 20,
-            "done": 1,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 5,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-07-26 (1, 1, 1, 1)",
+      "name": "dailyScore 2026-07-26 (8, 5, 1)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
           "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done",
+          "hayaoki": "done",
+          "asagohan": "done",
+          "hayane": "done",
+          "outmedia": "done",
+          "radio_taisou": "done",
           "ondoku": "done",
+          "nikki": "done",
           "keisan": "done",
+          "kenban": "done",
+          "drill": "done",
           "gakki": "done"
         },
         "day": "2026-07-26"
       },
       "output": {
-        "score": 37,
+        "score": 92,
         "parts": [
           {
             "name": "habits",
             "label": "せいかつ",
-            "points": 17,
+            "points": 50,
             "max_points": 50,
-            "done": 1,
+            "done": 3,
             "total": 3
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 15,
-            "max_points": 30,
-            "done": 1,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 5,
-            "max_points": 20,
-            "done": 1,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 42,
+            "max_points": 50,
+            "done": 5,
+            "total": 6
           }
         ],
         "bonus": 0,
-        "total": 37,
+        "total": 92,
         "challenges": [
           {
             "key": "gakki",
@@ -2298,7 +2714,65 @@
       }
     },
     {
-      "name": "dailyScore 2026-08-27 (0, 0, 0, 0)",
+      "name": "dailyScore 2026-07-26 (1, 1, 1)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "ondoku": "done",
+          "gakki": "done"
+        },
+        "day": "2026-07-26"
+      },
+      "output": {
+        "score": 25,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 17,
+            "max_points": 50,
+            "done": 1,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 8,
+            "max_points": 50,
+            "done": 1,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 25,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": true
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-27 (0, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {},
@@ -2317,19 +2791,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -2360,7 +2826,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-08-27 (1, 0, 0, 0)",
+      "name": "dailyScore 2026-08-27 (1, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -2381,19 +2847,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -2424,7 +2882,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-08-27 (2, 0, 0, 0)",
+      "name": "dailyScore 2026-08-27 (2, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -2446,19 +2904,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -2489,7 +2939,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-08-27 (3, 0, 0, 0)",
+      "name": "dailyScore 2026-08-27 (3, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -2512,19 +2962,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -2555,320 +2997,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-08-27 (8, 2, 4, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "hamigaki_asa": "done",
-          "hamigaki_hiru": "done",
-          "hamigaki_yoru": "done",
-          "hayaoki": "done",
-          "asagohan": "done",
-          "hayane": "done",
-          "outmedia": "done",
-          "radio_taisou": "done",
-          "ondoku": "done",
-          "nikki": "done",
-          "keisan": "done",
-          "kenban": "done",
-          "drill": "done",
-          "jishu": "done"
-        },
-        "day": "2026-08-27"
-      },
-      "output": {
-        "score": 100,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 50,
-            "max_points": 50,
-            "done": 7,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 100,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-27 (8, 2, 4, 1)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "hamigaki_asa": "done",
-          "hamigaki_hiru": "done",
-          "hamigaki_yoru": "done",
-          "hayaoki": "done",
-          "asagohan": "done",
-          "hayane": "done",
-          "outmedia": "done",
-          "radio_taisou": "done",
-          "ondoku": "done",
-          "nikki": "done",
-          "keisan": "done",
-          "kenban": "done",
-          "drill": "done",
-          "jishu": "done",
-          "gakki": "done"
-        },
-        "day": "2026-08-27"
-      },
-      "output": {
-        "score": 100,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 50,
-            "max_points": 50,
-            "done": 7,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
-          }
-        ],
-        "bonus": 25,
-        "total": 125,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": true
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-27 (8, 2, 4, 4)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "hamigaki_asa": "done",
-          "hamigaki_hiru": "done",
-          "hamigaki_yoru": "done",
-          "hayaoki": "done",
-          "asagohan": "done",
-          "hayane": "done",
-          "outmedia": "done",
-          "radio_taisou": "done",
-          "ondoku": "done",
-          "nikki": "done",
-          "keisan": "done",
-          "kenban": "done",
-          "drill": "done",
-          "jishu": "done",
-          "gakki": "done",
-          "otetsudai": "done",
-          "eigo": "done",
-          "tairyoku_ch": "done"
-        },
-        "day": "2026-08-27"
-      },
-      "output": {
-        "score": 100,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 50,
-            "max_points": 50,
-            "done": 7,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
-          }
-        ],
-        "bonus": 100,
-        "total": 200,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": true
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": true
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": true
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": true
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-27 (7, 2, 4, 1)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "hamigaki_asa": "done",
-          "hamigaki_hiru": "done",
-          "hamigaki_yoru": "done",
-          "hayaoki": "done",
-          "asagohan": "done",
-          "hayane": "done",
-          "outmedia": "done",
-          "ondoku": "done",
-          "nikki": "done",
-          "keisan": "done",
-          "kenban": "done",
-          "drill": "done",
-          "jishu": "done",
-          "gakki": "done"
-        },
-        "day": "2026-08-27"
-      },
-      "output": {
-        "score": 100,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 50,
-            "max_points": 50,
-            "done": 7,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
-          }
-        ],
-        "bonus": 25,
-        "total": 125,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": true
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-27 (0, 1, 0, 0)",
+      "name": "dailyScore 2026-08-27 (0, 1, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -2877,7 +3006,7 @@
         "day": "2026-08-27"
       },
       "output": {
-        "score": 15,
+        "score": 8,
         "parts": [
           {
             "name": "habits",
@@ -2889,23 +3018,15 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 15,
-            "max_points": 30,
+            "label": "しゅくだい",
+            "points": 8,
+            "max_points": 50,
             "done": 1,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
-        "total": 15,
+        "total": 8,
         "challenges": [
           {
             "key": "gakki",
@@ -2932,971 +3053,14 @@
       }
     },
     {
-      "name": "dailyScore 2026-08-27 (0, 0, 1, 0)",
+      "name": "dailyScore 2026-08-27 (0, 2, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
-          "keisan": "done"
+          "ondoku": "done",
+          "nikki": "done"
         },
         "day": "2026-08-27"
-      },
-      "output": {
-        "score": 5,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 0,
-            "max_points": 50,
-            "done": 0,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 0,
-            "max_points": 30,
-            "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 5,
-            "max_points": 20,
-            "done": 1,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 5,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-27 (1, 1, 1, 1)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "hamigaki_asa": "done",
-          "ondoku": "done",
-          "keisan": "done",
-          "gakki": "done"
-        },
-        "day": "2026-08-27"
-      },
-      "output": {
-        "score": 27,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 7,
-            "max_points": 50,
-            "done": 1,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 15,
-            "max_points": 30,
-            "done": 1,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 5,
-            "max_points": 20,
-            "done": 1,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 27,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": true
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-31 (0, 0, 0, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {},
-        "day": "2026-08-31"
-      },
-      "output": {
-        "score": 0,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 0,
-            "max_points": 50,
-            "done": 0,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 0,
-            "max_points": 30,
-            "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 0,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-31 (1, 0, 0, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "hamigaki_asa": "done"
-        },
-        "day": "2026-08-31"
-      },
-      "output": {
-        "score": 7,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 7,
-            "max_points": 50,
-            "done": 1,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 0,
-            "max_points": 30,
-            "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 7,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-31 (2, 0, 0, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "hamigaki_asa": "done",
-          "hamigaki_hiru": "done"
-        },
-        "day": "2026-08-31"
-      },
-      "output": {
-        "score": 14,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 14,
-            "max_points": 50,
-            "done": 2,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 0,
-            "max_points": 30,
-            "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 14,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-31 (3, 0, 0, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "hamigaki_asa": "done",
-          "hamigaki_hiru": "done",
-          "hamigaki_yoru": "done"
-        },
-        "day": "2026-08-31"
-      },
-      "output": {
-        "score": 21,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 21,
-            "max_points": 50,
-            "done": 3,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 0,
-            "max_points": 30,
-            "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 21,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-31 (8, 2, 4, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "hamigaki_asa": "done",
-          "hamigaki_hiru": "done",
-          "hamigaki_yoru": "done",
-          "hayaoki": "done",
-          "asagohan": "done",
-          "hayane": "done",
-          "outmedia": "done",
-          "radio_taisou": "done",
-          "ondoku": "done",
-          "nikki": "done",
-          "keisan": "done",
-          "kenban": "done",
-          "drill": "done",
-          "jishu": "done"
-        },
-        "day": "2026-08-31"
-      },
-      "output": {
-        "score": 100,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 50,
-            "max_points": 50,
-            "done": 7,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 100,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-31 (8, 2, 4, 1)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "hamigaki_asa": "done",
-          "hamigaki_hiru": "done",
-          "hamigaki_yoru": "done",
-          "hayaoki": "done",
-          "asagohan": "done",
-          "hayane": "done",
-          "outmedia": "done",
-          "radio_taisou": "done",
-          "ondoku": "done",
-          "nikki": "done",
-          "keisan": "done",
-          "kenban": "done",
-          "drill": "done",
-          "jishu": "done",
-          "gakki": "done"
-        },
-        "day": "2026-08-31"
-      },
-      "output": {
-        "score": 100,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 50,
-            "max_points": 50,
-            "done": 7,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
-          }
-        ],
-        "bonus": 25,
-        "total": 125,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": true
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-31 (8, 2, 4, 4)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "hamigaki_asa": "done",
-          "hamigaki_hiru": "done",
-          "hamigaki_yoru": "done",
-          "hayaoki": "done",
-          "asagohan": "done",
-          "hayane": "done",
-          "outmedia": "done",
-          "radio_taisou": "done",
-          "ondoku": "done",
-          "nikki": "done",
-          "keisan": "done",
-          "kenban": "done",
-          "drill": "done",
-          "jishu": "done",
-          "gakki": "done",
-          "otetsudai": "done",
-          "eigo": "done",
-          "tairyoku_ch": "done"
-        },
-        "day": "2026-08-31"
-      },
-      "output": {
-        "score": 100,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 50,
-            "max_points": 50,
-            "done": 7,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
-          }
-        ],
-        "bonus": 100,
-        "total": 200,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": true
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": true
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": true
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": true
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-31 (7, 2, 4, 1)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "hamigaki_asa": "done",
-          "hamigaki_hiru": "done",
-          "hamigaki_yoru": "done",
-          "hayaoki": "done",
-          "asagohan": "done",
-          "hayane": "done",
-          "outmedia": "done",
-          "ondoku": "done",
-          "nikki": "done",
-          "keisan": "done",
-          "kenban": "done",
-          "drill": "done",
-          "jishu": "done",
-          "gakki": "done"
-        },
-        "day": "2026-08-31"
-      },
-      "output": {
-        "score": 100,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 50,
-            "max_points": 50,
-            "done": 7,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
-          }
-        ],
-        "bonus": 25,
-        "total": 125,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": true
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-31 (0, 1, 0, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "ondoku": "done"
-        },
-        "day": "2026-08-31"
-      },
-      "output": {
-        "score": 15,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 0,
-            "max_points": 50,
-            "done": 0,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 15,
-            "max_points": 30,
-            "done": 1,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 15,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-31 (0, 0, 1, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "keisan": "done"
-        },
-        "day": "2026-08-31"
-      },
-      "output": {
-        "score": 5,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 0,
-            "max_points": 50,
-            "done": 0,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 0,
-            "max_points": 30,
-            "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 5,
-            "max_points": 20,
-            "done": 1,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 5,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-31 (1, 1, 1, 1)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "hamigaki_asa": "done",
-          "ondoku": "done",
-          "keisan": "done",
-          "gakki": "done"
-        },
-        "day": "2026-08-31"
-      },
-      "output": {
-        "score": 27,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 7,
-            "max_points": 50,
-            "done": 1,
-            "total": 7
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 15,
-            "max_points": 30,
-            "done": 1,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 5,
-            "max_points": 20,
-            "done": 1,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 27,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": true
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-15 (0, 0, 0, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {},
-        "day": "2026-08-15"
-      },
-      "output": {
-        "score": 0,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 0,
-            "max_points": 50,
-            "done": 0,
-            "total": 3
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 0,
-            "max_points": 30,
-            "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 0,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-15 (1, 0, 0, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "hamigaki_asa": "done"
-        },
-        "day": "2026-08-15"
       },
       "output": {
         "score": 17,
@@ -3904,26 +3068,18 @@
           {
             "name": "habits",
             "label": "せいかつ",
-            "points": 17,
+            "points": 0,
             "max_points": 50,
-            "done": 1,
-            "total": 3
+            "done": 0,
+            "total": 7
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 0,
-            "max_points": 30,
-            "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 17,
+            "max_points": 50,
+            "done": 2,
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -3954,14 +3110,74 @@
       }
     },
     {
-      "name": "dailyScore 2026-08-15 (2, 0, 0, 0)",
+      "name": "dailyScore 2026-08-27 (0, 3, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
-          "hamigaki_asa": "done",
-          "hamigaki_hiru": "done"
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done"
         },
-        "day": "2026-08-15"
+        "day": "2026-08-27"
+      },
+      "output": {
+        "score": 25,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 25,
+            "max_points": 50,
+            "done": 3,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 25,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-27 (0, 4, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done"
+        },
+        "day": "2026-08-27"
       },
       "output": {
         "score": 33,
@@ -3969,26 +3185,18 @@
           {
             "name": "habits",
             "label": "せいかつ",
-            "points": 33,
+            "points": 0,
             "max_points": 50,
-            "done": 2,
-            "total": 3
+            "done": 0,
+            "total": 7
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 0,
-            "max_points": 30,
-            "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 33,
+            "max_points": 50,
+            "done": 4,
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -4019,7 +3227,1565 @@
       }
     },
     {
-      "name": "dailyScore 2026-08-15 (3, 0, 0, 0)",
+      "name": "dailyScore 2026-08-27 (0, 5, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done"
+        },
+        "day": "2026-08-27"
+      },
+      "output": {
+        "score": 42,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 42,
+            "max_points": 50,
+            "done": 5,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 42,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-27 (8, 6, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done",
+          "hayaoki": "done",
+          "asagohan": "done",
+          "hayane": "done",
+          "outmedia": "done",
+          "radio_taisou": "done",
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done",
+          "jishu": "done"
+        },
+        "day": "2026-08-27"
+      },
+      "output": {
+        "score": 100,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 50,
+            "max_points": 50,
+            "done": 7,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 100,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-27 (8, 6, 1)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done",
+          "hayaoki": "done",
+          "asagohan": "done",
+          "hayane": "done",
+          "outmedia": "done",
+          "radio_taisou": "done",
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done",
+          "jishu": "done",
+          "gakki": "done"
+        },
+        "day": "2026-08-27"
+      },
+      "output": {
+        "score": 100,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 50,
+            "max_points": 50,
+            "done": 7,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
+          }
+        ],
+        "bonus": 25,
+        "total": 125,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": true
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-27 (8, 6, 4)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done",
+          "hayaoki": "done",
+          "asagohan": "done",
+          "hayane": "done",
+          "outmedia": "done",
+          "radio_taisou": "done",
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done",
+          "jishu": "done",
+          "gakki": "done",
+          "otetsudai": "done",
+          "eigo": "done",
+          "tairyoku_ch": "done"
+        },
+        "day": "2026-08-27"
+      },
+      "output": {
+        "score": 100,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 50,
+            "max_points": 50,
+            "done": 7,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
+          }
+        ],
+        "bonus": 100,
+        "total": 200,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": true
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": true
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": true
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": true
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-27 (7, 6, 1)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done",
+          "hayaoki": "done",
+          "asagohan": "done",
+          "hayane": "done",
+          "outmedia": "done",
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done",
+          "jishu": "done",
+          "gakki": "done"
+        },
+        "day": "2026-08-27"
+      },
+      "output": {
+        "score": 100,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 50,
+            "max_points": 50,
+            "done": 7,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
+          }
+        ],
+        "bonus": 25,
+        "total": 125,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": true
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-27 (8, 5, 1)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done",
+          "hayaoki": "done",
+          "asagohan": "done",
+          "hayane": "done",
+          "outmedia": "done",
+          "radio_taisou": "done",
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done",
+          "gakki": "done"
+        },
+        "day": "2026-08-27"
+      },
+      "output": {
+        "score": 92,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 50,
+            "max_points": 50,
+            "done": 7,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 42,
+            "max_points": 50,
+            "done": 5,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 92,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": true
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-27 (1, 1, 1)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "ondoku": "done",
+          "gakki": "done"
+        },
+        "day": "2026-08-27"
+      },
+      "output": {
+        "score": 15,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 7,
+            "max_points": 50,
+            "done": 1,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 8,
+            "max_points": 50,
+            "done": 1,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 15,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": true
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (0, 0, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {},
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 0,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 0,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (1, 0, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done"
+        },
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 7,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 7,
+            "max_points": 50,
+            "done": 1,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 7,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (2, 0, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "hamigaki_hiru": "done"
+        },
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 14,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 14,
+            "max_points": 50,
+            "done": 2,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 14,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (3, 0, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done"
+        },
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 21,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 21,
+            "max_points": 50,
+            "done": 3,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 21,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (0, 1, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done"
+        },
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 8,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 8,
+            "max_points": 50,
+            "done": 1,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 8,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (0, 2, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done"
+        },
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 17,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 17,
+            "max_points": 50,
+            "done": 2,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 17,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (0, 3, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done"
+        },
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 25,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 25,
+            "max_points": 50,
+            "done": 3,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 25,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (0, 4, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done"
+        },
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 33,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 33,
+            "max_points": 50,
+            "done": 4,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 33,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (0, 5, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done"
+        },
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 42,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 42,
+            "max_points": 50,
+            "done": 5,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 42,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (8, 6, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done",
+          "hayaoki": "done",
+          "asagohan": "done",
+          "hayane": "done",
+          "outmedia": "done",
+          "radio_taisou": "done",
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done",
+          "jishu": "done"
+        },
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 100,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 50,
+            "max_points": 50,
+            "done": 7,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 100,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (8, 6, 1)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done",
+          "hayaoki": "done",
+          "asagohan": "done",
+          "hayane": "done",
+          "outmedia": "done",
+          "radio_taisou": "done",
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done",
+          "jishu": "done",
+          "gakki": "done"
+        },
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 100,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 50,
+            "max_points": 50,
+            "done": 7,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
+          }
+        ],
+        "bonus": 25,
+        "total": 125,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": true
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (8, 6, 4)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done",
+          "hayaoki": "done",
+          "asagohan": "done",
+          "hayane": "done",
+          "outmedia": "done",
+          "radio_taisou": "done",
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done",
+          "jishu": "done",
+          "gakki": "done",
+          "otetsudai": "done",
+          "eigo": "done",
+          "tairyoku_ch": "done"
+        },
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 100,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 50,
+            "max_points": 50,
+            "done": 7,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
+          }
+        ],
+        "bonus": 100,
+        "total": 200,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": true
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": true
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": true
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": true
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (7, 6, 1)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done",
+          "hayaoki": "done",
+          "asagohan": "done",
+          "hayane": "done",
+          "outmedia": "done",
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done",
+          "jishu": "done",
+          "gakki": "done"
+        },
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 100,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 50,
+            "max_points": 50,
+            "done": 7,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
+          }
+        ],
+        "bonus": 25,
+        "total": 125,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": true
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (8, 5, 1)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done",
+          "hayaoki": "done",
+          "asagohan": "done",
+          "hayane": "done",
+          "outmedia": "done",
+          "radio_taisou": "done",
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done",
+          "gakki": "done"
+        },
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 92,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 50,
+            "max_points": 50,
+            "done": 7,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 42,
+            "max_points": 50,
+            "done": 5,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 92,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": true
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-31 (1, 1, 1)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "ondoku": "done",
+          "gakki": "done"
+        },
+        "day": "2026-08-31"
+      },
+      "output": {
+        "score": 15,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 7,
+            "max_points": 50,
+            "done": 1,
+            "total": 7
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 8,
+            "max_points": 50,
+            "done": 1,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 15,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": true
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-15 (0, 0, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {},
+        "day": "2026-08-15"
+      },
+      "output": {
+        "score": 0,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 0,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-15 (1, 0, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done"
+        },
+        "day": "2026-08-15"
+      },
+      "output": {
+        "score": 17,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 17,
+            "max_points": 50,
+            "done": 1,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 17,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-15 (2, 0, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "hamigaki_hiru": "done"
+        },
+        "day": "2026-08-15"
+      },
+      "output": {
+        "score": 33,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 33,
+            "max_points": 50,
+            "done": 2,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 33,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-15 (3, 0, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -4042,19 +4808,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
+            "label": "しゅくだい",
             "points": 0,
-            "max_points": 30,
+            "max_points": 50,
             "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -4085,7 +4843,297 @@
       }
     },
     {
-      "name": "dailyScore 2026-08-15 (8, 2, 4, 0)",
+      "name": "dailyScore 2026-08-15 (0, 1, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done"
+        },
+        "day": "2026-08-15"
+      },
+      "output": {
+        "score": 8,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 8,
+            "max_points": 50,
+            "done": 1,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 8,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-15 (0, 2, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done"
+        },
+        "day": "2026-08-15"
+      },
+      "output": {
+        "score": 17,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 17,
+            "max_points": 50,
+            "done": 2,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 17,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-15 (0, 3, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done"
+        },
+        "day": "2026-08-15"
+      },
+      "output": {
+        "score": 25,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 25,
+            "max_points": 50,
+            "done": 3,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 25,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-15 (0, 4, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done"
+        },
+        "day": "2026-08-15"
+      },
+      "output": {
+        "score": 33,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 33,
+            "max_points": 50,
+            "done": 4,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 33,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-15 (0, 5, 0)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "ondoku": "done",
+          "nikki": "done",
+          "keisan": "done",
+          "kenban": "done",
+          "drill": "done"
+        },
+        "day": "2026-08-15"
+      },
+      "output": {
+        "score": 42,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 0,
+            "max_points": 50,
+            "done": 0,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 42,
+            "max_points": 50,
+            "done": 5,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 42,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": false
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-15 (8, 6, 0)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -4119,19 +5167,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -4162,7 +5202,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-08-15 (8, 2, 4, 1)",
+      "name": "dailyScore 2026-08-15 (8, 6, 1)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -4197,19 +5237,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 25,
@@ -4240,7 +5272,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-08-15 (8, 2, 4, 4)",
+      "name": "dailyScore 2026-08-15 (8, 6, 4)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -4278,19 +5310,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 100,
@@ -4321,7 +5345,7 @@
       }
     },
     {
-      "name": "dailyScore 2026-08-15 (7, 2, 4, 1)",
+      "name": "dailyScore 2026-08-15 (7, 6, 1)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
@@ -4355,19 +5379,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 25,
@@ -4398,147 +5414,87 @@
       }
     },
     {
-      "name": "dailyScore 2026-08-15 (0, 1, 0, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "ondoku": "done"
-        },
-        "day": "2026-08-15"
-      },
-      "output": {
-        "score": 15,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 0,
-            "max_points": 50,
-            "done": 0,
-            "total": 3
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 15,
-            "max_points": 30,
-            "done": 1,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 0,
-            "max_points": 20,
-            "done": 0,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 15,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-15 (0, 0, 1, 0)",
-      "input": {
-        "kind": "dailyScore",
-        "statuses": {
-          "keisan": "done"
-        },
-        "day": "2026-08-15"
-      },
-      "output": {
-        "score": 5,
-        "parts": [
-          {
-            "name": "habits",
-            "label": "せいかつ",
-            "points": 0,
-            "max_points": 50,
-            "done": 0,
-            "total": 3
-          },
-          {
-            "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 0,
-            "max_points": 30,
-            "done": 0,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 5,
-            "max_points": 20,
-            "done": 1,
-            "total": 4
-          }
-        ],
-        "bonus": 0,
-        "total": 5,
-        "challenges": [
-          {
-            "key": "gakki",
-            "label": "がっきのれんしゅう",
-            "done": false
-          },
-          {
-            "key": "otetsudai",
-            "label": "おてつだい",
-            "done": false
-          },
-          {
-            "key": "eigo",
-            "label": "えいごのうた",
-            "done": false
-          },
-          {
-            "key": "tairyoku_ch",
-            "label": "体力《たいりょく》づくり",
-            "done": false
-          }
-        ],
-        "challenge_max": 100
-      }
-    },
-    {
-      "name": "dailyScore 2026-08-15 (1, 1, 1, 1)",
+      "name": "dailyScore 2026-08-15 (8, 5, 1)",
       "input": {
         "kind": "dailyScore",
         "statuses": {
           "hamigaki_asa": "done",
+          "hamigaki_hiru": "done",
+          "hamigaki_yoru": "done",
+          "hayaoki": "done",
+          "asagohan": "done",
+          "hayane": "done",
+          "outmedia": "done",
+          "radio_taisou": "done",
           "ondoku": "done",
+          "nikki": "done",
           "keisan": "done",
+          "kenban": "done",
+          "drill": "done",
           "gakki": "done"
         },
         "day": "2026-08-15"
       },
       "output": {
-        "score": 37,
+        "score": 92,
+        "parts": [
+          {
+            "name": "habits",
+            "label": "せいかつ",
+            "points": 50,
+            "max_points": 50,
+            "done": 3,
+            "total": 3
+          },
+          {
+            "name": "daily",
+            "label": "しゅくだい",
+            "points": 42,
+            "max_points": 50,
+            "done": 5,
+            "total": 6
+          }
+        ],
+        "bonus": 0,
+        "total": 92,
+        "challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "done": true
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "done": false
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "done": false
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "done": false
+          }
+        ],
+        "challenge_max": 100
+      }
+    },
+    {
+      "name": "dailyScore 2026-08-15 (1, 1, 1)",
+      "input": {
+        "kind": "dailyScore",
+        "statuses": {
+          "hamigaki_asa": "done",
+          "ondoku": "done",
+          "gakki": "done"
+        },
+        "day": "2026-08-15"
+      },
+      "output": {
+        "score": 25,
         "parts": [
           {
             "name": "habits",
@@ -4550,23 +5506,15 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 15,
-            "max_points": 30,
+            "label": "しゅくだい",
+            "points": 8,
+            "max_points": 50,
             "done": 1,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 5,
-            "max_points": 20,
-            "done": 1,
-            "total": 4
+            "total": 6
           }
         ],
         "bonus": 0,
-        "total": 37,
+        "total": 25,
         "challenges": [
           {
             "key": "gakki",
@@ -4627,19 +5575,11 @@
           },
           {
             "name": "daily",
-            "label": "まいにちのしゅくだい",
-            "points": 30,
-            "max_points": 30,
-            "done": 2,
-            "total": 2
-          },
-          {
-            "name": "practice",
-            "label": "くりかえしのしゅくだい",
-            "points": 20,
-            "max_points": 20,
-            "done": 4,
-            "total": 4
+            "label": "しゅくだい",
+            "points": 50,
+            "max_points": 50,
+            "done": 6,
+            "total": 6
           }
         ],
         "bonus": 0,
@@ -6518,9 +7458,27 @@
           "note": null
         },
         {
-          "kind": "practice",
-          "key": "practice_any",
-          "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+          "kind": "daily",
+          "key": "keisan",
+          "label": "計算《けいさん》カードのれんしゅう",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "kenban",
+          "label": "けんばんハーモニカ",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "drill",
+          "label": "なつやすみのドリルをすすめる",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "jishu",
+          "label": "じしゅがくしゅう",
           "note": null
         },
         {
@@ -6632,9 +7590,27 @@
           "note": null
         },
         {
-          "kind": "practice",
-          "key": "practice_any",
-          "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+          "kind": "daily",
+          "key": "keisan",
+          "label": "計算《けいさん》カードのれんしゅう",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "kenban",
+          "label": "けんばんハーモニカ",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "drill",
+          "label": "なつやすみのドリルをすすめる",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "jishu",
+          "label": "じしゅがくしゅう",
           "note": null
         },
         {
@@ -6722,9 +7698,27 @@
           "note": null
         },
         {
-          "kind": "practice",
-          "key": "practice_any",
-          "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+          "kind": "daily",
+          "key": "keisan",
+          "label": "計算《けいさん》カードのれんしゅう",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "kenban",
+          "label": "けんばんハーモニカ",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "drill",
+          "label": "なつやすみのドリルをすすめる",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "jishu",
+          "label": "じしゅがくしゅう",
           "note": null
         },
         {
@@ -6812,9 +7806,27 @@
           "note": null
         },
         {
-          "kind": "practice",
-          "key": "practice_any",
-          "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+          "kind": "daily",
+          "key": "keisan",
+          "label": "計算《けいさん》カードのれんしゅう",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "kenban",
+          "label": "けんばんハーモニカ",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "drill",
+          "label": "なつやすみのドリルをすすめる",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "jishu",
+          "label": "じしゅがくしゅう",
           "note": null
         },
         {
@@ -6902,9 +7914,27 @@
           "note": null
         },
         {
-          "kind": "practice",
-          "key": "practice_any",
-          "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+          "kind": "daily",
+          "key": "keisan",
+          "label": "計算《けいさん》カードのれんしゅう",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "kenban",
+          "label": "けんばんハーモニカ",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "drill",
+          "label": "なつやすみのドリルをすすめる",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "jishu",
+          "label": "じしゅがくしゅう",
           "note": null
         }
       ]
@@ -6950,9 +7980,27 @@
           "note": null
         },
         {
-          "kind": "practice",
-          "key": "practice_any",
-          "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+          "kind": "daily",
+          "key": "keisan",
+          "label": "計算《けいさん》カードのれんしゅう",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "kenban",
+          "label": "けんばんハーモニカ",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "drill",
+          "label": "なつやすみのドリルをすすめる",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "jishu",
+          "label": "じしゅがくしゅう",
           "note": null
         }
       ]
@@ -7022,9 +8070,27 @@
           "note": null
         },
         {
-          "kind": "practice",
-          "key": "practice_any",
-          "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+          "kind": "daily",
+          "key": "keisan",
+          "label": "計算《けいさん》カードのれんしゅう",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "kenban",
+          "label": "けんばんハーモニカ",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "drill",
+          "label": "なつやすみのドリルをすすめる",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "jishu",
+          "label": "じしゅがくしゅう",
           "note": null
         },
         {
@@ -7160,9 +8226,27 @@
           "note": null
         },
         {
-          "kind": "practice",
-          "key": "practice_any",
-          "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+          "kind": "daily",
+          "key": "keisan",
+          "label": "計算《けいさん》カードのれんしゅう",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "kenban",
+          "label": "けんばんハーモニカ",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "drill",
+          "label": "なつやすみのドリルをすすめる",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "jishu",
+          "label": "じしゅがくしゅう",
           "note": null
         },
         {
@@ -7280,9 +8364,27 @@
           "note": null
         },
         {
-          "kind": "practice",
-          "key": "practice_any",
-          "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+          "kind": "daily",
+          "key": "keisan",
+          "label": "計算《けいさん》カードのれんしゅう",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "kenban",
+          "label": "けんばんハーモニカ",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "drill",
+          "label": "なつやすみのドリルをすすめる",
+          "note": null
+        },
+        {
+          "kind": "daily",
+          "key": "jishu",
+          "label": "じしゅがくしゅう",
           "note": null
         },
         {

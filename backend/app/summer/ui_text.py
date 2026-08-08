@@ -44,8 +44,7 @@ UI_TEXT: dict[str, str] = {
     "todo_speech_ask": "今日《きょう》やることをきく",
     "todo_speech_busy": "じゅんびちゅう…",
     "section_habits": "生活《せいかつ》",
-    "section_daily": "毎日《まいにち》の宿題《しゅくだい》",
-    "section_practice": "くり返《かえ》しの宿題《しゅくだい》（今日《きょう》やったもの）",
+    "section_daily": "宿題《しゅくだい》",
     # ---- 3値チェックのボタン（SummerCheckButtons.svelte） ----
     "check_done": "やった",
     "check_not_done": "やらなかった",

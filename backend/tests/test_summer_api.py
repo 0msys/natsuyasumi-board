@@ -121,7 +121,7 @@ def test_state_history点数とstreaks(client):
     )
     s2 = client.get("/api/summer/state", params={"child": CHILD}).json()
     h_today = next(h for h in s2["history"] if h["day"] == "2026-08-01")
-    assert h_today["score"] == s2["today_score"]["score"] == 15
+    assert h_today["score"] == s2["today_score"]["score"] == 8
 
     # きのう（7/31・窓外は9項目）を全部 done → 満点スタンプ1。今日が未達でもまだ切らない
     for key in FULL_100_KEYS:
@@ -231,7 +231,7 @@ def test_check_set_3値と状態反映(client):
     s = client.get("/api/summer/state", params={"child": CHILD}).json()
     ondoku = next(i for i in s["daily_homework"] if i["key"] == "ondoku")
     assert ondoku["status"] == "done" and ondoku["done_days"] == 1
-    assert s["today_score"]["score"] == 15  # まいにちのしゅくだい 30点×1/2
+    assert s["today_score"]["score"] == 8  # しゅくだい 50点×1/6 = 8.33 → 8
 
     r2 = client.post(
         "/api/summer/check/set",
@@ -448,7 +448,8 @@ def test_todo_speech(client):
     body = r.json()
     assert body["text"].startswith("はなさん。")
     assert body["day"] == "2026-08-01"
-    assert any(item["key"] == "practice_any" for item in body["remaining"])
+    # 宿題は集約行ではなく1項目ずつ残りに出る
+    assert {"ondoku", "keisan"} <= {item["key"] for item in body["remaining"]}
 
 
 def test_todo_speech_child必須(client):
@@ -468,9 +469,9 @@ def test_comment_定型褒めは決定的(client):
     )
     s1 = client.get("/api/summer/state", params={"child": CHILD}).json()
     c = s1["comment"]
-    assert c["score"] == 15 and c["band"] == "keep_going"
+    assert c["score"] == 8 and c["band"] == "keep_going"
     # 小2 は low 帯の口調・小2の配当漢字（読みは全学年で同じ）
-    assert "きょうは 15てんだよ。" in ruby_reading(c["text"])
+    assert "きょうは 8てんだよ。" in ruby_reading(c["text"])
     # 同じ日・同じ状態なら同じ文（リロードで変わらない）
     s2 = client.get("/api/summer/state", params={"child": CHILD}).json()
     assert s2["comment"] == c

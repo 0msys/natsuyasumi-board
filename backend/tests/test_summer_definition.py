@@ -78,10 +78,58 @@ def test_count型はtargetを持つ(definition):
     assert all(isinstance(i.target, int) and i.target >= 1 for i in counts)
 
 
+def test_旧形式のpractice_homeworkはそのまま読めて宿題1区分にまとまる(definition):
+    # 宿題の2区分（まいにち30点／くりかえし20点）は しゅくだい50点 の1区分へ統合した。
+    # 古い JSON・エクスポートの取り込みが 503 にならないよう、読み取り側で畳む。
+    doc = load_sample_doc()
+    keys = [i["key"] for i in doc["daily_homework"]]
+    doc["practice_homework"] = doc["daily_homework"][2:]  # 旧形式へ巻き戻す
+    doc["daily_homework"] = doc["daily_homework"][:2]
+
+    old = parse_definition(doc)
+    assert [i.key for i in old.daily_homework] == keys  # key はそのまま＝過去の記録が切れない
+    assert not hasattr(old, "practice_homework")
+    # 採点も統合後と同じ（メモ定義まで含めて現行の定義と一致する）
+    assert [(i.key, [f.key for f in i.meta]) for i in old.daily_homework] == [
+        (i.key, [f.key for f in i.meta]) for i in definition.daily_homework
+    ]
+
+
+@pytest.mark.parametrize("broken", ["もじ", {"key": "x"}, 0, True])
+def test_畳めない旧形式は黙って捨てずにエラーにする(broken):
+    # 統合前は practice_homework が配列でなければ「項目の配列で書いてください」で弾かれていた。
+    # 畳むついでに黙って落とすと、手書き JSON の書き損じが「宿題がまるごと消えた定義」として
+    # 保存できてしまう（=気づけない実害）。畳めない値は daily_homework に残して弾く。
+    doc = load_sample_doc()
+    doc["practice_homework"] = broken
+    with pytest.raises(SummerDefinitionError):
+        parse_definition(doc)
+
+
+def test_旧形式を畳むときdaily側が壊れていても弾く():
+    # 畳み先が壊れている場合も同じ。ここで legacy だけを採用すると、壊れた daily_homework が
+    # 黙って消えて「くりかえしの項目しか無い定義」になる。
+    doc = load_sample_doc()
+    doc["daily_homework"] = "もじ"
+    doc["practice_homework"] = [{"key": "ph_a", "label": "あ"}]
+    with pytest.raises(SummerDefinitionError):
+        parse_definition(doc)
+
+
+@pytest.mark.parametrize("empty", [None, []])
+def test_空の旧形式はキーだけ落として素通りする(empty):
+    # null / 空配列は「無い」と同じ（_as_entries と揃える）。ここでエラーにすると、
+    # 区画を空のまま持っている既存の定義が読めなくなる。
+    doc = load_sample_doc()
+    keys = [i["key"] for i in doc["daily_homework"]]
+    doc["practice_homework"] = empty
+    assert [i.key for i in parse_definition(doc).daily_homework] == keys
+
+
 def test_meta定義_音読はtext_計算カードはchoiceとduration(definition):
     ondoku = next(i for i in definition.daily_homework if i.key == "ondoku")
     assert [(f.key, f.type) for f in ondoku.meta] == [("book", "text")]
-    keisan = next(i for i in definition.practice_homework if i.key == "keisan")
+    keisan = next(i for i in definition.daily_homework if i.key == "keisan")
     assert [(f.key, f.type) for f in keisan.meta] == [("calc_type", "choice"), ("seconds", "duration")]
     calc_type = keisan.meta_field("calc_type")
     assert [o.key for o in calc_type.options] == ["tashizan", "hikizan"]
@@ -390,7 +438,7 @@ def test_range窓のwindow_start欠落はエラー():
 
 def test_choice型metaのoptions欠落はエラー():
     doc = load_sample_doc()
-    keisan = next(i for i in doc["practice_homework"] if i["key"] == "keisan")
+    keisan = next(i for i in doc["daily_homework"] if i["key"] == "keisan")
     keisan["meta"][0]["options"] = []
     with pytest.raises(SummerDefinitionError):
         parse_definition(doc)

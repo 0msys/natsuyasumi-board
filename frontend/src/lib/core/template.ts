@@ -46,7 +46,6 @@ export function emptyTemplate(
 		media_timer: { limit_minutes: MEDIA_LIMIT_MINUTES_DEFAULT },
 		habits: [],
 		daily_homework: [],
-		practice_homework: [],
 		special_challenges: [],
 		rewards: [],
 		one_shot_homework: [],
@@ -82,9 +81,7 @@ export function standardTemplate(
 				{ key: 'book', type: 'text', label: t.ondoku_book, placeholder: t.ondoku_book_ph }
 			]
 		},
-		{ key: 'nikki', label: t.nikki }
-	];
-	doc.practice_homework = [
+		{ key: 'nikki', label: t.nikki },
 		{ key: 'keisan', label: t.keisan },
 		{ key: 'drill', label: t.drill }
 	];

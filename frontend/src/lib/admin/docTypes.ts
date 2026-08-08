@@ -59,7 +59,6 @@ export type DefinitionDoc = {
 	media_timer?: DocMediaTimer;
 	habits?: DocDailyItem[];
 	daily_homework?: DocDailyItem[];
-	practice_homework?: DocDailyItem[];
 	special_challenges?: DocDailyItem[];
 	rewards?: DocReward[];
 	one_shot_homework?: DocOneShot[];

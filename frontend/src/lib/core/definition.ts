@@ -94,7 +94,6 @@ export type SummerDefinition = {
 	card_rules: { edges_window_days: number };
 	habits: DailyItem[];
 	daily_homework: DailyItem[];
-	practice_homework: DailyItem[];
 	one_shot_homework: OneShotItem[];
 	choice_homework: ChoiceGroup[];
 	school_start_items: SchoolStartItem[];
@@ -395,13 +394,51 @@ export function parseGrade(value: unknown, source: string): [string, number] {
 	return [grade, Number(m[1])];
 }
 
+/**
+ * 旧形式（practice_homework＝くりかえしの宿題）を daily_homework へ畳む（doc を書き換えて返す）。
+ *
+ * 宿題の区分は「まいにち30点／くりかえし20点」の2本立てだったが、設定する側から見て
+ * どちらに置くべきか判別できず、実質の差は1項目あたりの重みだけだった。せいかつ50点＋
+ * しゅくだい50点の2区分へ統合した（judge.DAILY_MAX）。
+ *
+ * item の key は変えずに移すので、保存済みのチェック記録は切れない。ただし採点は毎回
+ * 計算し直すため、過去日の点数は新しい重みで再計算される。
+ *
+ * 読み取り経路（parseDefinition）と書き込み経路（keys.assignKeys / local の getDocument）の
+ * 両方から呼ぶ＝保存済みデータを触らなくても古い定義とエクスポート JSON がそのまま読める。
+ *
+ * 畳めない形（どちらかが配列でない）を黙って捨てないこと。捨てると、手書き JSON の
+ * 書き損じが「宿題がまるごと消えた定義」として保存できてしまう（前は「項目の配列で
+ * 書いてください」で弾かれていた）。壊れている値のほうを daily_homework に残し、
+ * いつもの検証にエラーを出させる。
+ */
+export function migrateDoc<T>(doc: T): T {
+	if (!isMap(doc) || !('practice_homework' in doc)) return doc;
+	const map = doc as Doc;
+	const legacy = map.practice_homework;
+	delete map.practice_homework;
+	const daily = map.daily_homework;
+	if (legacy === null || legacy === undefined) return doc; // null は「キーが無い」と同じ
+	if (!Array.isArray(legacy)) {
+		map.daily_homework = legacy; // 壊れているのは legacy 側
+	} else if (Array.isArray(daily)) {
+		map.daily_homework = [...daily, ...legacy];
+	} else if (daily === null || daily === undefined) {
+		map.daily_homework = legacy;
+	}
+	// else: daily 側が壊れている＝そのまま残して検証に弾かせる
+	return doc;
+}
+
 /** 定義ドキュメントを検証して SummerDefinition にする。壊れていれば SummerDefinitionError。
  *
  *  ここを try/catch で包んで例外を SummerDefinitionError に変換してはいけない：
  *  パーサ自身のバグまで「あなたの定義が壊れています」と報告してしまい、利用者は
  *  壊れていない定義を直しに行くことになる。 */
+
 export function parseDefinition(doc: unknown, source = '定義'): SummerDefinition {
 	if (!isMap(doc)) throw new SummerDefinitionError(`${source}: トップレベルがマップではありません`);
+	migrateDoc(doc); // 旧形式の practice_homework を daily_homework へ畳む
 
 	const period = require_(doc, 'period', source);
 	if (!isMap(period)) throw new SummerDefinitionError(`${source}: period はマップで書いてください`);
@@ -445,7 +482,6 @@ export function parseDefinition(doc: unknown, source = '定義'): SummerDefiniti
 
 	const habits = parseDailyItems(doc.habits, 'habits', source);
 	const dailyHomework = parseDailyItems(doc.daily_homework, 'daily_homework', source);
-	const practiceHomework = parseDailyItems(doc.practice_homework, 'practice_homework', source);
 	const specialChallenges = parseDailyItems(doc.special_challenges, 'special_challenges', source);
 	const rewards = parseRewards(doc.rewards, source);
 
@@ -538,7 +574,6 @@ export function parseDefinition(doc: unknown, source = '定義'): SummerDefiniti
 		card_rules: cardRules,
 		habits,
 		daily_homework: dailyHomework,
-		practice_homework: practiceHomework,
 		one_shot_homework: oneShot,
 		choice_homework: choiceGroups,
 		school_start_items: schoolStart,
@@ -552,7 +587,7 @@ export function parseDefinition(doc: unknown, source = '定義'): SummerDefiniti
 	const dailyKeys = dailyItems(definition).map((i) => i.key);
 	if (dailyKeys.length !== new Set(dailyKeys).size) {
 		throw new SummerDefinitionError(
-			`${source}: habits/daily/practice/challenges の key が重複しています`
+			`${source}: habits/daily/challenges の key が重複しています`
 		);
 	}
 	const flagKeys = [...flagItemKeysList(definition)];
@@ -571,7 +606,6 @@ export function parseDefinition(doc: unknown, source = '定義'): SummerDefiniti
 export const dailyItems = (d: SummerDefinition): DailyItem[] => [
 	...d.habits,
 	...d.daily_homework,
-	...d.practice_homework,
 	...d.special_challenges
 ];
 

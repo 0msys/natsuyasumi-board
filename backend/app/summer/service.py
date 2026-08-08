@@ -117,17 +117,6 @@ def build_state(child: str, today=None, db_path: Path | None = None) -> dict:
         }
         for i in definition.daily_homework
     ]
-    practice_out = [
-        {
-            "key": i.key,
-            "label": i.label,
-            "status": today_statuses.get(i.key),
-            "done_days": _done_days(i.key),
-            "meta_fields": _meta_fields_dict(i),
-            "meta": today_meta.get(i.key),
-        }
-        for i in definition.practice_homework
-    ]
     # スペシャルチャレンジ（宿題で100点をとると解放されるごほうび枠）。done のみの単純トグル。
     challenges_out = [
         {
@@ -280,7 +269,6 @@ def build_state(child: str, today=None, db_path: Path | None = None) -> dict:
         "away": [{"start": a.start.isoformat(), "end": a.end.isoformat(), "label": a.label} for a in definition.away],
         "habits": habits_out,
         "daily_homework": daily_out,
-        "practice_homework": practice_out,
         "special_challenges": challenges_out,
         "score_max": score_max,
         "rewards": rewards_out,
@@ -293,6 +281,12 @@ def build_state(child: str, today=None, db_path: Path | None = None) -> dict:
         # else 枝に落ちて guide.rows で落ちる（＝リロードするまで真っ白）。null なら
         # 空のカードが1枚出るだけで済む。全端末を1回リロードしたらこの行は消してよい。
         "card_guide": None,
+        # 「くりかえしの宿題」を daily_homework へ統合したあとの互換スタブ（同上）。
+        # 旧画面は practice を配列として {#each} や [...daily, ...practice] に渡すので、
+        # キーごと消すと undefined の展開で `practice is not iterable` になり真っ白に落ちる
+        # （実測で確認済み）。空配列なら見出しだけ出て中身が無い状態で済む。
+        # 全端末を1回リロードしたらこの行は消してよい。
+        "practice_homework": [],
         "history": history,
         "streaks": {
             "perfect_current": streaks.perfect_current,
@@ -479,8 +473,8 @@ def set_check(
 
 
 def _find_meta_item(definition: SummerDefinition, item_key: str) -> DailyItem | None:
-    """メモを持つ日次項目（daily/practice）を key で探す（無ければ None）."""
-    for item in definition.daily_homework + definition.practice_homework:
+    """メモを持つ日次項目（daily_homework）を key で探す（無ければ None）."""
+    for item in definition.daily_homework:
         if item.key == item_key and item.meta:
             return item
     return None

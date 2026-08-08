@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from datetime import date
 
+from app.summer import definition as summer_definition
 from app.summer import kanji
 from app.summer.definition import (
     EDGES_WINDOW_DAYS_DEFAULT,
@@ -172,6 +173,10 @@ def validate_document(
 
     if not isinstance(doc, dict):
         return {"ok": False, "errors": [{"path": "", "code": "type", "message": "定義がマップではありません"}], "warnings": []}
+    # 旧形式（practice_homework）の取り込み JSON を新形式で検査する（parse_definition と同じ畳み方）
+    summer_definition.migrate_doc(doc)
+    if prev_doc is not None:
+        summer_definition.migrate_doc(prev_doc)
 
     # ---- 基本情報 ----
     child = doc.get("child")
@@ -258,7 +263,7 @@ def validate_document(
                 f"テレビの時間は 1〜{MEDIA_LIMIT_MINUTES_MAX}分 のあいだで入れてください",
             )
 
-    # ---- 日次セクション（habits / daily / practice / challenges） ----
+    # ---- 日次セクション（habits / daily / challenges） ----
     def _check_daily_items(section: str) -> None:
         for i, item in enumerate(_entries(errors, doc.get(section), f"/{section}")):
             path = f"/{section}/{i}"
@@ -303,8 +308,24 @@ def validate_document(
             if len(meta_keys) != len(set(meta_keys)):
                 _err(errors, f"{path}/meta", "key_dup", "メモ欄の key が重複しています")
 
-    for section in ("habits", "daily_homework", "practice_homework", "special_challenges"):
+    for section in ("habits", "daily_homework", "special_challenges"):
         _check_daily_items(section)
+
+    # ---- 採点区分が空（judge.daily_score の配点50+50が片肺になる） ----
+    # 空の区分は0点固定なので、片方だけ空にすると満点が50点になり、満点スタンプも
+    # 連続満点ストリークもスペシャルチャレンジの加点も永久に出ない。気づけないので警告する。
+    for section, other, label in (
+        ("habits", "daily_homework", "せいかつ"),
+        ("daily_homework", "habits", "しゅくだい"),
+    ):
+        if not _list(doc.get(section)) and _list(doc.get(other)):
+            _warn(
+                warnings,
+                f"/{section}",
+                "empty_score_section",
+                f"「{label}」の項目が1つもないと、どんなにがんばっても100点になりません"
+                "（満点のスタンプ・れんぞく満点・スペシャルチャレンジが出なくなります）",
+            )
 
     # ---- 一回もの ----
     for i, item in enumerate(_entries(errors, doc.get("one_shot_homework"), "/one_shot_homework")):
@@ -384,7 +405,7 @@ def validate_document(
         _err(errors, "/rewards", "key_dup", "ランクの key が重複しています")
 
     # ---- キー一意性（日次系と flags 系は別空間） ----
-    daily_sections = ("habits", "daily_homework", "practice_homework", "special_challenges")
+    daily_sections = ("habits", "daily_homework", "special_challenges")
     daily_keys: list[str] = []
     for section in daily_sections:
         for item in _list(doc.get(section)):
@@ -409,9 +430,9 @@ def validate_document(
 
     # ---- 影響警告（過去の点数の見え方が変わる操作） ----
     if prev_doc is not None and today is not None and start and end and start <= today <= end:
-        # 期間中の分母追加（daily/practice は全過去日、habits は窓次第だがまとめて警告）
-        prev_keys = _daily_section_keys(prev_doc, ("habits", "daily_homework", "practice_homework"))
-        for section in ("habits", "daily_homework", "practice_homework"):
+        # 期間中の分母追加（daily は全過去日、habits は窓次第だがまとめて警告）
+        prev_keys = _daily_section_keys(prev_doc, ("habits", "daily_homework"))
+        for section in ("habits", "daily_homework"):
             for i, item in enumerate(_list(doc.get(section))):
                 # key が空＝採番前の新規項目も「期間中の追加」なので警告する（保存前 validate はこの経路）
                 if isinstance(item, dict) and (not item.get("key") or str(item["key"]) not in prev_keys):

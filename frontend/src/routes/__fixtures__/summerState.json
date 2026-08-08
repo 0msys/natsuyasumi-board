@@ -18,8 +18,7 @@
       "todo_speech_ask": "今日《きょう》やることをきく",
       "todo_speech_busy": "じゅんびちゅう…",
       "section_habits": "生活《せいかつ》",
-      "section_daily": "毎日《まいにち》のしゅくだい",
-      "section_practice": "くりかえしのしゅくだい（今日《きょう》やったもの）",
+      "section_daily": "しゅくだい",
       "check_done": "やった",
       "check_not_done": "やらなかった",
       "check_cancelled": "中止《ちゅうし》",
@@ -213,9 +212,7 @@
         "done_days": 0,
         "meta_fields": [],
         "meta": null
-      }
-    ],
-    "practice_homework": [
+      },
       {
         "key": "keisan",
         "label": "計算《けいさん》カードのれんしゅう",
@@ -529,6 +526,7 @@
       }
     ],
     "card_guide": null,
+    "practice_homework": [],
     "history": [
       {
         "day": "2026-07-18",
@@ -1094,19 +1092,11 @@
         },
         {
           "name": "daily",
-          "label": "まいにちのしゅくだい",
+          "label": "しゅくだい",
           "points": 0,
-          "max_points": 30,
+          "max_points": 50,
           "done": 0,
-          "total": 2
-        },
-        {
-          "name": "practice",
-          "label": "くりかえしのしゅくだい",
-          "points": 0,
-          "max_points": 20,
-          "done": 0,
-          "total": 4
+          "total": 6
         }
       ]
     },
@@ -1142,9 +1132,27 @@
         "note": null
       },
       {
-        "kind": "practice",
-        "key": "practice_any",
-        "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+        "kind": "daily",
+        "key": "keisan",
+        "label": "計算《けいさん》カードのれんしゅう",
+        "note": null
+      },
+      {
+        "kind": "daily",
+        "key": "kenban",
+        "label": "けんばんハーモニカ",
+        "note": null
+      },
+      {
+        "kind": "daily",
+        "key": "drill",
+        "label": "なつやすみのドリルをすすめる",
+        "note": null
+      },
+      {
+        "kind": "daily",
+        "key": "jishu",
+        "label": "じしゅがくしゅう",
         "note": null
       }
     ],
@@ -1179,8 +1187,7 @@
       "todo_speech_ask": "今日《きょう》やることをきく",
       "todo_speech_busy": "じゅんびちゅう…",
       "section_habits": "生活《せいかつ》",
-      "section_daily": "毎日《まいにち》のしゅくだい",
-      "section_practice": "くりかえしのしゅくだい（今日《きょう》やったもの）",
+      "section_daily": "しゅくだい",
       "check_done": "やった",
       "check_not_done": "やらなかった",
       "check_cancelled": "中止《ちゅうし》",
@@ -1374,9 +1381,7 @@
         "done_days": 0,
         "meta_fields": [],
         "meta": null
-      }
-    ],
-    "practice_homework": [
+      },
       {
         "key": "keisan",
         "label": "計算《けいさん》カードのれんしゅう",
@@ -1690,6 +1695,7 @@
       }
     ],
     "card_guide": null,
+    "practice_homework": [],
     "history": [
       {
         "day": "2026-07-18",
@@ -2255,19 +2261,11 @@
         },
         {
           "name": "daily",
-          "label": "まいにちのしゅくだい",
+          "label": "しゅくだい",
           "points": 0,
-          "max_points": 30,
+          "max_points": 50,
           "done": 0,
-          "total": 2
-        },
-        {
-          "name": "practice",
-          "label": "くりかえしのしゅくだい",
-          "points": 0,
-          "max_points": 20,
-          "done": 0,
-          "total": 4
+          "total": 6
         }
       ]
     },
@@ -2303,9 +2301,27 @@
         "note": null
       },
       {
-        "kind": "practice",
-        "key": "practice_any",
-        "label": "くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
+        "kind": "daily",
+        "key": "keisan",
+        "label": "計算《けいさん》カードのれんしゅう",
+        "note": null
+      },
+      {
+        "kind": "daily",
+        "key": "kenban",
+        "label": "けんばんハーモニカ",
+        "note": null
+      },
+      {
+        "kind": "daily",
+        "key": "drill",
+        "label": "なつやすみのドリルをすすめる",
+        "note": null
+      },
+      {
+        "kind": "daily",
+        "key": "jishu",
+        "label": "じしゅがくしゅう",
         "note": null
       }
     ],
@@ -2340,8 +2356,7 @@
       "todo_speech_ask": "今日《きょう》やることをきく",
       "todo_speech_busy": "じゅんびちゅう…",
       "section_habits": "生活《せいかつ》",
-      "section_daily": "毎日《まいにち》のしゅくだい",
-      "section_practice": "くりかえしのしゅくだい（今日《きょう》やったもの）",
+      "section_daily": "しゅくだい",
       "check_done": "やった",
       "check_not_done": "やらなかった",
       "check_cancelled": "中止《ちゅうし》",
@@ -2535,9 +2550,7 @@
         "done_days": 1,
         "meta_fields": [],
         "meta": null
-      }
-    ],
-    "practice_homework": [
+      },
       {
         "key": "keisan",
         "label": "計算《けいさん》カードのれんしゅう",
@@ -2851,6 +2864,7 @@
       }
     ],
     "card_guide": null,
+    "practice_homework": [],
     "history": [
       {
         "day": "2026-07-18",
@@ -3435,19 +3449,11 @@
         },
         {
           "name": "daily",
-          "label": "まいにちのしゅくだい",
-          "points": 30,
-          "max_points": 30,
-          "done": 2,
-          "total": 2
-        },
-        {
-          "name": "practice",
-          "label": "くりかえしのしゅくだい",
-          "points": 20,
-          "max_points": 20,
-          "done": 4,
-          "total": 4
+          "label": "しゅくだい",
+          "points": 50,
+          "max_points": 50,
+          "done": 6,
+          "total": 6
         }
       ]
     },

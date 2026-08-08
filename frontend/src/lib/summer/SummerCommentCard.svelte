@@ -52,7 +52,13 @@
 				<span class="font-bold text-violet-500">+{todayScore.bonus}</span>
 			</p>
 		{/if}
-		<div class="mb-3 grid grid-cols-3 gap-1.5 lg:gap-2">
+		<!-- 列数は採点区分の数に合わせる（判定は judge が持つ単一の真実源）。ここを固定すると、
+		     区分を足し引きしたときに空の列が残ったり card が潰れたりする。Tailwind の
+		     grid-cols-N は静的クラスしか拾えないので、列数は style で直接渡す。 -->
+		<div
+			class="mb-3 grid gap-1.5 lg:gap-2"
+			style="grid-template-columns: repeat({todayScore.parts.length}, minmax(0, 1fr))"
+		>
 			{#each todayScore.parts as part (part.name)}
 				<div class="rounded-lg bg-surface2/60 px-2 py-1.5 text-center">
 					<div class="truncate text-[10px] text-text-dim lg:text-xs" title={stripRuby(part.label)}><Ruby text={part.label} /></div>

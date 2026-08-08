@@ -1,7 +1,7 @@
 """判定・採点（純関数のみ。DB・IO に触れない＝特性化テストの対象）。
 
 - edges 窓: 早寝早起き朝ごはん等の記録欄は はじめ n 日間・おわり n 日間のみ
-- 採点: 100点満点の決定的採点
+- 採点: 100点満点の決定的採点（せいかつ50＋しゅくだい50）
 - remaining: 「きょうやること」の残り列挙（画面・音声読み上げで共用）
 
 statuses は {item_key: 'done'|'not_done'}（キーが無い＝未記入）を受け取る。
@@ -25,10 +25,12 @@ from app.summer.definition import (
     SummerDefinition,
 )
 
-# 採点の配点（合計100）
+# 採点の配点（合計100）。区分を増やすときは合計100を保つこと：
+# 区分の点数は「その区分の項目を全部やった日」にしか満額にならないので、合計が100未満だと
+# どんなに頑張っても base==100 に届かず、満点スタンプ・連続満点ストリーク・スペシャル
+# チャレンジの加点（base==100 が条件）が永久に発生しなくなる。
 HABITS_MAX = 50
-DAILY_MAX = 30
-PRACTICE_MAX = 20
+DAILY_MAX = 50
 
 # スペシャルチャレンジ1つあたりの加点（base==100 のときだけ有効）
 CHALLENGE_POINTS = 25
@@ -41,7 +43,7 @@ ONE_SHOT_LEAD_DAYS = 7
 
 @dataclass(frozen=True)
 class ScorePart:
-    """採点の内訳1区分（せいかつ・まいにちのしゅくだい・くりかえしのしゅくだい）."""
+    """採点の内訳1区分（せいかつ・しゅくだい）."""
 
     name: str
     label: str
@@ -67,7 +69,7 @@ class ScoreBreakdown:
     満点(Star)・連続満点ストリークは base(score)==100 を基準にする（total は使わない）。
     """
 
-    score: int  # base（習慣50+毎日30+反復20）＝満点判定・ストリークの基準
+    score: int  # base（せいかつ50＋しゅくだい50）＝満点判定・ストリークの基準
     parts: tuple[ScorePart, ...]
     bonus: int = 0  # スペシャルチャレンジの加点（base==100 のときのみ、else 0）
     total: int = 0  # base + bonus。表示・履歴グラフの基準
@@ -79,7 +81,7 @@ class ScoreBreakdown:
 class RemainingItem:
     """「きょうやること」の残り1件（画面リスト・音声読み上げで共用）."""
 
-    kind: str  # 'habit' | 'daily' | 'practice' | 'one_shot' | 'school_start'
+    kind: str  # 'habit' | 'daily' | 'one_shot' | 'school_start'
     key: str
     label: str
     note: str | None = None
@@ -133,10 +135,12 @@ def can_skip(group: ChoiceGroup, decisions: Mapping[str, str | None], option_key
 def daily_score(statuses: Mapping[str, str], day: date, definition: SummerDefinition) -> ScoreBreakdown:
     """その日の100点満点採点（決定的）。
 
-    せいかつ（当日記録欄がある習慣のみ）50点・まいにちのしゅくだい30点・
-    くりかえしのしゅくだい20点。いずれも「やった数 ÷ 項目数」で按分する
-    （反復宿題も他と同じ割合採点＝1つやれば満点ではない）。
+    せいかつ（当日記録欄がある習慣のみ）50点・しゅくだい50点。どちらも
+    「やった数 ÷ 項目数」で按分する＝宿題は全項目が同じ重み。
     未記入と「やらなかった」はどちらも加点なし（区別は表示・音声側で行う）。
+
+    区分が空（項目0件）だとその区分は0点＝その子は base==100 に届かなくなる。
+    片方だけ空の定義を作らせないのは admin.validate の責任。
     """
     due = habits_due(day, definition)
     habit_done = sum(1 for h in due if _habit_credited(h, statuses.get(h.key)))
@@ -145,12 +149,6 @@ def daily_score(statuses: Mapping[str, str], day: date, definition: SummerDefini
     daily_items = definition.daily_homework
     daily_done = sum(1 for i in daily_items if statuses.get(i.key) == STATUS_DONE)
     daily_points = _round_half_up(DAILY_MAX * daily_done / len(daily_items)) if daily_items else 0
-
-    practice_items = definition.practice_homework
-    practice_done = sum(1 for i in practice_items if statuses.get(i.key) == STATUS_DONE)
-    practice_points = (
-        _round_half_up(PRACTICE_MAX * practice_done / len(practice_items)) if practice_items else 0
-    )
 
     parts = (
         ScorePart(
@@ -163,19 +161,11 @@ def daily_score(statuses: Mapping[str, str], day: date, definition: SummerDefini
         ),
         ScorePart(
             name="daily",
-            label="まいにちのしゅくだい",
+            label="しゅくだい",
             points=daily_points,
             max_points=DAILY_MAX,
             done=daily_done,
             total=len(daily_items),
-        ),
-        ScorePart(
-            name="practice",
-            label="くりかえしのしゅくだい",
-            points=practice_points,
-            max_points=PRACTICE_MAX,
-            done=practice_done,
-            total=len(practice_items),
         ),
     )
     base = sum(p.points for p in parts)
@@ -342,16 +332,6 @@ def remaining_today(
         for hw in definition.daily_homework:
             if hw.key not in statuses:
                 items.append(RemainingItem(kind="daily", key=hw.key, label=hw.label))
-        if definition.practice_homework and not any(
-            statuses.get(p.key) == STATUS_DONE for p in definition.practice_homework
-        ):
-            items.append(
-                RemainingItem(
-                    kind="practice",
-                    key="practice_any",
-                    label="くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ",
-                )
-            )
         # 夏休みの終わりが近づいたら、終わっていない一回もの宿題も出す
         if (definition.end - day).days <= ONE_SHOT_LEAD_DAYS:
             for item in definition.one_shot_homework:

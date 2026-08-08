@@ -27,8 +27,15 @@ START = date(2026, 7, 18)
 END = date(2026, 8, 31)
 
 HAMIGAKI_ALL = {"hamigaki_asa": "done", "hamigaki_hiru": "done", "hamigaki_yoru": "done"}
-DAILY_ALL = {"ondoku": "done", "nikki": "done"}
-PRACTICE_ALL = {"keisan": "done", "kenban": "done", "drill": "done", "jishu": "done"}
+# しゅくだいは6項目（音読・日記・計算カード・けんばん・ドリル・自主学習）で50点を按分する
+DAILY_ALL = {
+    "ondoku": "done",
+    "nikki": "done",
+    "keisan": "done",
+    "kenban": "done",
+    "drill": "done",
+    "jishu": "done",
+}
 
 
 # ---- edges 窓（はじめ5日間・おわり5日間） ----
@@ -75,10 +82,10 @@ def test_can_skip_未定は残りに数える(definition):
 
 
 def test_score_全部やったら100点_窓外(definition):
-    statuses = {**HAMIGAKI_ALL, **DAILY_ALL, **PRACTICE_ALL}
+    statuses = {**HAMIGAKI_ALL, **DAILY_ALL}
     result = daily_score(statuses, date(2026, 8, 1), definition)
     assert result.score == 100
-    assert [p.points for p in result.parts] == [50, 30, 20]
+    assert [p.points for p in result.parts] == [50, 50]  # せいかつ50＋しゅくだい50
 
 
 def test_score_全部やったら100点_窓内は7習慣(definition):
@@ -89,21 +96,23 @@ def test_score_全部やったら100点_窓内は7習慣(definition):
         "hayane": "done",
         "outmedia": "done",
         **DAILY_ALL,
-        **PRACTICE_ALL,
     }
     result = daily_score(statuses, date(2026, 7, 18), definition)
     assert result.score == 100
     assert result.parts[0].total == 7  # 窓内は はみがき3＋edges4
 
 
-def test_score_反復宿題は割合按分(definition):
-    # 反復4項目のうち やった数に比例（1つで満点にはならない）
+def test_score_宿題は全項目が同じ重みで割合按分(definition):
+    # 6項目のうち やった数に比例。どの項目を落としても同じだけ下がる
+    # （旧「まいにち30点／くりかえし20点」の重み差は廃止した）。
     r1 = daily_score({"keisan": "done"}, date(2026, 8, 1), definition)
-    assert r1.parts[2].points == 5 and r1.parts[2].done == 1 and r1.parts[2].total == 4
-    r2 = daily_score({"keisan": "done", "drill": "done"}, date(2026, 8, 1), definition)
-    assert r2.parts[2].points == 10 and r2.parts[2].done == 2
-    r4 = daily_score(PRACTICE_ALL, date(2026, 8, 1), definition)
-    assert r4.parts[2].points == 20 and r4.parts[2].done == 4
+    assert r1.parts[1].points == 8 and r1.parts[1].done == 1 and r1.parts[1].total == 6  # 50/6=8.33
+    r_ondoku = daily_score({"ondoku": "done"}, date(2026, 8, 1), definition)
+    assert r_ondoku.parts[1].points == r1.parts[1].points  # 項目によって重みが変わらない
+    r3 = daily_score({"keisan": "done", "drill": "done", "nikki": "done"}, date(2026, 8, 1), definition)
+    assert r3.parts[1].points == 25 and r3.parts[1].done == 3
+    r6 = daily_score(DAILY_ALL, date(2026, 8, 1), definition)
+    assert r6.parts[1].points == 50 and r6.parts[1].done == 6
 
 
 def test_score_何もしなければ0点(definition):
@@ -122,9 +131,8 @@ def test_score_部分点は四捨五入(definition):
     statuses = {"hamigaki_asa": "done", "ondoku": "done"}
     result = daily_score(statuses, date(2026, 8, 1), definition)
     assert result.parts[0].points == 17
-    assert result.parts[1].points == 15  # 30*1/2
-    assert result.parts[2].points == 0
-    assert result.score == 32
+    assert result.parts[1].points == 8  # 50*1/6 = 8.33 → 8
+    assert result.score == 25
 
 
 # ---- ラジオ体操（range 窓・cancelable） ----
@@ -152,7 +160,7 @@ def test_score_ラジオ体操中止は満点扱いで加点(definition):
 
 # ---- スペシャルチャレンジ（base==100 で解放される +25点ボーナス・最大200点） ----
 
-FULL_100 = {**HAMIGAKI_ALL, **DAILY_ALL, **PRACTICE_ALL}  # 窓外(8/1)で base=100
+FULL_100 = {**HAMIGAKI_ALL, **DAILY_ALL}  # 窓外(8/1)で base=100
 
 
 def test_challenge_base100未満は加点されない(definition):
@@ -204,7 +212,8 @@ def test_remaining_未記入だけが残る(definition):
     assert "hamigaki_yoru" in keys  # 未記入 → 残り
     assert "hamigaki_hiru" not in keys  # やらなかった＝記録済み → 残りに出さない
     assert "nikki" in keys and "ondoku" not in keys
-    assert "practice_any" in keys  # 反復未実施
+    assert "keisan" in keys  # 旧くりかえし宿題も1項目ずつ残りに出る（集約行はもう無い）
+    assert "practice_any" not in keys
 
 
 def test_remaining_新学期じゅんびはdue3日前から(definition):

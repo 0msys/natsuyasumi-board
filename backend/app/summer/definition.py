@@ -61,6 +61,42 @@ class SummerDefinitionError(Exception):
     """定義が見つからない・壊れているときに送出（ルーターで 503 に変換）."""
 
 
+def migrate_doc(doc: dict) -> dict:
+    """旧形式（practice_homework＝くりかえしの宿題）を daily_homework へ畳む（doc を書き換えて返す）.
+
+    宿題の区分は「まいにち30点／くりかえし20点」の2本立てだったが、設定する側から見て
+    どちらに置くべきか判別できず、実質の差は1項目あたりの重みだけだった。せいかつ50点＋
+    しゅくだい50点の2区分へ統合した（judge.DAILY_MAX）。
+
+    item の key は変えずに移すので、summer_daily_checks の記録は切れない（過去日の
+    チェックはそのまま残る）。ただし採点は毎回計算し直すため、過去日の点数は新しい
+    重みで再計算される。
+
+    読み取り経路（parse_definition）と書き込み経路（admin.definition_store.assign_keys /
+    get_document）の両方から呼ぶ＝DB を触らなくても古い定義とエクスポート JSON が
+    そのまま読める。次に管理画面から保存した時点で practice_homework は消える。
+
+    畳めない形（どちらかが配列でない）を黙って捨てないこと。捨てると、手書き JSON の
+    書き損じが「宿題がまるごと消えた定義」として保存できてしまう（前は
+    「項目の配列で書いてください」で弾かれていた）。壊れている値のほうを
+    daily_homework に残し、いつもの検証にエラーを出させる。
+    """
+    if not isinstance(doc, dict) or "practice_homework" not in doc:
+        return doc
+    legacy = doc.pop("practice_homework")
+    daily = doc.get("daily_homework")
+    if legacy is None:
+        return doc  # null は「キーが無い」と同じ（_as_entries と揃える）
+    if not isinstance(legacy, list):
+        doc["daily_homework"] = legacy  # 壊れているのは legacy 側
+    elif isinstance(daily, list):
+        doc["daily_homework"] = daily + legacy
+    elif daily is None:
+        doc["daily_homework"] = legacy
+    # else: daily 側が壊れている＝そのまま残して検証に弾かせる
+    return doc
+
+
 @dataclass(frozen=True)
 class MetaOption:
     """choice 型メモの選択肢1つ（key は保存値・label は表示名）."""
@@ -82,7 +118,7 @@ class MetaField:
 
 @dataclass(frozen=True)
 class DailyItem:
-    """日次3値記録の項目（habits / daily_homework / practice_homework）."""
+    """日次3値記録の項目（habits / daily_homework）."""
 
     key: str
     label: str
@@ -90,7 +126,7 @@ class DailyItem:
     window_start: date | None = None  # window='range' のとき記録欄を出す開始日
     window_end: date | None = None  # window='range' のとき記録欄を出す終了日
     cancelable: bool = False  # 中止（雨天等）を記録でき、中止日は満点扱い
-    meta: tuple[MetaField, ...] = ()  # daily/practice のみ: 「やった」日に開く追加メモ
+    meta: tuple[MetaField, ...] = ()  # daily_homework のみ: 「やった」日に開く追加メモ
 
     def meta_field(self, key: str) -> MetaField | None:
         return next((f for f in self.meta if f.key == key), None)
@@ -210,7 +246,6 @@ class SummerDefinition:
     card_rules: CardRules
     habits: tuple[DailyItem, ...]
     daily_homework: tuple[DailyItem, ...]
-    practice_homework: tuple[DailyItem, ...]
     one_shot_homework: tuple[OneShotItem, ...]
     choice_homework: tuple[ChoiceGroup, ...]
     school_start_items: tuple[SchoolStartItem, ...]
@@ -229,9 +264,9 @@ class SummerDefinition:
 
         スペシャルチャレンジも summer_daily_checks に done 記録されるため含める
         （＝check/set の検証・キー一意検査の対象）。ただし base 採点は
-        judge.daily_score が habits/daily/practice を明示参照するので混ざらない。
+        judge.daily_score が habits/daily を明示参照するので混ざらない。
         """
-        return self.habits + self.daily_homework + self.practice_homework + self.special_challenges
+        return self.habits + self.daily_homework + self.special_challenges
 
     def daily_item_keys(self) -> set[str]:
         return {i.key for i in self.daily_items()}
@@ -514,6 +549,7 @@ def parse_definition(doc: dict, source: str = "定義") -> SummerDefinition:
     """
     if not isinstance(doc, dict):
         raise SummerDefinitionError(f"{source}: トップレベルがマップではありません")
+    migrate_doc(doc)  # 旧形式の practice_homework を daily_homework へ畳む
 
     period = _require(doc, "period", source)
     if not isinstance(period, dict):
@@ -557,7 +593,6 @@ def parse_definition(doc: dict, source: str = "定義") -> SummerDefinition:
 
     habits = _parse_daily_items(doc.get("habits"), "habits", source)
     daily_homework = _parse_daily_items(doc.get("daily_homework"), "daily_homework", source)
-    practice_homework = _parse_daily_items(doc.get("practice_homework"), "practice_homework", source)
     special_challenges = _parse_daily_items(doc.get("special_challenges"), "special_challenges", source)
     rewards = _parse_rewards(doc.get("rewards"), source)
 
@@ -638,7 +673,6 @@ def parse_definition(doc: dict, source: str = "定義") -> SummerDefinition:
         card_rules=card_rules,
         habits=habits,
         daily_homework=daily_homework,
-        practice_homework=practice_homework,
         one_shot_homework=tuple(one_shot),
         choice_homework=tuple(choice_groups),
         school_start_items=school_start,
@@ -651,7 +685,7 @@ def parse_definition(doc: dict, source: str = "定義") -> SummerDefinition:
     # key の一意性（DB 記録キーの衝突防止）。日次系と flags 系はテーブルが別なので別空間で検査
     daily_keys = [i.key for i in definition.daily_items()]
     if len(daily_keys) != len(set(daily_keys)):
-        raise SummerDefinitionError(f"{source}: habits/daily/practice/challenges の key が重複しています")
+        raise SummerDefinitionError(f"{source}: habits/daily/challenges の key が重複しています")
     flag_keys = [i.key for i in definition.one_shot_homework] + [i.key for i in definition.school_start_items]
     for group in definition.choice_homework:
         flag_keys.extend(o.key for o in group.options)

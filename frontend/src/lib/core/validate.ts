@@ -14,7 +14,8 @@ import {
 	MEDIA_LIMIT_MINUTES_DEFAULT,
 	MEDIA_LIMIT_MINUTES_MAX,
 	intLike,
-	isText
+	isText,
+	migrateDoc
 } from './definition';
 import { gradeOf, nameExceptionsFor, nonconformingKanji } from './kanji';
 
@@ -59,6 +60,9 @@ export function validateDocument(
 			warnings: []
 		};
 	}
+	// 旧形式（practice_homework）の取り込み JSON を新形式で検査する（parseDefinition と同じ畳み方）
+	migrateDoc(doc);
+	if (opts.prevDoc) migrateDoc(opts.prevDoc);
 
 	/** 区画を「項目の配列」として取り出す。配列でなければ errors に積んで空を返す。
 	 *  ここで弾かないと下のループが素の例外で落ちる＝「常に結果を返す」はずの検証が壊れる。 */
@@ -199,7 +203,7 @@ export function validateDocument(
 		}
 	}
 
-	// ---- 日次セクション（habits / daily / practice / challenges） ----
+	// ---- 日次セクション（habits / daily / challenges） ----
 	const checkDailyItems = (section: string) => {
 		entries(doc[section], `/${section}`).forEach((item, i) => {
 			const path = `/${section}/${i}`;
@@ -256,8 +260,25 @@ export function validateDocument(
 			}
 		});
 	};
-	for (const section of ['habits', 'daily_homework', 'practice_homework', 'special_challenges']) {
+	for (const section of ['habits', 'daily_homework', 'special_challenges']) {
 		checkDailyItems(section);
+	}
+
+	// ---- 採点区分が空（judge.dailyScore の配点50+50が片肺になる） ----
+	// 空の区分は0点固定なので、片方だけ空にすると満点が50点になり、満点スタンプも
+	// れんぞく満点もスペシャルチャレンジの加点も永久に出ない。気づけないので警告する。
+	for (const [section, other, label] of [
+		['habits', 'daily_homework', 'せいかつ'],
+		['daily_homework', 'habits', 'しゅくだい']
+	]) {
+		if (asList(doc[section]).length === 0 && asList(doc[other]).length > 0) {
+			warn(
+				`/${section}`,
+				'empty_score_section',
+				`「${label}」の項目が1つもないと、どんなにがんばっても100点になりません` +
+					'（満点のスタンプ・れんぞく満点・スペシャルチャレンジが出なくなります）'
+			);
+		}
 	}
 
 	// ---- 一回もの ----
@@ -349,7 +370,7 @@ export function validateDocument(
 	}
 
 	// ---- キー一意性（日次系と flags 系は別空間） ----
-	const DAILY_SECTIONS = ['habits', 'daily_homework', 'practice_homework', 'special_challenges'];
+	const DAILY_SECTIONS = ['habits', 'daily_homework', 'special_challenges'];
 	const dailyKeys: string[] = [];
 	for (const section of DAILY_SECTIONS) {
 		for (const item of asList(doc[section])) {
@@ -379,9 +400,9 @@ export function validateDocument(
 	// ---- 影響警告（過去の点数の見え方が変わる操作） ----
 	const { prevDoc, usage, recordDays, today } = opts;
 	if (prevDoc && today && start && end && start <= today && today <= end) {
-		// 期間中の分母追加（daily/practice は全過去日、habits は窓次第だがまとめて警告）
-		const prevKeys = sectionKeys(prevDoc, ['habits', 'daily_homework', 'practice_homework']);
-		for (const section of ['habits', 'daily_homework', 'practice_homework']) {
+		// 期間中の分母追加（daily は全過去日、habits は窓次第だがまとめて警告）
+		const prevKeys = sectionKeys(prevDoc, ['habits', 'daily_homework']);
+		for (const section of ['habits', 'daily_homework']) {
 			asList(doc[section]).forEach((item, i) => {
 				// key が空＝採番前の新規項目も「期間中の追加」なので警告する
 				if (isMap(item) && (!item.key || !prevKeys.has(String(item.key)))) {

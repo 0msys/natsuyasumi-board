@@ -70,12 +70,12 @@ def _mutate_range開始欠落(doc):
 
 
 def _mutate_meta_choice_options欠落(doc):
-    keisan = next(i for i in doc["practice_homework"] if i["key"] == "keisan")
+    keisan = next(i for i in doc["daily_homework"] if i["key"] == "keisan")
     keisan["meta"][0]["options"] = []
 
 
 def _mutate_meta_type不正(doc):
-    keisan = next(i for i in doc["practice_homework"] if i["key"] == "keisan")
+    keisan = next(i for i in doc["daily_homework"] if i["key"] == "keisan")
     keisan["meta"][0]["type"] = "number"
 
 
@@ -274,7 +274,7 @@ def test_mid_period_add_warning(sample_doc):
     # 期間中（8/1）→ 警告
     result = validate_document(sample_doc, prev_doc=prev, today=date(2026, 8, 1))
     warns = [w for w in result["warnings"] if w["code"] == "mid_period_add"]
-    assert len(warns) == 1 and warns[0]["path"] == "/daily_homework/2"
+    assert len(warns) == 1 and warns[0]["path"] == "/daily_homework/6"
     # 期間外（9/15）→ 警告なし
     result2 = validate_document(sample_doc, prev_doc=prev, today=date(2026, 9, 15))
     assert [w for w in result2["warnings"] if w["code"] == "mid_period_add"] == []
@@ -287,7 +287,24 @@ def test_mid_period_add_warning_採番前の新規項目でも発火する(sampl
     sample_doc["daily_homework"].append({"key": None, "label": "あたらしいしゅくだい"})
     result = validate_document(sample_doc, prev_doc=prev, today=date(2026, 8, 1))
     warns = [w for w in result["warnings"] if w["code"] == "mid_period_add"]
-    assert len(warns) == 1 and warns[0]["path"] == "/daily_homework/2"
+    assert len(warns) == 1 and warns[0]["path"] == "/daily_homework/6"
+
+
+def test_empty_score_section_warning(sample_doc):
+    # 採点区分（せいかつ50／しゅくだい50）を片方だけ空にすると、その区分は0点固定になり
+    # 満点が50点になる＝満点スタンプもストリークもチャレンジも永久に出ない。
+    # エラーにはしない（作りかけを保存できなくなる）が、気づけないので必ず警告する。
+    sample_doc["daily_homework"] = []
+    result = validate_document(sample_doc)
+    warns = [w for w in result["warnings"] if w["code"] == "empty_score_section"]
+    assert result["ok"] is True  # 保存はできる
+    assert len(warns) == 1 and warns[0]["path"] == "/daily_homework"
+
+    # 両方空（＝まだ何も入れていない作りかけ）は当たり前なので鳴らさない
+    sample_doc["habits"] = []
+    assert [
+        w for w in validate_document(sample_doc)["warnings"] if w["code"] == "empty_score_section"
+    ] == []
 
 
 def test_delete_with_records_warning(sample_doc):

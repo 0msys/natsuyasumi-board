@@ -64,7 +64,6 @@ function mountFor(child: string, daily: SummerDailyHomework[], ttsAvailable = fa
 			child,
 			habits: [],
 			daily,
-			practice: [],
 			ttsAvailable,
 			onSet: () => {},
 			onSetMeta: () => {},

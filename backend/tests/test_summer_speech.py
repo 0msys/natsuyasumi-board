@@ -22,6 +22,9 @@ ALL_DONE_MIDSUMMER = {
     "ondoku": "done",
     "nikki": "done",
     "keisan": "done",
+    "kenban": "done",
+    "drill": "done",
+    "jishu": "done",
 }
 
 
@@ -64,12 +67,16 @@ def test_終盤は一回もの宿題を促す(definition):
     assert "なつやすみのおわりがちかい" in ruby_reading(text)
 
 
-def test_反復宿題だけ残ると促し文(definition):
+def test_旧くりかえし宿題も項目名で促される(definition):
+    # 「くりかえしのしゅくだいをどれかひとつ」の集約行は廃止した。宿題はどの項目も
+    # まいにちと同じく名前で読み上げる（採点の重みが同じなので案内も揃える）。
     day = date(2026, 8, 1)
     statuses = {k: "done" for k in ALL_DONE_MIDSUMMER if k != "keisan"}
     items = remaining_today(day, statuses, {}, {}, definition)
     text = todo_speech_text(day, items, definition)
-    assert "くりかえしのしゅくだいも、どれかひとつやろうね。" in ruby_reading(text)
+    reading = ruby_reading(text)
+    assert "けいさんカードのれんしゅう" in reading
+    assert "どれかひとつ" not in reading
 
 
 # ---- 定型文そのものの lint と、学年別の開きが本当に効いているか ----

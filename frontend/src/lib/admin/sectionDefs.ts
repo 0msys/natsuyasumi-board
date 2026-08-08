@@ -4,7 +4,6 @@ export type SectionId =
 	| 'basic'
 	| 'habits'
 	| 'daily'
-	| 'practice'
 	| 'challenges'
 	| 'rewards'
 	| 'oneshot'
@@ -15,8 +14,7 @@ export type SectionId =
 export const SECTIONS: { id: SectionId; label: string }[] = [
 	{ id: 'basic', label: 'きほん' },
 	{ id: 'habits', label: 'せいかつ' },
-	{ id: 'daily', label: 'まいにち' },
-	{ id: 'practice', label: 'くりかえし' },
+	{ id: 'daily', label: 'しゅくだい' },
 	{ id: 'challenges', label: 'チャレンジ' },
 	{ id: 'rewards', label: 'ごほうび' },
 	{ id: 'oneshot', label: 'いっかいもの' },
@@ -77,8 +75,6 @@ export function sectionForPath(path: string): SectionId | null {
 			return 'habits';
 		case 'daily_homework':
 			return 'daily';
-		case 'practice_homework':
-			return 'practice';
 		case 'special_challenges':
 			return 'challenges';
 		case 'rewards':

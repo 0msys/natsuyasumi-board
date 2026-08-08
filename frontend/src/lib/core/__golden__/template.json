@@ -83,9 +83,7 @@
           {
             "key": "nikki",
             "label": "にっき"
-          }
-        ],
-        "practice_homework": [
+          },
           {
             "key": "keisan",
             "label": "けいさんの れんしゅう"
@@ -213,9 +211,7 @@
           {
             "key": "nikki",
             "label": "日記《にっき》"
-          }
-        ],
-        "practice_homework": [
+          },
           {
             "key": "keisan",
             "label": "計算《けいさん》の れんしゅう"
@@ -343,9 +339,7 @@
           {
             "key": "nikki",
             "label": "日記《にっき》"
-          }
-        ],
-        "practice_homework": [
+          },
           {
             "key": "keisan",
             "label": "計算《けいさん》の 練習《れんしゅう》"
@@ -473,9 +467,7 @@
           {
             "key": "nikki",
             "label": "日記《にっき》"
-          }
-        ],
-        "practice_homework": [
+          },
           {
             "key": "keisan",
             "label": "計算《けいさん》の 練習《れんしゅう》"
@@ -603,9 +595,7 @@
           {
             "key": "nikki",
             "label": "日記《にっき》"
-          }
-        ],
-        "practice_homework": [
+          },
           {
             "key": "keisan",
             "label": "計算《けいさん》の 練習《れんしゅう》"
@@ -733,9 +723,7 @@
           {
             "key": "nikki",
             "label": "日記《にっき》"
-          }
-        ],
-        "practice_homework": [
+          },
           {
             "key": "keisan",
             "label": "計算《けいさん》の 練習《れんしゅう》"
@@ -863,9 +851,7 @@
           {
             "key": "nikki",
             "label": "にっき"
-          }
-        ],
-        "practice_homework": [
+          },
           {
             "key": "keisan",
             "label": "けいさんの れんしゅう"
@@ -945,7 +931,6 @@
         },
         "habits": [],
         "daily_homework": [],
-        "practice_homework": [],
         "special_challenges": [],
         "rewards": [],
         "one_shot_homework": [],
@@ -986,7 +971,6 @@
         },
         "habits": [],
         "daily_homework": [],
-        "practice_homework": [],
         "special_challenges": [],
         "rewards": [],
         "one_shot_homework": [],
@@ -1027,7 +1011,6 @@
         },
         "habits": [],
         "daily_homework": [],
-        "practice_homework": [],
         "special_challenges": [],
         "rewards": [],
         "one_shot_homework": [],
@@ -1068,7 +1051,6 @@
         },
         "habits": [],
         "daily_homework": [],
-        "practice_homework": [],
         "special_challenges": [],
         "rewards": [],
         "one_shot_homework": [],
@@ -1109,7 +1091,6 @@
         },
         "habits": [],
         "daily_homework": [],
-        "practice_homework": [],
         "special_challenges": [],
         "rewards": [],
         "one_shot_homework": [],
@@ -1150,7 +1131,6 @@
         },
         "habits": [],
         "daily_homework": [],
-        "practice_homework": [],
         "special_challenges": [],
         "rewards": [],
         "one_shot_homework": [],
@@ -1191,7 +1171,6 @@
         },
         "habits": [],
         "daily_homework": [],
-        "practice_homework": [],
         "special_challenges": [],
         "rewards": [],
         "one_shot_homework": [],

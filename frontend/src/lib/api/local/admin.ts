@@ -7,6 +7,7 @@ import {
 	SummerDefinitionError,
 	dailyItemKeys,
 	flagItemKeys,
+	migrateDoc,
 	parseDefinition,
 	parseGrade,
 	type SummerDefinition
@@ -49,7 +50,9 @@ const entryOf = (db: Db, row: DefinitionRow) => ({
 	years: yearsOf(db, row.child),
 	revision: row.revision,
 	updated_at: row.updated_at,
-	doc: clone(row.doc)
+	// 旧形式で保存されたままの doc も、編集画面には新形式（daily_homework 1本）で渡す。
+	// 保存の実体は次の保存まで旧形式のままだが、revision は据え置きなので楽観ロックは壊れない。
+	doc: migrateDoc(clone(row.doc))
 });
 
 /** 定義を検証して受け取る（壊れていれば 422）。 */

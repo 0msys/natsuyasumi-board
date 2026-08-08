@@ -22,7 +22,6 @@
 		history,
 		habits,
 		daily,
-		practice,
 		streaks,
 		scoreMax,
 		onOpenDay
@@ -31,13 +30,12 @@
 		history: SummerHistoryDay[];
 		habits: SummerHabit[];
 		daily: SummerDailyHomework[];
-		practice: SummerDailyHomework[];
 		streaks: SummerStreaks;
 		scoreMax: number; // グラフ y 軸の上限（チャレンジ込み。4項目で200）
 		onOpenDay: (day: SummerHistoryDay, e: MouseEvent) => void;
 	} = $props();
 
-	// 行の並び: はみがき3行 → edges/range 習慣（窓内のみセル）→ 毎日宿題 → 反復宿題
+	// 行の並び: はみがき3行 → edges/range 習慣（窓内のみセル）→ 宿題
 	const rows = $derived([
 		...habits.map((h) => ({
 			key: h.key,
@@ -46,8 +44,7 @@
 			windowStart: h.window_start,
 			windowEnd: h.window_end
 		})),
-		...daily.map((d) => ({ key: d.key, label: d.label, window: null, windowStart: null, windowEnd: null })),
-		...practice.map((p) => ({ key: p.key, label: p.label, window: null, windowStart: null, windowEnd: null }))
+		...daily.map((d) => ({ key: d.key, label: d.label, window: null, windowStart: null, windowEnd: null }))
 	]);
 
 	// その行にその日 記録欄があるか（edges=カード窓・range=期間限定・window なし=毎日）。

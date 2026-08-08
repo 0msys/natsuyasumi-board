@@ -22,7 +22,6 @@
 		day,
 		habits,
 		daily,
-		practice,
 		anchorY = null,
 		onSet,
 		onSetMeta,
@@ -32,7 +31,6 @@
 		day: SummerHistoryDay;
 		habits: SummerHabit[];
 		daily: SummerDailyHomework[];
-		practice: SummerDailyHomework[];
 		anchorY?: number | null;
 		onSet: (day: string, itemKey: string, status: SummerCheckStatus) => void;
 		onSetMeta: (day: string, itemKey: string, fieldKey: string, value: string | number | null) => void;
@@ -62,8 +60,7 @@
 		...habits
 			.filter(habitHasSlot)
 			.map((h) => ({ key: h.key, label: h.label, meta_fields: [], cancelable: h.cancelable })),
-		...daily.map((d) => ({ key: d.key, label: d.label, meta_fields: d.meta_fields, cancelable: false })),
-		...practice.map((p) => ({ key: p.key, label: p.label, meta_fields: p.meta_fields, cancelable: false }))
+		...daily.map((d) => ({ key: d.key, label: d.label, meta_fields: d.meta_fields, cancelable: false }))
 	]);
 
 	function dateLabel(iso: string): string {

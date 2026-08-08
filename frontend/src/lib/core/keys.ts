@@ -4,12 +4,12 @@
 // ＝改名で履歴が切れない）。ラベルからキーを導出しないのは、そうすると「改名したら
 // キーも変えたくなる」誘惑が生まれるため。
 import { shiftYear, type DayString } from './dates';
+import { migrateDoc } from './definition';
 
 /** 区画ごとのキー接頭辞（choice の選択肢はグループとドット連結で保存される）。 */
 export const KEY_PREFIXES = {
 	habits: 'h_',
 	daily_homework: 'dh_',
-	practice_homework: 'ph_',
 	special_challenges: 'sc_',
 	one_shot_homework: 'os_',
 	school_start_items: 'ss_',
@@ -56,7 +56,6 @@ function* walkKeyed(doc: Doc): Generator<Doc> {
 	const sections = [
 		'habits',
 		'daily_homework',
-		'practice_homework',
 		'special_challenges',
 		'one_shot_homework',
 		'school_start_items',
@@ -89,8 +88,12 @@ export function collectKeys(doc: Doc): Set<string> {
 	return keys;
 }
 
-/** key が空（欠落・null・空文字）の項目にキーを振る（doc を書き換えて返す）。 */
+/** key が空（欠落・null・空文字）の項目にキーを振る（doc を書き換えて返す）。
+ *
+ *  採番の前に旧形式（practice_homework）を畳む＝取り込んだ古い JSON も、この先は
+ *  daily_homework 1本として採番・保存される。 */
 export function assignKeys(doc: Doc): Doc {
+	migrateDoc(doc);
 	const used = collectKeys(doc);
 	const fill = (raw: unknown, prefix: string) => {
 		for (const item of items(raw)) {
@@ -100,14 +103,12 @@ export function assignKeys(doc: Doc): Doc {
 
 	fill(doc.habits, KEY_PREFIXES.habits);
 	fill(doc.daily_homework, KEY_PREFIXES.daily_homework);
-	fill(doc.practice_homework, KEY_PREFIXES.practice_homework);
 	fill(doc.special_challenges, KEY_PREFIXES.special_challenges);
 	fill(doc.one_shot_homework, KEY_PREFIXES.one_shot_homework);
 	fill(doc.school_start_items, KEY_PREFIXES.school_start_items);
 	fill(doc.rewards, KEY_PREFIXES.rewards);
-	for (const section of ['daily_homework', 'practice_homework']) {
-		for (const item of items(doc[section])) {
-			if (!isMap(item)) continue;
+	for (const item of items(doc.daily_homework)) {
+		if (isMap(item)) {
 			fill(item.meta, KEY_PREFIXES.meta);
 			// choice 型メモの選択肢キー（保存値になる）も採番対象
 			for (const field of items(item.meta)) {
