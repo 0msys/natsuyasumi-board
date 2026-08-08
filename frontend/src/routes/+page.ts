@@ -5,16 +5,19 @@ import type { PageLoad } from './$types';
 
 // 子ども選択 → state 取得。定義がゼロなら初回ウィザードへ誘導する。
 export const load: PageLoad = async ({ url }) => {
-	let children: ChildInfo[] = [];
+	const requested = url.searchParams.get('child');
+	let children: ChildInfo[];
 	try {
 		children = (await api.summerChildren()).children ?? [];
 	} catch {
-		// 取得できないときはページ側の「よみこめなかった」表示に任せる
+		// 「読めなかった」と「まだ何も無い」は違う。一緒くたに空とみなすと、記録がある人を
+		// 初回ウィザードへ流してしまう——保存が一瞬読めなかっただけかもしれないのに、
+		// 「ようこそ」から始めさせることになる。ページ側の「よみこめなかった」表示に任せる。
+		return { children: [], child: requested ?? '', summer: null };
 	}
 	if (children.length === 0) redirect(307, resolve('/admin/new'));
 
 	const valid = children.filter((c) => c.valid);
-	const requested = url.searchParams.get('child');
 	const chosen = valid.find((c) => c.child === requested) ?? valid[0];
 	if (!chosen) redirect(307, resolve('/admin')); // 定義はあるが全部壊れている → 管理画面で直してもらう
 
