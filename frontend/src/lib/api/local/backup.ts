@@ -24,13 +24,20 @@ export const backupApi = {
 		// ここで待たないのは、断られても親に打つ手が無く、待たせる意味がないため。
 		if (!persistenceAsked) {
 			persistenceAsked = true;
-			void read((db) => db.meta.persisted).then(async (known) => {
-				if (known !== null) return;
-				const granted = await askPersist();
-				await mutate((db) => {
-					db.meta.persisted = granted;
+			void read((db) => db.meta.persisted)
+				.then(async (known) => {
+					if (known !== null) return;
+					const granted = await askPersist();
+					await mutate((db) => {
+						db.meta.persisted = granted;
+					});
+				})
+				.catch(() => {
+					// 保存が読めなかった／書けなかっただけ。次に開いたときに頼み直せるよう戻す。
+					// ここを付けずに転ばせると、誰も掴まない拒否になるうえ、「頼んだ」の印だけが
+					// 立って iOS の7日削除への備えがそのタブでは二度と効かない。
+					persistenceAsked = false;
 				});
-			});
 		}
 		return read((db) => ({
 			supported: true,

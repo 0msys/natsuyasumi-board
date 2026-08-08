@@ -89,7 +89,9 @@
 		errorMsg = null;
 	});
 	$effect(() => {
-		mediaTimerStore.setup(data.child);
+		// 誰の画面かも決まらなかったとき（load が保存を読めなかった）は始めない。
+		// 空の子ども名で5秒ごとに引くと、失敗するだけの問い合わせが延々と並ぶ。
+		if (data.child) mediaTimerStore.setup(data.child);
 	});
 
 	// ランク英字の読み（VOICEVOX 発話用。C→シー 等でアルファベット読みを確定させる）
@@ -290,7 +292,7 @@
 		<h1 class="flex items-center gap-2 text-lg font-bold text-text-base lg:text-2xl">
 			<Sun size={26} class="text-amber-500" />{#if summer}<Ruby
 					text={fmt(summer.ui.header_title, { name: summer.child_kana })}
-				/>{:else}{data.child}のなつやすみ{/if}
+				/>{:else}{data.child ? `${data.child}のなつやすみ` : 'なつやすみ'}{/if}
 		</h1>
 		<div class="flex items-center gap-2 lg:gap-3">
 			{#if data.children.length > 1}
