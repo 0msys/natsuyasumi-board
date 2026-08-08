@@ -1,5 +1,5 @@
 import { api, type AdminSession, type ChildInfo } from '$lib/api';
-import { errorStatus } from '$lib/admin/apiError';
+import { errorStatus } from '$lib/api/apiError';
 import type { PageLoad } from './$types';
 
 // 一覧ページ: セッション状態 → 認証済みなら定義一覧。

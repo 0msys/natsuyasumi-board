@@ -4,7 +4,7 @@
 // 立て、ページ側が「読み直す」ボタンを出す。
 import { api } from '$lib/api';
 import type { AdminDefinitionEntry, AdminDocument, ValidationIssue } from '$lib/api';
-import { errorDetail, errorStatus } from './apiError';
+import { errorDetail, errorStatus } from '$lib/api/apiError';
 import type { DefinitionDoc } from './docTypes';
 
 export class AdminDraft {

@@ -27,7 +27,7 @@ import type {
  *
  *  status を持たせているのは、呼ぶ側が「404 なのか 409 なのか」で分岐するため。
  *  かつては `path → status detail` という文字列を組み立てて呼び出し側が正規表現で
- *  読み戻していた（src/lib/admin/apiError.ts）が、それだと lite 実装まで同じ文字列を
+ *  読み戻していた（src/lib/api/apiError.ts）が、それだと lite 実装まで同じ文字列を
  *  作らされる。status と detail は最初から構造で持つ。 */
 export class ApiError extends Error {
 	readonly status: number;

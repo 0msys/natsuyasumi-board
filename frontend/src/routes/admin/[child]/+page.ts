@@ -1,5 +1,5 @@
 import { api, type AdminDefinitionEntry, type AdminSession } from '$lib/api';
-import { errorStatus } from '$lib/admin/apiError';
+import { errorStatus } from '$lib/api/apiError';
 import type { PageLoad } from './$types';
 
 // 子ども名は列挙できないので、この1ルートだけ静的に書き出せない。

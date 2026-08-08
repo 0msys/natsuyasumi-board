@@ -8,7 +8,7 @@
 	import { page } from '$app/state';
 	import { ArrowLeft, RefreshCw, Save, TriangleAlert } from '@lucide/svelte';
 	import { api } from '$lib/api';
-	import { errorDetail } from '$lib/admin/apiError';
+	import { errorDetail } from '$lib/api/apiError';
 	import { AdminDraft } from '$lib/admin/draft.svelte';
 	import { gradeLevelOf } from '$lib/admin/docTypes';
 	import {

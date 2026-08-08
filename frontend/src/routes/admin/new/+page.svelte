@@ -6,7 +6,7 @@
 	import { resolve } from '$app/paths';
 	import { ArrowLeft, ArrowRight, Check, TriangleAlert } from '@lucide/svelte';
 	import { api } from '$lib/api';
-	import { errorDetail } from '$lib/admin/apiError';
+	import { errorDetail } from '$lib/api/apiError';
 	import { GRADES } from '$lib/admin/docTypes';
 	import PinGate from '$lib/admin/PinGate.svelte';
 	import AdminDisabledNotice from '$lib/admin/AdminDisabledNotice.svelte';
