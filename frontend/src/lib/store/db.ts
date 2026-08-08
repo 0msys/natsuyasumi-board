@@ -294,6 +294,18 @@ export function load(): Promise<Db> {
 	return loading;
 }
 
+export type MutateOptions = {
+	/**
+	 * 記録ではなく、この端末の事情だけを書く（通番を上げない＝催促に数えない）。
+	 *
+	 * 保存の持続を聞いた結果や、ホームの案内を閉じたこと。どれも保存には残すが、
+	 * 「バックアップを取り直す理由」にはならない。内部の書き込みを足すときは、
+	 * それが催促の「そのあと N件」に出てよい変更かどうかをここで決めること。
+	 * 付け忘れても数えすぎるだけで、記録の変更が消えることはない（安全側に転ぶ）。
+	 */
+	local?: boolean;
+};
+
 /**
  * 書き込み。fn の中でドキュメントを書き換えると、通番を上げて保存し、他のタブに知らせる。
  *
@@ -304,7 +316,7 @@ export function load(): Promise<Db> {
  * 手元の写しが古いまま保存すると、別のタブが入れた記録ごと消える。読み直しは
  * IndexedDB から数ミリ秒で、書き込みは人が押したときにしか起きないので、毎回やってよい。
  */
-export function mutate<T>(fn: (db: Db) => T): Promise<T> {
+export function mutate<T>(fn: (db: Db) => T, options: MutateOptions = {}): Promise<T> {
 	// 鍵の中で「読む」からやり直す。鍵を取るまでのあいだに別のタブが書いている
 	// かもしれないので、鍵の外で読んだものを使ってはいけない。
 	return serialize(async () => {
@@ -318,7 +330,10 @@ export function mutate<T>(fn: (db: Db) => T): Promise<T> {
 		// 「この書き込みが終わったときの通番」を知る手段が無くなる。
 		// 実際それでバックアップが自分の書き込みを数えてしまい、書き出した直後に
 		// 「そのあと 1件」と出ていた。
-		db.meta.seq += 1;
+		// 端末の事情だけを書く回は上げない（バックアップの催促に数えないため。model.ts の
+		// meta.seq を参照）。通番を2本に分けるのではなく、この1本を上げるか上げないかで
+		// 決める——分けると、新しいほうを知らない版が書いた記録が催促から消える。
+		if (!options.local) db.meta.seq += 1;
 		try {
 			const result = fn(db);
 			await store.save(db);

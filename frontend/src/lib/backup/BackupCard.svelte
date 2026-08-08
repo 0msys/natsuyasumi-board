@@ -9,6 +9,7 @@
 	import { api, type BackupStatus } from '$lib/api';
 	import { downloadJson } from '$lib/admin/download';
 	import { errorDetail } from '$lib/api/apiError';
+	import { backupLevel, daysSinceBackup } from './level';
 
 	let { onImported }: { onImported?: () => void } = $props();
 
@@ -37,19 +38,10 @@
 		void refresh();
 	});
 
-	const daysSince = $derived(
-		status?.last_backup_at
-			? Math.floor((Date.now() / 1000 - status.last_backup_at) / 86400)
-			: null
-	);
-	// 未バックアップ＝赤、7日超または50件超＝黄、それ以下＝ふつう
-	const level = $derived(
-		!status?.last_backup_at
-			? 'danger'
-			: (daysSince ?? 0) > 7 || status.changes_since_backup > 50
-				? 'warn'
-				: 'ok'
-	);
+	// 日数もしきい値の判定も $lib/backup/level に置いてある（子どもページの歯車バッジと
+	// 同じものを使う。ここに書き写すと、また片方だけずれる）。
+	const daysSince = $derived(status ? daysSinceBackup(status) : null);
+	const level = $derived(status ? backupLevel(status) : 'ok');
 
 	async function exportAll() {
 		busy = true;

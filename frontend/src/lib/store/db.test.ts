@@ -475,6 +475,63 @@ describe('タブをまたぐ書き込みの直列化', () => {
 	});
 });
 
+describe('記録の通番（バックアップの催促の物差し）', () => {
+	it('端末の事情だけを書く回は上げない', async () => {
+		setPersistence(memoryPersistence());
+		const before = await read((db) => db.meta.seq);
+
+		// 保存の持続を聞いた結果と、ホームの案内を閉じたこと。どちらも記録は変えていない。
+		await mutate(
+			(db) => {
+				db.meta.persisted = null;
+			},
+			{ local: true }
+		);
+		await mutate(
+			(db) => {
+				db.meta.home_hint_dismissed = true;
+			},
+			{ local: true }
+		);
+
+		expect(await read((db) => db.meta.seq), '記録が変わっていないのに2件と数える').toBe(before);
+		expect(await read((db) => db.meta.home_hint_dismissed), '通番と一緒に中身まで捨てた').toBe(
+			true
+		);
+	});
+
+	it('記録の書き込みでは上げる', async () => {
+		setPersistence(memoryPersistence());
+		const before = await read((db) => db.meta.seq);
+		await mutate((db) => {
+			db.flags['A'] = { value: 1, decision: null, updated_at: 0 };
+		});
+		expect(await read((db) => db.meta.seq)).toBe(before + 1);
+	});
+
+	// 通番を上げない書き込みでも、他のタブの写しは捨てさせる必要がある
+	// （そちらが古い中身を書き戻すと、いま書いた1件が消える）。
+	it('上げない書き込みでも、他のタブへの知らせは飛ばす', async () => {
+		setPersistence(memoryPersistence());
+		const posted: unknown[] = [];
+		const original = BroadcastChannel.prototype.postMessage;
+		BroadcastChannel.prototype.postMessage = function (msg: unknown) {
+			posted.push(msg);
+		};
+		try {
+			await mutate(
+				(db) => {
+					db.meta.persisted = true;
+				},
+				{ local: true }
+			);
+		} finally {
+			BroadcastChannel.prototype.postMessage = original;
+		}
+		expect(posted, '他のタブが古い写しを持ったままになる').toHaveLength(1);
+	});
+});
+
 describe('まるごと復元', () => {
 	/** 読み書きに時間がかかる保存。
 	 *

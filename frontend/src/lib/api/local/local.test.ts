@@ -5,10 +5,10 @@
 // ここは実装そのものを見たいので、相対パスで直接読む。
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { addDays } from '$lib/core/dates';
-import { todayJst } from '$lib/core/clock';
+import { nowEpochSec, todayJst } from '$lib/core/clock';
 import { setPersistence, read } from '$lib/store/db';
-import { memoryPersistence } from '$lib/store/persist';
-import { checkKey, flagKey } from '$lib/store/model';
+import { memoryPersistence, type Persistence } from '$lib/store/persist';
+import { checkKey, flagKey, type Db } from '$lib/store/model';
 import { api } from './index';
 import { ApiError } from '../contract';
 
@@ -43,6 +43,24 @@ async function keysOf(child = CHILD) {
 		habits: doc.habits.map((h) => h.key),
 		daily: doc.daily_homework.map((h) => h.key),
 		challenges: doc.special_challenges.map((h) => h.key)
+	};
+}
+
+/** 保存の中身を外から差し替えられる置き場（別の版が書いた保存を作るのに使う）。 */
+function pokeablePersistence(): Persistence & { poke(db: unknown): void } {
+	let current: unknown = null;
+	const copy = (db: unknown) => JSON.parse(JSON.stringify(db));
+	return {
+		load: async () => current,
+		save: async (db) => {
+			current = copy(db);
+		},
+		clear: async () => {
+			current = null;
+		},
+		poke: (db) => {
+			current = copy(db);
+		}
 	};
 }
 
@@ -460,6 +478,76 @@ describe('バックアップの催促', () => {
 		const k = await keysOf();
 		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
 		expect((await api.backupStatus()).changes_since_backup).toBe(1);
+	});
+
+	// 記録以外の書き込みまで数えると、何もしていないのに件数だけ積み上がって
+	// 「バックアップをおすすめします」に昇格する＝催促が当てにならなくなる。
+	it('端末の事情を書いただけでは数が増えない', async () => {
+		await wizard();
+		await api.backupExportAll();
+		await api.backupDismissHomeHint();
+		expect(
+			(await api.backupStatus()).changes_since_backup,
+			'案内を閉じただけで「そのあと1件」と出る'
+		).toBe(0);
+
+		// 記録のほうは、そのあとも数えられていること（数え落としに倒れていない）
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		expect((await api.backupStatus()).changes_since_backup).toBe(1);
+	});
+
+	// 数えかたは「seq の増分」ひとつきり、というのを固定する。
+	//
+	// 記録の変更ぶんを別の欄に数え上げる作りにすると、その欄を知らない版
+	// （Service Worker のキャッシュに残った古いタブ、配信の切り戻し）が書いた分が
+	// まるごと催促から消える。逆に内部の書き込みを別の欄に数えて引く作りにすると、
+	// 古い版が書き出したときに基準の片方だけが更新されて、そのあとの変更を過少に数える。
+	// どちらの版が書いても物差しが1本なら、そのどちらも起きない。
+	it('通番を上げるだけの版が書いた分も、そのまま数える', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+		await api.backupExportAll();
+
+		// 古い版のタブが31回書いた状況
+		const stale = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
+		stale.meta.seq += 31;
+		store.poke(stale);
+		setPersistence(store); // 手元の写しを捨てて、保存から読み直させる
+
+		expect(
+			(await api.backupStatus()).changes_since_backup,
+			'古い版が書いた分が催促から消えている'
+		).toBe(31);
+	});
+
+	it('古い版が書き出したあとの変更も、取りこぼさず数える', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+		await api.backupExportAll();
+		// 書き出したあとで、この端末の事情を書く（ホームの案内を閉じた。通番は上がらない）
+		await api.backupDismissHomeHint();
+
+		// 古い版のタブが書き出した状況。あちらは last_backup_at と last_backup_seq を
+		// 今の通番に置き直すだけで、こちらが足した仕掛けのことは知らない。
+		const exported = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
+		exported.meta.last_backup_at = nowEpochSec();
+		exported.meta.last_backup_seq = exported.meta.seq;
+		store.poke(exported);
+		setPersistence(store);
+		expect((await api.backupStatus()).changes_since_backup, '書き出した直後なのに増えている').toBe(
+			0
+		);
+
+		// そのあとの記録は1件目から数えられること（基準がずれていると先頭が飲み込まれる）
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		expect(
+			(await api.backupStatus()).changes_since_backup,
+			'古い版の書き出しのあと、変更が過少に数えられている'
+		).toBe(1);
 	});
 });
 
