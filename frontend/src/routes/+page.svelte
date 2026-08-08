@@ -362,7 +362,6 @@
 						child={shownChild}
 						habits={summer.habits}
 						daily={summer.daily_homework}
-						practice={summer.practice_homework}
 						{ttsAvailable}
 						onSet={(key, status) => setCheck(summer!.today, key, status)}
 						onSetMeta={(key, field, value) => setMeta(summer!.today, key, field, value)}
@@ -401,7 +400,6 @@
 					ui={summer.ui}
 					oneShot={summer.one_shot}
 					choiceGroups={summer.choice_groups}
-					practice={summer.practice_homework}
 					daily={summer.daily_homework}
 					progress={summer.progress}
 					onToggleFlag={toggleFlag}
@@ -423,7 +421,6 @@
 				history={summer.history}
 				habits={summer.habits}
 				daily={summer.daily_homework}
-				practice={summer.practice_homework}
 				streaks={summer.streaks}
 				scoreMax={summer.score_max}
 				onOpenDay={openDay}
@@ -449,7 +446,6 @@
 				day={editDay}
 				habits={summer.habits}
 				daily={summer.daily_homework}
-				practice={summer.practice_homework}
 				{anchorY}
 				onSet={setCheck}
 				onSetMeta={setMeta}

@@ -19,10 +19,12 @@ import {
 	type SummerDefinition
 } from './definition';
 
-// 採点の配点（合計100）
+// 採点の配点（合計100）。区分を増やすときは合計100を保つこと：
+// 区分の点数は「その区分の項目を全部やった日」にしか満額にならないので、合計が100未満だと
+// どんなに頑張っても base==100 に届かず、満点スタンプ・連続満点ストリーク・スペシャル
+// チャレンジの加点（base==100 が条件）が永久に発生しなくなる。
 export const HABITS_MAX = 50;
-export const DAILY_MAX = 30;
-export const PRACTICE_MAX = 20;
+export const DAILY_MAX = 50;
 
 /** スペシャルチャレンジ1つあたりの加点（base==100 のときだけ有効）。 */
 export const CHALLENGE_POINTS = 25;
@@ -50,7 +52,7 @@ export type ScoreBreakdown = {
 	challenge_max: number;
 };
 export type RemainingItem = {
-	kind: 'habit' | 'daily' | 'practice' | 'one_shot' | 'school_start';
+	kind: 'habit' | 'daily' | 'one_shot' | 'school_start';
 	key: string;
 	label: string;
 	note?: string | null;
@@ -111,10 +113,12 @@ export function canSkip(
 /**
  * その日の100点満点採点（決定的）。
  *
- * せいかつ（当日記録欄がある習慣のみ）50点・まいにちのしゅくだい30点・
- * くりかえしのしゅくだい20点。いずれも「やった数 ÷ 項目数」で按分する
- * （反復宿題も他と同じ割合採点＝1つやれば満点ではない）。
+ * せいかつ（当日記録欄がある習慣のみ）50点・しゅくだい50点。どちらも
+ * 「やった数 ÷ 項目数」で按分する＝宿題は全項目が同じ重み。
  * 未記入と「やらなかった」はどちらも加点なし（区別は表示・音声側で行う）。
+ *
+ * 区分が空（項目0件）だとその区分は0点＝その子は base==100 に届かなくなる。
+ * 片方だけ空の定義を作らせないのは validate の責任。
  */
 export function dailyScore(
 	statuses: Readonly<Record<string, string>>,
@@ -131,12 +135,6 @@ export function dailyScore(
 		? roundHalfUp((DAILY_MAX * dailyDone) / dailyItemsList.length)
 		: 0;
 
-	const practiceItems = definition.practice_homework;
-	const practiceDone = practiceItems.filter((i) => statuses[i.key] === STATUS_DONE).length;
-	const practicePoints = practiceItems.length
-		? roundHalfUp((PRACTICE_MAX * practiceDone) / practiceItems.length)
-		: 0;
-
 	const parts: ScorePart[] = [
 		{
 			name: 'habits',
@@ -148,19 +146,11 @@ export function dailyScore(
 		},
 		{
 			name: 'daily',
-			label: 'まいにちのしゅくだい',
+			label: 'しゅくだい',
 			points: dailyPoints,
 			max_points: DAILY_MAX,
 			done: dailyDone,
 			total: dailyItemsList.length
-		},
-		{
-			name: 'practice',
-			label: 'くりかえしのしゅくだい',
-			points: practicePoints,
-			max_points: PRACTICE_MAX,
-			done: practiceDone,
-			total: practiceItems.length
 		}
 	];
 	const base = parts.reduce((sum, p) => sum + p.points, 0);
@@ -322,16 +312,6 @@ export function remainingToday(
 		}
 		for (const hw of definition.daily_homework) {
 			if (!(hw.key in statuses)) items.push({ kind: 'daily', key: hw.key, label: hw.label });
-		}
-		if (
-			definition.practice_homework.length &&
-			!definition.practice_homework.some((p) => statuses[p.key] === STATUS_DONE)
-		) {
-			items.push({
-				kind: 'practice',
-				key: 'practice_any',
-				label: 'くりかえしのしゅくだい（けいさんカードやドリルなど）をどれかひとつ'
-			});
 		}
 		// 夏休みの終わりが近づいたら、終わっていない一回もの宿題も出す
 		if (diffDays(day, definition.end) <= ONE_SHOT_LEAD_DAYS) {

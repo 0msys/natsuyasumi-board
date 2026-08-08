@@ -1,5 +1,5 @@
 <script lang="ts">
-	// まいにち（daily_homework）／くりかえし（practice_homework）共用のリスト編集。
+	// しゅくだい（daily_homework）のリスト編集。
 	// 各項目はラベル＋メモ欄定義（折りたたみ）: 「やった」の日に書きそえる入力欄の設計。
 	// メモ欄 choice の選択肢 key はサーバ採番の対象外なのでクライアントで newKey('mo_') を振る。
 	import { Plus, Trash2, X } from '@lucide/svelte';
@@ -10,29 +10,18 @@
 
 	let {
 		draft,
-		sectionKey,
 		gradeLevel,
 		nameExceptions,
 		usage
 	}: {
 		draft: AdminDraft;
-		sectionKey: 'daily_homework' | 'practice_homework';
 		gradeLevel: number;
 		nameExceptions: string;
 		usage: Record<string, number>;
 	} = $props();
 
 	const doc = $derived(draft.doc!);
-	const items = $derived(doc[sectionKey] ?? []);
-
-	const TITLES = {
-		daily_homework: 'まいにちのしゅくだい',
-		practice_homework: 'くりかえしのしゅくだい'
-	} as const;
-	const DESCRIPTIONS = {
-		daily_homework: '毎日やる宿題です（1日1回のチェック欄に出ます）。',
-		practice_homework: '毎日でなくてもよい、くりかえし系の宿題です（やった日にチェック）。'
-	} as const;
+	const items = $derived(doc.daily_homework ?? []);
 
 	const META_TYPES: { value: 'text' | 'choice' | 'duration'; label: string }[] = [
 		{ value: 'text', label: 'じゆうに書く' },
@@ -48,7 +37,7 @@
 	}
 
 	function add() {
-		(doc[sectionKey] ??= []).push({ key: null, label: '', meta: [] });
+		(doc.daily_homework ??= []).push({ key: null, label: '', meta: [] });
 		draft.markDirty();
 	}
 	function removeAt(i: number) {
@@ -64,8 +53,11 @@
 </script>
 
 <section class="flex flex-col gap-3 rounded-lg bg-surface p-4 lg:p-5">
-	<h2 class="text-base font-bold text-text-base">{TITLES[sectionKey]}</h2>
-	<p class="text-xs text-text-dim">{DESCRIPTIONS[sectionKey]}</p>
+	<h2 class="text-base font-bold text-text-base">しゅくだい</h2>
+	<p class="text-xs text-text-dim">
+		毎日やる宿題です（1日1回のチェック欄に出ます）。ここに入れた項目は、どれも同じ重みで
+		採点されます（せいかつ50点＋しゅくだい50点）。
+	</p>
 
 	{#each items as item, i}
 		<div class="flex flex-col gap-2 rounded-lg bg-surface2/60 p-3">

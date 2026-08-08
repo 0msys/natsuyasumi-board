@@ -29,7 +29,6 @@ const doc = () => ({
 	away: [],
 	habits: [],
 	daily_homework: [],
-	practice_homework: [],
 	special_challenges: [],
 	rewards: [],
 	one_shot_homework: [],
@@ -63,7 +62,7 @@ beforeEach(() => {
 describe('編集画面の年', () => {
 	it('タブのリンクが編集中の年を連れて行く', () => {
 		render(Page, { props: { data: data() } });
-		expect(href('まいにち')).toBe('?section=daily&year=2027');
+		expect(href('しゅくだい')).toBe('?section=daily&year=2027');
 		expect(href('ごほうび')).toBe('?section=rewards&year=2027');
 	});
 

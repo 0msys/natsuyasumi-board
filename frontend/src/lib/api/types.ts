@@ -145,7 +145,6 @@ export type SummerUiKey =
 	| 'todo_speech_busy'
 	| 'section_habits'
 	| 'section_daily'
-	| 'section_practice'
 	| 'check_done'
 	| 'check_not_done'
 	| 'check_cancelled'
@@ -231,7 +230,6 @@ export type SummerState = {
 	away: { start: string; end: string; label: string }[];
 	habits: SummerHabit[];
 	daily_homework: SummerDailyHomework[];
-	practice_homework: SummerDailyHomework[];
 	special_challenges: SummerSpecialChallenge[];
 	rewards: SummerRewards | null; // 定義に rewards が無ければ null＝カード非表示
 	score_max: number; // 満点の上限（チャレンジ込み）

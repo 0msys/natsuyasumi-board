@@ -25,7 +25,6 @@ _LINES: dict[str, str] = {
     "away": "今日《きょう》はお出《で》かけの日《ひ》だね。楽《たの》しんでね。",
     "all_done": "今日《きょう》の記録《きろく》と宿題《しゅくだい》は、全部《ぜんぶ》できているよ。すごいね。",
     "habit_daily": "今日《きょう》はまだ、{labels}の 記録《きろく》がないよ。わすれずにやろうね。",
-    "practice": "くり返《かえ》しの宿題《しゅくだい》も、どれかひとつやろうね。",
     "one_shot": "夏休《なつやす》みのおわりが近《ちか》いから、{labels}も 進《すす》めようね。",
     "prep": "新学期《しんがっき》のじゅんび、{label}{note}も わすれずにね。",
     "more": "、そのほかも少《すこ》し",
@@ -54,7 +53,6 @@ def todo_speech_text(
     sentences: list[str] = [f"{kana}さん。"]
 
     habit_daily = [i for i in items if i.kind in ("habit", "daily")]
-    practice = [i for i in items if i.kind == "practice"]
     one_shot = [i for i in items if i.kind == "one_shot"]
     prep = [i for i in items if i.kind == "school_start"]
 
@@ -62,14 +60,12 @@ def todo_speech_text(
     if away and definition.in_period(day):
         sentences.append(line("away"))
 
-    if not habit_daily and not practice and not one_shot:
+    if not habit_daily and not one_shot:
         if definition.in_period(day):
             sentences.append(line("all_done"))
     else:
         if habit_daily:
             sentences.append(line("habit_daily", labels=_join_labels(habit_daily, grade)))
-        if practice:
-            sentences.append(line("practice"))
         if one_shot:
             sentences.append(line("one_shot", labels=_join_labels(one_shot, grade)))
 

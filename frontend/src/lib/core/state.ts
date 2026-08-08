@@ -102,7 +102,6 @@ export function buildState(args: {
 		meta: todayMeta[i.key] ?? null
 	});
 	const dailyOut = definition.daily_homework.map(withMeta);
-	const practiceOut = definition.practice_homework.map(withMeta);
 
 	// スペシャルチャレンジ（宿題で100点をとると解放されるごほうび枠）。done のみの単純トグル。
 	const challengesOut = definition.special_challenges.map((c) => ({
@@ -224,7 +223,6 @@ export function buildState(args: {
 		away: definition.away.map((a) => ({ start: a.start, end: a.end, label: a.label })),
 		habits: habitsOut,
 		daily_homework: dailyOut,
-		practice_homework: practiceOut,
 		special_challenges: challengesOut,
 		score_max: scoreMax,
 		rewards: rewardsOut,

@@ -110,7 +110,6 @@ def _display_strings(defn: SummerDefinition) -> list[tuple[str, str]]:
     for section, items in (
         ("habits", defn.habits),
         ("daily_homework", defn.daily_homework),
-        ("practice_homework", defn.practice_homework),
         ("special_challenges", defn.special_challenges),
     ):
         for item in items:
@@ -169,7 +168,7 @@ def test_学年帯をリテラルで固定():
 def _template_texts(doc: dict) -> list[str]:
     """テンプレートの全表示文字列（ラベル・meta・ごほうび名）を集める."""
     texts: list[str] = []
-    for section in ("habits", "daily_homework", "practice_homework", "special_challenges"):
+    for section in ("habits", "daily_homework", "special_challenges"):
         for item in doc[section]:
             texts.append(item["label"])
             for field in item.get("meta") or []:
@@ -215,7 +214,7 @@ def test_標準テンプレートは学年で漢字の量が変わる():
 def test_標準テンプレートのキーと採点構造は全学年共通():
     """学年で変わるのは表示文字列だけ＝どの学年で作っても採点の挙動は同じ."""
     docs = [standard_template("はな", "はな", g, 2026, PERIOD) for g in ("小1", "小3", "小5")]
-    for section in ("habits", "daily_homework", "practice_homework", "special_challenges", "rewards"):
+    for section in ("habits", "daily_homework", "special_challenges", "rewards"):
         keys = [[item["key"] for item in doc[section]] for doc in docs]
         assert keys[0] == keys[1] == keys[2], f"{section} のキーが学年で変わっている"
     avgs = [[r["avg"] for r in doc["rewards"]] for doc in docs]

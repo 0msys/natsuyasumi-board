@@ -67,7 +67,6 @@ def empty_template(child: str, child_kana: str, grade: str, year: int, period: d
         "media_timer": {"limit_minutes": MEDIA_LIMIT_MINUTES_DEFAULT},
         "habits": [],
         "daily_homework": [],
-        "practice_homework": [],
         "special_challenges": [],
         "rewards": [],
         "one_shot_homework": [],
@@ -98,8 +97,6 @@ def standard_template(child: str, child_kana: str, grade: str, year: int, period
             ],
         },
         {"key": "nikki", "label": t["nikki"]},
-    ]
-    doc["practice_homework"] = [
         {"key": "keisan", "label": t["keisan"]},
         {"key": "drill", "label": t["drill"]},
     ]

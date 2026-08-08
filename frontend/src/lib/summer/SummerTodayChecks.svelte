@@ -4,7 +4,7 @@
 	// 見出し右の「きょうやることをきく」は /api/summer/todo-speech の決定的テキストを
 	// 既存 /api/tts（VOICEVOX）で合成して再生し、同内容を見出し直下にも表示する。
 	import { onDestroy } from 'svelte';
-	import { Sparkles, BookOpenText, Repeat2, Volume2 } from '@lucide/svelte';
+	import { Sparkles, BookOpenText, Volume2 } from '@lucide/svelte';
 	import { api } from '$lib/api';
 	import type { SummerCheckStatus, SummerDailyHomework, SummerHabit, SummerUiText } from '$lib/api';
 	import SummerCheckButtons from './SummerCheckButtons.svelte';
@@ -18,7 +18,6 @@
 		child,
 		habits,
 		daily,
-		practice,
 		ttsAvailable,
 		onSet,
 		onSetMeta,
@@ -29,7 +28,6 @@
 		child: string;
 		habits: SummerHabit[];
 		daily: SummerDailyHomework[];
-		practice: SummerDailyHomework[];
 		ttsAvailable: boolean;
 		onSet: (itemKey: string, status: SummerCheckStatus) => void;
 		onSetMeta: (itemKey: string, fieldKey: string, value: string | number | null) => void;
@@ -154,12 +152,4 @@
 		{/each}
 	</div>
 
-	<div class="mt-4 mb-1 flex items-center gap-1.5 text-xs font-semibold text-text-dim lg:text-sm">
-		<Repeat2 size={14} /><Ruby text={ui.section_practice} />
-	</div>
-	<div class="flex flex-col gap-1.5 lg:gap-2">
-		{#each practice as hw (hw.key)}
-			{@render metaRow(hw)}
-		{/each}
-	</div>
 </section>

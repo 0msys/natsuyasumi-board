@@ -23,7 +23,6 @@ HISTORY_KEEP = 10  # 子ども×年ごとに残す履歴世代数
 KEY_PREFIXES = {
     "habits": "h_",
     "daily_homework": "dh_",
-    "practice_homework": "ph_",
     "special_challenges": "sc_",
     "one_shot_homework": "os_",
     "school_start_items": "ss_",
@@ -72,7 +71,7 @@ def _items(raw: object) -> list:
 def _collect_keys(doc: dict) -> set[str]:
     """ドキュメント内の既存キーを全区画から集める（採番の衝突回避用・空間は分けない）."""
     keys: set[str] = set()
-    for section in ("habits", "daily_homework", "practice_homework", "special_challenges",
+    for section in ("habits", "daily_homework", "special_challenges",
                     "one_shot_homework", "school_start_items", "rewards"):
         for item in _items(doc.get(section)):
             if isinstance(item, dict) and item.get("key"):
@@ -96,7 +95,11 @@ def assign_keys(doc: dict) -> dict:
     """key が空（None/""/欠落）の項目にサーバ採番のキーを振る（doc を書き換えて返す）.
 
     ラベルからキーを導出しない（改名でキーを変えたくなる誘惑を作らない）。
+
+    採番の前に旧形式（practice_homework）を畳む＝取り込んだ古い JSON も、この先は
+    daily_homework 1本として採番・保存される。
     """
+    summer_definition.migrate_doc(doc)
     used = _collect_keys(doc)
 
     def _fill(items: object, prefix: str) -> None:
@@ -106,19 +109,17 @@ def assign_keys(doc: dict) -> dict:
 
     _fill(doc.get("habits"), KEY_PREFIXES["habits"])
     _fill(doc.get("daily_homework"), KEY_PREFIXES["daily_homework"])
-    _fill(doc.get("practice_homework"), KEY_PREFIXES["practice_homework"])
     _fill(doc.get("special_challenges"), KEY_PREFIXES["special_challenges"])
     _fill(doc.get("one_shot_homework"), KEY_PREFIXES["one_shot_homework"])
     _fill(doc.get("school_start_items"), KEY_PREFIXES["school_start_items"])
     _fill(doc.get("rewards"), KEY_PREFIXES["rewards"])
-    for section in ("daily_homework", "practice_homework"):
-        for item in _items(doc.get(section)):
-            if isinstance(item, dict):
-                _fill(item.get("meta"), KEY_PREFIXES["meta"])
-                # choice 型メモの選択肢キー（保存値になる）も採番対象に含める
-                for field in _items(item.get("meta")):
-                    if isinstance(field, dict):
-                        _fill(field.get("options"), KEY_PREFIXES["meta_option"])
+    for item in _items(doc.get("daily_homework")):
+        if isinstance(item, dict):
+            _fill(item.get("meta"), KEY_PREFIXES["meta"])
+            # choice 型メモの選択肢キー（保存値になる）も採番対象に含める
+            for field in _items(item.get("meta")):
+                if isinstance(field, dict):
+                    _fill(field.get("options"), KEY_PREFIXES["meta_option"])
     for group in _items(doc.get("choice_homework")):
         if isinstance(group, dict) and not group.get("key"):
             group["key"] = _fresh_key(KEY_PREFIXES["choice_homework"], used)
@@ -142,7 +143,7 @@ def _resolve_year(child: str, year: int | None, db_path: Path | None) -> int | N
 
 def _walk_keyed(doc: dict):
     """key を持ちうる項目を全区画から順に取り出す（採番・キー剥がしで共用）."""
-    for section in ("habits", "daily_homework", "practice_homework", "special_challenges",
+    for section in ("habits", "daily_homework", "special_challenges",
                     "one_shot_homework", "school_start_items", "rewards"):
         for item in _items(doc.get(section)):
             if not isinstance(item, dict):
@@ -200,7 +201,9 @@ def get_document(
         "years": summer_definition.list_definition_years(child, db_path=db_path),
         "revision": row[2],
         "updated_at": row[3],
-        "doc": json.loads(row[1]),
+        # 旧形式で保存されたままの doc も、編集画面には新形式（daily_homework 1本）で渡す。
+        # DB は次の保存まで旧形式のままだが、revision は据え置きなので楽観ロックは壊れない。
+        "doc": summer_definition.migrate_doc(json.loads(row[1])),
     }
 
 

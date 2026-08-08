@@ -50,7 +50,7 @@ def _travel(monkeypatch, today: date) -> None:
 
 
 def _keys(doc: dict) -> set[str]:
-    keys = {i["key"] for section in ("habits", "daily_homework", "practice_homework",
+    keys = {i["key"] for section in ("habits", "daily_homework",
                                      "special_challenges", "one_shot_homework",
                                      "school_start_items", "rewards")
             for i in doc[section]}

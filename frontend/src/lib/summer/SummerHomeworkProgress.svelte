@@ -16,7 +16,6 @@
 		ui,
 		oneShot,
 		choiceGroups,
-		practice,
 		daily,
 		progress,
 		onToggleFlag,
@@ -26,7 +25,6 @@
 		ui: SummerUiText;
 		oneShot: SummerOneShot[];
 		choiceGroups: SummerChoiceGroup[];
-		practice: SummerDailyHomework[];
 		daily: SummerDailyHomework[];
 		progress: { days_elapsed: number; days_total: number };
 		onToggleFlag: (itemKey: string) => void;
@@ -176,7 +174,7 @@
 			<Ruby text={ui.homework_done_days_title} />
 		</div>
 		<div class="grid grid-cols-2 gap-1.5 lg:gap-2">
-			{#each [...daily, ...practice] as hw (hw.key)}
+			{#each daily as hw (hw.key)}
 				<div class="rounded-lg bg-surface2/40 px-3 py-1.5">
 					<div class="truncate text-[10px] text-text-dim lg:text-xs" title={stripRuby(hw.label)}><Ruby text={hw.label} /></div>
 					<div class="text-sm font-bold text-text-base lg:text-base">

@@ -140,7 +140,7 @@ export function setCheck(
 }
 
 function findMetaItem(definition: SummerDefinition, itemKey: string) {
-	for (const item of [...definition.daily_homework, ...definition.practice_homework]) {
+	for (const item of definition.daily_homework) {
 		if (item.key === itemKey && item.meta.length) return item;
 	}
 	return null;

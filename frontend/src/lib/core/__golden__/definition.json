@@ -12211,26 +12211,28 @@
       }
     },
     {
-      "name": "/practice_homework = None",
+      "name": "/daily_homework/2 = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework"
+            "daily_homework",
+            2
           ],
           "op": "set",
           "value": null
         }
       },
       "output": {
-        "accepted": true
+        "accepted": false
       }
     },
     {
-      "name": "/practice_homework = 'もじ'",
+      "name": "/daily_homework/2 = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework"
+            "daily_homework",
+            2
           ],
           "op": "set",
           "value": "もじ"
@@ -12241,11 +12243,12 @@
       }
     },
     {
-      "name": "/practice_homework = 0",
+      "name": "/daily_homework/2 = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework"
+            "daily_homework",
+            2
           ],
           "op": "set",
           "value": 0
@@ -12256,11 +12259,12 @@
       }
     },
     {
-      "name": "/practice_homework = -1",
+      "name": "/daily_homework/2 = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework"
+            "daily_homework",
+            2
           ],
           "op": "set",
           "value": -1
@@ -12271,11 +12275,12 @@
       }
     },
     {
-      "name": "/practice_homework = True",
+      "name": "/daily_homework/2 = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework"
+            "daily_homework",
+            2
           ],
           "op": "set",
           "value": true
@@ -12286,11 +12291,12 @@
       }
     },
     {
-      "name": "/practice_homework = 1.5",
+      "name": "/daily_homework/2 = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework"
+            "daily_homework",
+            2
           ],
           "op": "set",
           "value": 1.5
@@ -12301,26 +12307,28 @@
       }
     },
     {
-      "name": "/practice_homework = []",
+      "name": "/daily_homework/2 = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework"
+            "daily_homework",
+            2
           ],
           "op": "set",
           "value": []
         }
       },
       "output": {
-        "accepted": true
+        "accepted": false
       }
     },
     {
-      "name": "/practice_homework = {}",
+      "name": "/daily_homework/2 = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework"
+            "daily_homework",
+            2
           ],
           "op": "set",
           "value": {}
@@ -12331,11 +12339,12 @@
       }
     },
     {
-      "name": "/practice_homework = [1]",
+      "name": "/daily_homework/2 = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework"
+            "daily_homework",
+            2
           ],
           "op": "set",
           "value": [
@@ -12348,11 +12357,12 @@
       }
     },
     {
-      "name": "/practice_homework = {'a': 1}",
+      "name": "/daily_homework/2 = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework"
+            "daily_homework",
+            2
           ],
           "op": "set",
           "value": {
@@ -12365,11 +12375,12 @@
       }
     },
     {
-      "name": "/practice_homework = 削除",
+      "name": "/daily_homework/2 = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework"
+            "daily_homework",
+            2
           ],
           "op": "delete"
         }
@@ -12379,191 +12390,12 @@
       }
     },
     {
-      "name": "/practice_homework/0 = None",
+      "name": "/daily_homework/2/key = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0
-          ],
-          "op": "set",
-          "value": null
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/0 = 'もじ'",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            0
-          ],
-          "op": "set",
-          "value": "もじ"
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/0 = 0",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            0
-          ],
-          "op": "set",
-          "value": 0
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/0 = -1",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            0
-          ],
-          "op": "set",
-          "value": -1
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/0 = True",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            0
-          ],
-          "op": "set",
-          "value": true
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/0 = 1.5",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            0
-          ],
-          "op": "set",
-          "value": 1.5
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/0 = []",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            0
-          ],
-          "op": "set",
-          "value": []
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/0 = {}",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            0
-          ],
-          "op": "set",
-          "value": {}
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/0 = [1]",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            0
-          ],
-          "op": "set",
-          "value": [
-            1
-          ]
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/0 = {'a': 1}",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            0
-          ],
-          "op": "set",
-          "value": {
-            "a": 1
-          }
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/0 = 削除",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            0
-          ],
-          "op": "delete"
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/0/key = None",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "key"
           ],
           "op": "set",
@@ -12575,12 +12407,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/key = 'もじ'",
+      "name": "/daily_homework/2/key = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "key"
           ],
           "op": "set",
@@ -12592,12 +12424,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/key = 0",
+      "name": "/daily_homework/2/key = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "key"
           ],
           "op": "set",
@@ -12609,12 +12441,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/key = -1",
+      "name": "/daily_homework/2/key = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "key"
           ],
           "op": "set",
@@ -12626,12 +12458,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/key = True",
+      "name": "/daily_homework/2/key = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "key"
           ],
           "op": "set",
@@ -12643,12 +12475,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/key = 1.5",
+      "name": "/daily_homework/2/key = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "key"
           ],
           "op": "set",
@@ -12660,12 +12492,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/key = []",
+      "name": "/daily_homework/2/key = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "key"
           ],
           "op": "set",
@@ -12677,12 +12509,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/key = {}",
+      "name": "/daily_homework/2/key = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "key"
           ],
           "op": "set",
@@ -12694,12 +12526,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/key = [1]",
+      "name": "/daily_homework/2/key = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "key"
           ],
           "op": "set",
@@ -12713,12 +12545,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/key = {'a': 1}",
+      "name": "/daily_homework/2/key = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "key"
           ],
           "op": "set",
@@ -12732,12 +12564,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/key = 削除",
+      "name": "/daily_homework/2/key = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "key"
           ],
           "op": "delete"
@@ -12748,12 +12580,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/label = None",
+      "name": "/daily_homework/2/label = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "label"
           ],
           "op": "set",
@@ -12765,12 +12597,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/label = 'もじ'",
+      "name": "/daily_homework/2/label = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "label"
           ],
           "op": "set",
@@ -12782,12 +12614,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/label = 0",
+      "name": "/daily_homework/2/label = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "label"
           ],
           "op": "set",
@@ -12799,12 +12631,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/label = -1",
+      "name": "/daily_homework/2/label = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "label"
           ],
           "op": "set",
@@ -12816,12 +12648,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/label = True",
+      "name": "/daily_homework/2/label = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "label"
           ],
           "op": "set",
@@ -12833,12 +12665,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/label = 1.5",
+      "name": "/daily_homework/2/label = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "label"
           ],
           "op": "set",
@@ -12850,12 +12682,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/label = []",
+      "name": "/daily_homework/2/label = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "label"
           ],
           "op": "set",
@@ -12867,12 +12699,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/label = {}",
+      "name": "/daily_homework/2/label = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "label"
           ],
           "op": "set",
@@ -12884,12 +12716,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/label = [1]",
+      "name": "/daily_homework/2/label = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "label"
           ],
           "op": "set",
@@ -12903,12 +12735,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/label = {'a': 1}",
+      "name": "/daily_homework/2/label = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "label"
           ],
           "op": "set",
@@ -12922,12 +12754,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/label = 削除",
+      "name": "/daily_homework/2/label = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "label"
           ],
           "op": "delete"
@@ -12938,12 +12770,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta = None",
+      "name": "/daily_homework/2/meta = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta"
           ],
           "op": "set",
@@ -12955,12 +12787,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta = 'もじ'",
+      "name": "/daily_homework/2/meta = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta"
           ],
           "op": "set",
@@ -12972,12 +12804,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta = 0",
+      "name": "/daily_homework/2/meta = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta"
           ],
           "op": "set",
@@ -12989,12 +12821,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta = -1",
+      "name": "/daily_homework/2/meta = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta"
           ],
           "op": "set",
@@ -13006,12 +12838,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta = True",
+      "name": "/daily_homework/2/meta = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta"
           ],
           "op": "set",
@@ -13023,12 +12855,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta = 1.5",
+      "name": "/daily_homework/2/meta = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta"
           ],
           "op": "set",
@@ -13040,12 +12872,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta = []",
+      "name": "/daily_homework/2/meta = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta"
           ],
           "op": "set",
@@ -13057,12 +12889,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta = {}",
+      "name": "/daily_homework/2/meta = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta"
           ],
           "op": "set",
@@ -13074,12 +12906,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta = [1]",
+      "name": "/daily_homework/2/meta = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta"
           ],
           "op": "set",
@@ -13093,12 +12925,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta = {'a': 1}",
+      "name": "/daily_homework/2/meta = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta"
           ],
           "op": "set",
@@ -13112,12 +12944,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta = 削除",
+      "name": "/daily_homework/2/meta = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta"
           ],
           "op": "delete"
@@ -13128,12 +12960,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0 = None",
+      "name": "/daily_homework/2/meta/0 = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0
           ],
@@ -13146,12 +12978,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0 = 'もじ'",
+      "name": "/daily_homework/2/meta/0 = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0
           ],
@@ -13164,12 +12996,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0 = 0",
+      "name": "/daily_homework/2/meta/0 = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0
           ],
@@ -13182,12 +13014,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0 = -1",
+      "name": "/daily_homework/2/meta/0 = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0
           ],
@@ -13200,12 +13032,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0 = True",
+      "name": "/daily_homework/2/meta/0 = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0
           ],
@@ -13218,12 +13050,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0 = 1.5",
+      "name": "/daily_homework/2/meta/0 = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0
           ],
@@ -13236,12 +13068,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0 = []",
+      "name": "/daily_homework/2/meta/0 = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0
           ],
@@ -13254,12 +13086,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0 = {}",
+      "name": "/daily_homework/2/meta/0 = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0
           ],
@@ -13272,12 +13104,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0 = [1]",
+      "name": "/daily_homework/2/meta/0 = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0
           ],
@@ -13292,12 +13124,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0 = {'a': 1}",
+      "name": "/daily_homework/2/meta/0 = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0
           ],
@@ -13312,12 +13144,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0 = 削除",
+      "name": "/daily_homework/2/meta/0 = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0
           ],
@@ -13329,12 +13161,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/key = None",
+      "name": "/daily_homework/2/meta/0/key = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "key"
@@ -13348,12 +13180,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/key = 'もじ'",
+      "name": "/daily_homework/2/meta/0/key = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "key"
@@ -13367,12 +13199,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/key = 0",
+      "name": "/daily_homework/2/meta/0/key = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "key"
@@ -13386,12 +13218,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/key = -1",
+      "name": "/daily_homework/2/meta/0/key = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "key"
@@ -13405,12 +13237,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/key = True",
+      "name": "/daily_homework/2/meta/0/key = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "key"
@@ -13424,12 +13256,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/key = 1.5",
+      "name": "/daily_homework/2/meta/0/key = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "key"
@@ -13443,12 +13275,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/key = []",
+      "name": "/daily_homework/2/meta/0/key = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "key"
@@ -13462,12 +13294,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/key = {}",
+      "name": "/daily_homework/2/meta/0/key = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "key"
@@ -13481,12 +13313,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/key = [1]",
+      "name": "/daily_homework/2/meta/0/key = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "key"
@@ -13502,12 +13334,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/key = {'a': 1}",
+      "name": "/daily_homework/2/meta/0/key = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "key"
@@ -13523,12 +13355,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/key = 削除",
+      "name": "/daily_homework/2/meta/0/key = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "key"
@@ -13541,12 +13373,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/type = None",
+      "name": "/daily_homework/2/meta/0/type = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "type"
@@ -13560,12 +13392,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/type = 'もじ'",
+      "name": "/daily_homework/2/meta/0/type = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "type"
@@ -13579,12 +13411,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/type = 0",
+      "name": "/daily_homework/2/meta/0/type = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "type"
@@ -13598,12 +13430,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/type = -1",
+      "name": "/daily_homework/2/meta/0/type = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "type"
@@ -13617,12 +13449,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/type = True",
+      "name": "/daily_homework/2/meta/0/type = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "type"
@@ -13636,12 +13468,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/type = 1.5",
+      "name": "/daily_homework/2/meta/0/type = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "type"
@@ -13655,12 +13487,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/type = []",
+      "name": "/daily_homework/2/meta/0/type = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "type"
@@ -13674,12 +13506,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/type = {}",
+      "name": "/daily_homework/2/meta/0/type = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "type"
@@ -13693,12 +13525,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/type = [1]",
+      "name": "/daily_homework/2/meta/0/type = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "type"
@@ -13714,12 +13546,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/type = {'a': 1}",
+      "name": "/daily_homework/2/meta/0/type = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "type"
@@ -13735,12 +13567,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/type = 削除",
+      "name": "/daily_homework/2/meta/0/type = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "type"
@@ -13753,12 +13585,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/label = None",
+      "name": "/daily_homework/2/meta/0/label = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "label"
@@ -13772,12 +13604,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/label = 'もじ'",
+      "name": "/daily_homework/2/meta/0/label = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "label"
@@ -13791,12 +13623,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/label = 0",
+      "name": "/daily_homework/2/meta/0/label = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "label"
@@ -13810,12 +13642,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/label = -1",
+      "name": "/daily_homework/2/meta/0/label = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "label"
@@ -13829,12 +13661,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/label = True",
+      "name": "/daily_homework/2/meta/0/label = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "label"
@@ -13848,12 +13680,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/label = 1.5",
+      "name": "/daily_homework/2/meta/0/label = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "label"
@@ -13867,12 +13699,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/label = []",
+      "name": "/daily_homework/2/meta/0/label = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "label"
@@ -13886,12 +13718,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/label = {}",
+      "name": "/daily_homework/2/meta/0/label = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "label"
@@ -13905,12 +13737,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/label = [1]",
+      "name": "/daily_homework/2/meta/0/label = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "label"
@@ -13926,12 +13758,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/label = {'a': 1}",
+      "name": "/daily_homework/2/meta/0/label = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "label"
@@ -13947,12 +13779,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/label = 削除",
+      "name": "/daily_homework/2/meta/0/label = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "label"
@@ -13965,12 +13797,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options = None",
+      "name": "/daily_homework/2/meta/0/options = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options"
@@ -13984,12 +13816,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options = 'もじ'",
+      "name": "/daily_homework/2/meta/0/options = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options"
@@ -14003,12 +13835,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options = 0",
+      "name": "/daily_homework/2/meta/0/options = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options"
@@ -14022,12 +13854,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options = -1",
+      "name": "/daily_homework/2/meta/0/options = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options"
@@ -14041,12 +13873,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options = True",
+      "name": "/daily_homework/2/meta/0/options = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options"
@@ -14060,12 +13892,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options = 1.5",
+      "name": "/daily_homework/2/meta/0/options = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options"
@@ -14079,12 +13911,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options = []",
+      "name": "/daily_homework/2/meta/0/options = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options"
@@ -14098,12 +13930,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options = {}",
+      "name": "/daily_homework/2/meta/0/options = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options"
@@ -14117,12 +13949,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options = [1]",
+      "name": "/daily_homework/2/meta/0/options = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options"
@@ -14138,12 +13970,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options = {'a': 1}",
+      "name": "/daily_homework/2/meta/0/options = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options"
@@ -14159,12 +13991,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options = 削除",
+      "name": "/daily_homework/2/meta/0/options = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options"
@@ -14177,12 +14009,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0 = None",
+      "name": "/daily_homework/2/meta/0/options/0 = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14197,12 +14029,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0 = 'もじ'",
+      "name": "/daily_homework/2/meta/0/options/0 = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14217,12 +14049,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0 = 0",
+      "name": "/daily_homework/2/meta/0/options/0 = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14237,12 +14069,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0 = -1",
+      "name": "/daily_homework/2/meta/0/options/0 = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14257,12 +14089,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0 = True",
+      "name": "/daily_homework/2/meta/0/options/0 = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14277,12 +14109,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0 = 1.5",
+      "name": "/daily_homework/2/meta/0/options/0 = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14297,12 +14129,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0 = []",
+      "name": "/daily_homework/2/meta/0/options/0 = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14317,12 +14149,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0 = {}",
+      "name": "/daily_homework/2/meta/0/options/0 = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14337,12 +14169,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0 = [1]",
+      "name": "/daily_homework/2/meta/0/options/0 = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14359,12 +14191,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0 = {'a': 1}",
+      "name": "/daily_homework/2/meta/0/options/0 = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14381,12 +14213,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0 = 削除",
+      "name": "/daily_homework/2/meta/0/options/0 = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14400,12 +14232,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/key = None",
+      "name": "/daily_homework/2/meta/0/options/0/key = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14421,12 +14253,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/key = 'もじ'",
+      "name": "/daily_homework/2/meta/0/options/0/key = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14442,12 +14274,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/key = 0",
+      "name": "/daily_homework/2/meta/0/options/0/key = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14463,12 +14295,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/key = -1",
+      "name": "/daily_homework/2/meta/0/options/0/key = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14484,12 +14316,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/key = True",
+      "name": "/daily_homework/2/meta/0/options/0/key = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14505,12 +14337,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/key = 1.5",
+      "name": "/daily_homework/2/meta/0/options/0/key = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14526,12 +14358,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/key = []",
+      "name": "/daily_homework/2/meta/0/options/0/key = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14547,12 +14379,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/key = {}",
+      "name": "/daily_homework/2/meta/0/options/0/key = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14568,12 +14400,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/key = [1]",
+      "name": "/daily_homework/2/meta/0/options/0/key = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14591,12 +14423,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/key = {'a': 1}",
+      "name": "/daily_homework/2/meta/0/options/0/key = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14614,12 +14446,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/key = 削除",
+      "name": "/daily_homework/2/meta/0/options/0/key = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14634,12 +14466,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/label = None",
+      "name": "/daily_homework/2/meta/0/options/0/label = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14655,12 +14487,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/label = 'もじ'",
+      "name": "/daily_homework/2/meta/0/options/0/label = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14676,12 +14508,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/label = 0",
+      "name": "/daily_homework/2/meta/0/options/0/label = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14697,12 +14529,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/label = -1",
+      "name": "/daily_homework/2/meta/0/options/0/label = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14718,12 +14550,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/label = True",
+      "name": "/daily_homework/2/meta/0/options/0/label = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14739,12 +14571,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/label = 1.5",
+      "name": "/daily_homework/2/meta/0/options/0/label = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14760,12 +14592,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/label = []",
+      "name": "/daily_homework/2/meta/0/options/0/label = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14781,12 +14613,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/label = {}",
+      "name": "/daily_homework/2/meta/0/options/0/label = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14802,12 +14634,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/label = [1]",
+      "name": "/daily_homework/2/meta/0/options/0/label = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14825,12 +14657,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/label = {'a': 1}",
+      "name": "/daily_homework/2/meta/0/options/0/label = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14848,12 +14680,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/0/label = 削除",
+      "name": "/daily_homework/2/meta/0/options/0/label = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14868,12 +14700,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1 = None",
+      "name": "/daily_homework/2/meta/0/options/1 = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14888,12 +14720,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1 = 'もじ'",
+      "name": "/daily_homework/2/meta/0/options/1 = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14908,12 +14740,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1 = 0",
+      "name": "/daily_homework/2/meta/0/options/1 = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14928,12 +14760,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1 = -1",
+      "name": "/daily_homework/2/meta/0/options/1 = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14948,12 +14780,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1 = True",
+      "name": "/daily_homework/2/meta/0/options/1 = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14968,12 +14800,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1 = 1.5",
+      "name": "/daily_homework/2/meta/0/options/1 = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -14988,12 +14820,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1 = []",
+      "name": "/daily_homework/2/meta/0/options/1 = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15008,12 +14840,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1 = {}",
+      "name": "/daily_homework/2/meta/0/options/1 = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15028,12 +14860,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1 = [1]",
+      "name": "/daily_homework/2/meta/0/options/1 = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15050,12 +14882,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1 = {'a': 1}",
+      "name": "/daily_homework/2/meta/0/options/1 = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15072,12 +14904,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1 = 削除",
+      "name": "/daily_homework/2/meta/0/options/1 = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15091,12 +14923,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/key = None",
+      "name": "/daily_homework/2/meta/0/options/1/key = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15112,12 +14944,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/key = 'もじ'",
+      "name": "/daily_homework/2/meta/0/options/1/key = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15133,12 +14965,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/key = 0",
+      "name": "/daily_homework/2/meta/0/options/1/key = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15154,12 +14986,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/key = -1",
+      "name": "/daily_homework/2/meta/0/options/1/key = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15175,12 +15007,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/key = True",
+      "name": "/daily_homework/2/meta/0/options/1/key = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15196,12 +15028,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/key = 1.5",
+      "name": "/daily_homework/2/meta/0/options/1/key = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15217,12 +15049,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/key = []",
+      "name": "/daily_homework/2/meta/0/options/1/key = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15238,12 +15070,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/key = {}",
+      "name": "/daily_homework/2/meta/0/options/1/key = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15259,12 +15091,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/key = [1]",
+      "name": "/daily_homework/2/meta/0/options/1/key = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15282,12 +15114,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/key = {'a': 1}",
+      "name": "/daily_homework/2/meta/0/options/1/key = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15305,12 +15137,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/key = 削除",
+      "name": "/daily_homework/2/meta/0/options/1/key = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15325,12 +15157,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/label = None",
+      "name": "/daily_homework/2/meta/0/options/1/label = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15346,12 +15178,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/label = 'もじ'",
+      "name": "/daily_homework/2/meta/0/options/1/label = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15367,12 +15199,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/label = 0",
+      "name": "/daily_homework/2/meta/0/options/1/label = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15388,12 +15220,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/label = -1",
+      "name": "/daily_homework/2/meta/0/options/1/label = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15409,12 +15241,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/label = True",
+      "name": "/daily_homework/2/meta/0/options/1/label = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15430,12 +15262,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/label = 1.5",
+      "name": "/daily_homework/2/meta/0/options/1/label = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15451,12 +15283,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/label = []",
+      "name": "/daily_homework/2/meta/0/options/1/label = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15472,12 +15304,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/label = {}",
+      "name": "/daily_homework/2/meta/0/options/1/label = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15493,12 +15325,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/label = [1]",
+      "name": "/daily_homework/2/meta/0/options/1/label = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15516,12 +15348,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/label = {'a': 1}",
+      "name": "/daily_homework/2/meta/0/options/1/label = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15539,12 +15371,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/0/options/1/label = 削除",
+      "name": "/daily_homework/2/meta/0/options/1/label = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             0,
             "options",
@@ -15559,12 +15391,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1 = None",
+      "name": "/daily_homework/2/meta/1 = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1
           ],
@@ -15577,12 +15409,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1 = 'もじ'",
+      "name": "/daily_homework/2/meta/1 = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1
           ],
@@ -15595,12 +15427,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1 = 0",
+      "name": "/daily_homework/2/meta/1 = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1
           ],
@@ -15613,12 +15445,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1 = -1",
+      "name": "/daily_homework/2/meta/1 = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1
           ],
@@ -15631,12 +15463,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1 = True",
+      "name": "/daily_homework/2/meta/1 = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1
           ],
@@ -15649,12 +15481,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1 = 1.5",
+      "name": "/daily_homework/2/meta/1 = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1
           ],
@@ -15667,12 +15499,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1 = []",
+      "name": "/daily_homework/2/meta/1 = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1
           ],
@@ -15685,12 +15517,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1 = {}",
+      "name": "/daily_homework/2/meta/1 = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1
           ],
@@ -15703,12 +15535,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1 = [1]",
+      "name": "/daily_homework/2/meta/1 = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1
           ],
@@ -15723,12 +15555,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1 = {'a': 1}",
+      "name": "/daily_homework/2/meta/1 = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1
           ],
@@ -15743,12 +15575,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1 = 削除",
+      "name": "/daily_homework/2/meta/1 = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1
           ],
@@ -15760,12 +15592,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/key = None",
+      "name": "/daily_homework/2/meta/1/key = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "key"
@@ -15779,12 +15611,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/key = 'もじ'",
+      "name": "/daily_homework/2/meta/1/key = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "key"
@@ -15798,12 +15630,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/key = 0",
+      "name": "/daily_homework/2/meta/1/key = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "key"
@@ -15817,12 +15649,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/key = -1",
+      "name": "/daily_homework/2/meta/1/key = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "key"
@@ -15836,12 +15668,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/key = True",
+      "name": "/daily_homework/2/meta/1/key = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "key"
@@ -15855,12 +15687,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/key = 1.5",
+      "name": "/daily_homework/2/meta/1/key = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "key"
@@ -15874,12 +15706,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/key = []",
+      "name": "/daily_homework/2/meta/1/key = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "key"
@@ -15893,12 +15725,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/key = {}",
+      "name": "/daily_homework/2/meta/1/key = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "key"
@@ -15912,12 +15744,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/key = [1]",
+      "name": "/daily_homework/2/meta/1/key = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "key"
@@ -15933,12 +15765,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/key = {'a': 1}",
+      "name": "/daily_homework/2/meta/1/key = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "key"
@@ -15954,12 +15786,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/key = 削除",
+      "name": "/daily_homework/2/meta/1/key = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "key"
@@ -15972,12 +15804,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/type = None",
+      "name": "/daily_homework/2/meta/1/type = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "type"
@@ -15991,12 +15823,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/type = 'もじ'",
+      "name": "/daily_homework/2/meta/1/type = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "type"
@@ -16010,12 +15842,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/type = 0",
+      "name": "/daily_homework/2/meta/1/type = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "type"
@@ -16029,12 +15861,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/type = -1",
+      "name": "/daily_homework/2/meta/1/type = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "type"
@@ -16048,12 +15880,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/type = True",
+      "name": "/daily_homework/2/meta/1/type = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "type"
@@ -16067,12 +15899,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/type = 1.5",
+      "name": "/daily_homework/2/meta/1/type = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "type"
@@ -16086,12 +15918,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/type = []",
+      "name": "/daily_homework/2/meta/1/type = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "type"
@@ -16105,12 +15937,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/type = {}",
+      "name": "/daily_homework/2/meta/1/type = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "type"
@@ -16124,12 +15956,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/type = [1]",
+      "name": "/daily_homework/2/meta/1/type = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "type"
@@ -16145,12 +15977,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/type = {'a': 1}",
+      "name": "/daily_homework/2/meta/1/type = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "type"
@@ -16166,12 +15998,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/type = 削除",
+      "name": "/daily_homework/2/meta/1/type = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "type"
@@ -16184,12 +16016,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/label = None",
+      "name": "/daily_homework/2/meta/1/label = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "label"
@@ -16203,12 +16035,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/label = 'もじ'",
+      "name": "/daily_homework/2/meta/1/label = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "label"
@@ -16222,12 +16054,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/label = 0",
+      "name": "/daily_homework/2/meta/1/label = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "label"
@@ -16241,12 +16073,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/label = -1",
+      "name": "/daily_homework/2/meta/1/label = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "label"
@@ -16260,12 +16092,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/label = True",
+      "name": "/daily_homework/2/meta/1/label = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "label"
@@ -16279,12 +16111,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/label = 1.5",
+      "name": "/daily_homework/2/meta/1/label = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "label"
@@ -16298,12 +16130,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/label = []",
+      "name": "/daily_homework/2/meta/1/label = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "label"
@@ -16317,12 +16149,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/label = {}",
+      "name": "/daily_homework/2/meta/1/label = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "label"
@@ -16336,12 +16168,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/label = [1]",
+      "name": "/daily_homework/2/meta/1/label = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "label"
@@ -16357,12 +16189,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/label = {'a': 1}",
+      "name": "/daily_homework/2/meta/1/label = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "label"
@@ -16378,12 +16210,12 @@
       }
     },
     {
-      "name": "/practice_homework/0/meta/1/label = 削除",
+      "name": "/daily_homework/2/meta/1/label = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            0,
+            "daily_homework",
+            2,
             "meta",
             1,
             "label"
@@ -16396,1129 +16228,11 @@
       }
     },
     {
-      "name": "/practice_homework/1 = None",
+      "name": "/daily_homework/3 = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
-            1
-          ],
-          "op": "set",
-          "value": null
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1 = 'もじ'",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1
-          ],
-          "op": "set",
-          "value": "もじ"
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1 = 0",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1
-          ],
-          "op": "set",
-          "value": 0
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1 = -1",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1
-          ],
-          "op": "set",
-          "value": -1
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1 = True",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1
-          ],
-          "op": "set",
-          "value": true
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1 = 1.5",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1
-          ],
-          "op": "set",
-          "value": 1.5
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1 = []",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1
-          ],
-          "op": "set",
-          "value": []
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1 = {}",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1
-          ],
-          "op": "set",
-          "value": {}
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1 = [1]",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1
-          ],
-          "op": "set",
-          "value": [
-            1
-          ]
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1 = {'a': 1}",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1
-          ],
-          "op": "set",
-          "value": {
-            "a": 1
-          }
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1 = 削除",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1
-          ],
-          "op": "delete"
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/1/key = None",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "key"
-          ],
-          "op": "set",
-          "value": null
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/1/key = 'もじ'",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "key"
-          ],
-          "op": "set",
-          "value": "もじ"
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/1/key = 0",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "key"
-          ],
-          "op": "set",
-          "value": 0
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/1/key = -1",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "key"
-          ],
-          "op": "set",
-          "value": -1
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/1/key = True",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "key"
-          ],
-          "op": "set",
-          "value": true
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/1/key = 1.5",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "key"
-          ],
-          "op": "set",
-          "value": 1.5
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/1/key = []",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "key"
-          ],
-          "op": "set",
-          "value": []
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/1/key = {}",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "key"
-          ],
-          "op": "set",
-          "value": {}
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/1/key = [1]",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "key"
-          ],
-          "op": "set",
-          "value": [
-            1
-          ]
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/1/key = {'a': 1}",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "key"
-          ],
-          "op": "set",
-          "value": {
-            "a": 1
-          }
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/1/key = 削除",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "key"
-          ],
-          "op": "delete"
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1/label = None",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "label"
-          ],
-          "op": "set",
-          "value": null
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1/label = 'もじ'",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "label"
-          ],
-          "op": "set",
-          "value": "もじ"
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/1/label = 0",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "label"
-          ],
-          "op": "set",
-          "value": 0
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1/label = -1",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "label"
-          ],
-          "op": "set",
-          "value": -1
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1/label = True",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "label"
-          ],
-          "op": "set",
-          "value": true
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1/label = 1.5",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "label"
-          ],
-          "op": "set",
-          "value": 1.5
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1/label = []",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "label"
-          ],
-          "op": "set",
-          "value": []
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1/label = {}",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "label"
-          ],
-          "op": "set",
-          "value": {}
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1/label = [1]",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "label"
-          ],
-          "op": "set",
-          "value": [
-            1
-          ]
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1/label = {'a': 1}",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "label"
-          ],
-          "op": "set",
-          "value": {
-            "a": 1
-          }
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/1/label = 削除",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            1,
-            "label"
-          ],
-          "op": "delete"
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2 = None",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2
-          ],
-          "op": "set",
-          "value": null
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2 = 'もじ'",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2
-          ],
-          "op": "set",
-          "value": "もじ"
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2 = 0",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2
-          ],
-          "op": "set",
-          "value": 0
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2 = -1",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2
-          ],
-          "op": "set",
-          "value": -1
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2 = True",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2
-          ],
-          "op": "set",
-          "value": true
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2 = 1.5",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2
-          ],
-          "op": "set",
-          "value": 1.5
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2 = []",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2
-          ],
-          "op": "set",
-          "value": []
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2 = {}",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2
-          ],
-          "op": "set",
-          "value": {}
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2 = [1]",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2
-          ],
-          "op": "set",
-          "value": [
-            1
-          ]
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2 = {'a': 1}",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2
-          ],
-          "op": "set",
-          "value": {
-            "a": 1
-          }
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2 = 削除",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2
-          ],
-          "op": "delete"
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/2/key = None",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "key"
-          ],
-          "op": "set",
-          "value": null
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/2/key = 'もじ'",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "key"
-          ],
-          "op": "set",
-          "value": "もじ"
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/2/key = 0",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "key"
-          ],
-          "op": "set",
-          "value": 0
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/2/key = -1",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "key"
-          ],
-          "op": "set",
-          "value": -1
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/2/key = True",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "key"
-          ],
-          "op": "set",
-          "value": true
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/2/key = 1.5",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "key"
-          ],
-          "op": "set",
-          "value": 1.5
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/2/key = []",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "key"
-          ],
-          "op": "set",
-          "value": []
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/2/key = {}",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "key"
-          ],
-          "op": "set",
-          "value": {}
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/2/key = [1]",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "key"
-          ],
-          "op": "set",
-          "value": [
-            1
-          ]
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/2/key = {'a': 1}",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "key"
-          ],
-          "op": "set",
-          "value": {
-            "a": 1
-          }
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/2/key = 削除",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "key"
-          ],
-          "op": "delete"
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2/label = None",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "label"
-          ],
-          "op": "set",
-          "value": null
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2/label = 'もじ'",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "label"
-          ],
-          "op": "set",
-          "value": "もじ"
-        }
-      },
-      "output": {
-        "accepted": true
-      }
-    },
-    {
-      "name": "/practice_homework/2/label = 0",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "label"
-          ],
-          "op": "set",
-          "value": 0
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2/label = -1",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "label"
-          ],
-          "op": "set",
-          "value": -1
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2/label = True",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "label"
-          ],
-          "op": "set",
-          "value": true
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2/label = 1.5",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "label"
-          ],
-          "op": "set",
-          "value": 1.5
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2/label = []",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "label"
-          ],
-          "op": "set",
-          "value": []
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2/label = {}",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "label"
-          ],
-          "op": "set",
-          "value": {}
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2/label = [1]",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "label"
-          ],
-          "op": "set",
-          "value": [
-            1
-          ]
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2/label = {'a': 1}",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "label"
-          ],
-          "op": "set",
-          "value": {
-            "a": 1
-          }
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/2/label = 削除",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
-            2,
-            "label"
-          ],
-          "op": "delete"
-        }
-      },
-      "output": {
-        "accepted": false
-      }
-    },
-    {
-      "name": "/practice_homework/3 = None",
-      "input": {
-        "mutation": {
-          "path": [
-            "practice_homework",
+            "daily_homework",
             3
           ],
           "op": "set",
@@ -17530,11 +16244,11 @@
       }
     },
     {
-      "name": "/practice_homework/3 = 'もじ'",
+      "name": "/daily_homework/3 = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3
           ],
           "op": "set",
@@ -17546,11 +16260,11 @@
       }
     },
     {
-      "name": "/practice_homework/3 = 0",
+      "name": "/daily_homework/3 = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3
           ],
           "op": "set",
@@ -17562,11 +16276,11 @@
       }
     },
     {
-      "name": "/practice_homework/3 = -1",
+      "name": "/daily_homework/3 = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3
           ],
           "op": "set",
@@ -17578,11 +16292,11 @@
       }
     },
     {
-      "name": "/practice_homework/3 = True",
+      "name": "/daily_homework/3 = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3
           ],
           "op": "set",
@@ -17594,11 +16308,11 @@
       }
     },
     {
-      "name": "/practice_homework/3 = 1.5",
+      "name": "/daily_homework/3 = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3
           ],
           "op": "set",
@@ -17610,11 +16324,11 @@
       }
     },
     {
-      "name": "/practice_homework/3 = []",
+      "name": "/daily_homework/3 = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3
           ],
           "op": "set",
@@ -17626,11 +16340,11 @@
       }
     },
     {
-      "name": "/practice_homework/3 = {}",
+      "name": "/daily_homework/3 = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3
           ],
           "op": "set",
@@ -17642,11 +16356,11 @@
       }
     },
     {
-      "name": "/practice_homework/3 = [1]",
+      "name": "/daily_homework/3 = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3
           ],
           "op": "set",
@@ -17660,11 +16374,11 @@
       }
     },
     {
-      "name": "/practice_homework/3 = {'a': 1}",
+      "name": "/daily_homework/3 = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3
           ],
           "op": "set",
@@ -17678,11 +16392,11 @@
       }
     },
     {
-      "name": "/practice_homework/3 = 削除",
+      "name": "/daily_homework/3 = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3
           ],
           "op": "delete"
@@ -17693,11 +16407,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/key = None",
+      "name": "/daily_homework/3/key = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "key"
           ],
@@ -17710,11 +16424,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/key = 'もじ'",
+      "name": "/daily_homework/3/key = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "key"
           ],
@@ -17727,11 +16441,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/key = 0",
+      "name": "/daily_homework/3/key = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "key"
           ],
@@ -17744,11 +16458,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/key = -1",
+      "name": "/daily_homework/3/key = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "key"
           ],
@@ -17761,11 +16475,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/key = True",
+      "name": "/daily_homework/3/key = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "key"
           ],
@@ -17778,11 +16492,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/key = 1.5",
+      "name": "/daily_homework/3/key = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "key"
           ],
@@ -17795,11 +16509,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/key = []",
+      "name": "/daily_homework/3/key = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "key"
           ],
@@ -17812,11 +16526,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/key = {}",
+      "name": "/daily_homework/3/key = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "key"
           ],
@@ -17829,11 +16543,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/key = [1]",
+      "name": "/daily_homework/3/key = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "key"
           ],
@@ -17848,11 +16562,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/key = {'a': 1}",
+      "name": "/daily_homework/3/key = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "key"
           ],
@@ -17867,11 +16581,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/key = 削除",
+      "name": "/daily_homework/3/key = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "key"
           ],
@@ -17883,11 +16597,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/label = None",
+      "name": "/daily_homework/3/label = None",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "label"
           ],
@@ -17900,11 +16614,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/label = 'もじ'",
+      "name": "/daily_homework/3/label = 'もじ'",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "label"
           ],
@@ -17917,11 +16631,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/label = 0",
+      "name": "/daily_homework/3/label = 0",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "label"
           ],
@@ -17934,11 +16648,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/label = -1",
+      "name": "/daily_homework/3/label = -1",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "label"
           ],
@@ -17951,11 +16665,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/label = True",
+      "name": "/daily_homework/3/label = True",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "label"
           ],
@@ -17968,11 +16682,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/label = 1.5",
+      "name": "/daily_homework/3/label = 1.5",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "label"
           ],
@@ -17985,11 +16699,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/label = []",
+      "name": "/daily_homework/3/label = []",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "label"
           ],
@@ -18002,11 +16716,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/label = {}",
+      "name": "/daily_homework/3/label = {}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "label"
           ],
@@ -18019,11 +16733,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/label = [1]",
+      "name": "/daily_homework/3/label = [1]",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "label"
           ],
@@ -18038,11 +16752,11 @@
       }
     },
     {
-      "name": "/practice_homework/3/label = {'a': 1}",
+      "name": "/daily_homework/3/label = {'a': 1}",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
             "label"
           ],
@@ -18057,12 +16771,1130 @@
       }
     },
     {
-      "name": "/practice_homework/3/label = 削除",
+      "name": "/daily_homework/3/label = 削除",
       "input": {
         "mutation": {
           "path": [
-            "practice_homework",
+            "daily_homework",
             3,
+            "label"
+          ],
+          "op": "delete"
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4 = None",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4
+          ],
+          "op": "set",
+          "value": null
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4 = 'もじ'",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4
+          ],
+          "op": "set",
+          "value": "もじ"
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4 = 0",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4
+          ],
+          "op": "set",
+          "value": 0
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4 = -1",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4
+          ],
+          "op": "set",
+          "value": -1
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4 = True",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4
+          ],
+          "op": "set",
+          "value": true
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4 = 1.5",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4
+          ],
+          "op": "set",
+          "value": 1.5
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4 = []",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4
+          ],
+          "op": "set",
+          "value": []
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4 = {}",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4
+          ],
+          "op": "set",
+          "value": {}
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4 = [1]",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4
+          ],
+          "op": "set",
+          "value": [
+            1
+          ]
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4 = {'a': 1}",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4
+          ],
+          "op": "set",
+          "value": {
+            "a": 1
+          }
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4 = 削除",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4
+          ],
+          "op": "delete"
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/4/key = None",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "key"
+          ],
+          "op": "set",
+          "value": null
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/4/key = 'もじ'",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "key"
+          ],
+          "op": "set",
+          "value": "もじ"
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/4/key = 0",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "key"
+          ],
+          "op": "set",
+          "value": 0
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/4/key = -1",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "key"
+          ],
+          "op": "set",
+          "value": -1
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/4/key = True",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "key"
+          ],
+          "op": "set",
+          "value": true
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/4/key = 1.5",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "key"
+          ],
+          "op": "set",
+          "value": 1.5
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/4/key = []",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "key"
+          ],
+          "op": "set",
+          "value": []
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/4/key = {}",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "key"
+          ],
+          "op": "set",
+          "value": {}
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/4/key = [1]",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "key"
+          ],
+          "op": "set",
+          "value": [
+            1
+          ]
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/4/key = {'a': 1}",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "key"
+          ],
+          "op": "set",
+          "value": {
+            "a": 1
+          }
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/4/key = 削除",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "key"
+          ],
+          "op": "delete"
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4/label = None",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "label"
+          ],
+          "op": "set",
+          "value": null
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4/label = 'もじ'",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "label"
+          ],
+          "op": "set",
+          "value": "もじ"
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/4/label = 0",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "label"
+          ],
+          "op": "set",
+          "value": 0
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4/label = -1",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "label"
+          ],
+          "op": "set",
+          "value": -1
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4/label = True",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "label"
+          ],
+          "op": "set",
+          "value": true
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4/label = 1.5",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "label"
+          ],
+          "op": "set",
+          "value": 1.5
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4/label = []",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "label"
+          ],
+          "op": "set",
+          "value": []
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4/label = {}",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "label"
+          ],
+          "op": "set",
+          "value": {}
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4/label = [1]",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "label"
+          ],
+          "op": "set",
+          "value": [
+            1
+          ]
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4/label = {'a': 1}",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "label"
+          ],
+          "op": "set",
+          "value": {
+            "a": 1
+          }
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/4/label = 削除",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            4,
+            "label"
+          ],
+          "op": "delete"
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5 = None",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5
+          ],
+          "op": "set",
+          "value": null
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5 = 'もじ'",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5
+          ],
+          "op": "set",
+          "value": "もじ"
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5 = 0",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5
+          ],
+          "op": "set",
+          "value": 0
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5 = -1",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5
+          ],
+          "op": "set",
+          "value": -1
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5 = True",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5
+          ],
+          "op": "set",
+          "value": true
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5 = 1.5",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5
+          ],
+          "op": "set",
+          "value": 1.5
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5 = []",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5
+          ],
+          "op": "set",
+          "value": []
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5 = {}",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5
+          ],
+          "op": "set",
+          "value": {}
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5 = [1]",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5
+          ],
+          "op": "set",
+          "value": [
+            1
+          ]
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5 = {'a': 1}",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5
+          ],
+          "op": "set",
+          "value": {
+            "a": 1
+          }
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5 = 削除",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5
+          ],
+          "op": "delete"
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/5/key = None",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "key"
+          ],
+          "op": "set",
+          "value": null
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/5/key = 'もじ'",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "key"
+          ],
+          "op": "set",
+          "value": "もじ"
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/5/key = 0",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "key"
+          ],
+          "op": "set",
+          "value": 0
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/5/key = -1",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "key"
+          ],
+          "op": "set",
+          "value": -1
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/5/key = True",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "key"
+          ],
+          "op": "set",
+          "value": true
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/5/key = 1.5",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "key"
+          ],
+          "op": "set",
+          "value": 1.5
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/5/key = []",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "key"
+          ],
+          "op": "set",
+          "value": []
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/5/key = {}",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "key"
+          ],
+          "op": "set",
+          "value": {}
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/5/key = [1]",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "key"
+          ],
+          "op": "set",
+          "value": [
+            1
+          ]
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/5/key = {'a': 1}",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "key"
+          ],
+          "op": "set",
+          "value": {
+            "a": 1
+          }
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/5/key = 削除",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "key"
+          ],
+          "op": "delete"
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5/label = None",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "label"
+          ],
+          "op": "set",
+          "value": null
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5/label = 'もじ'",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "label"
+          ],
+          "op": "set",
+          "value": "もじ"
+        }
+      },
+      "output": {
+        "accepted": true
+      }
+    },
+    {
+      "name": "/daily_homework/5/label = 0",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "label"
+          ],
+          "op": "set",
+          "value": 0
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5/label = -1",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "label"
+          ],
+          "op": "set",
+          "value": -1
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5/label = True",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "label"
+          ],
+          "op": "set",
+          "value": true
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5/label = 1.5",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "label"
+          ],
+          "op": "set",
+          "value": 1.5
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5/label = []",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "label"
+          ],
+          "op": "set",
+          "value": []
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5/label = {}",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "label"
+          ],
+          "op": "set",
+          "value": {}
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5/label = [1]",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "label"
+          ],
+          "op": "set",
+          "value": [
+            1
+          ]
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5/label = {'a': 1}",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
+            "label"
+          ],
+          "op": "set",
+          "value": {
+            "a": 1
+          }
+        }
+      },
+      "output": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "/daily_homework/5/label = 削除",
+      "input": {
+        "mutation": {
+          "path": [
+            "daily_homework",
+            5,
             "label"
           ],
           "op": "delete"

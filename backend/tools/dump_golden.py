@@ -377,16 +377,13 @@ def dump_judge() -> None:
     doc = load_sample_doc()
     habits = [h["key"] for h in doc.get("habits", [])]
     dailies = [h["key"] for h in doc.get("daily_homework", [])]
-    practices = [h["key"] for h in doc.get("practice_homework", [])]
     challenges = [h["key"] for h in doc.get("special_challenges", [])]
 
-    def statuses(n_habit: int, n_daily: int, n_practice: int, n_challenge: int = 0) -> dict:
+    def statuses(n_habit: int, n_daily: int, n_challenge: int = 0) -> dict:
         s = {}
         for k in habits[:n_habit]:
             s[k] = "done"
         for k in dailies[:n_daily]:
-            s[k] = "done"
-        for k in practices[:n_practice]:
             s[k] = "done"
         for k in challenges[:n_challenge]:
             s[k] = "done"
@@ -395,17 +392,21 @@ def dump_judge() -> None:
     cases = []
     # 丸めの境目をひととおり（int(v+0.5) と偶数丸めの差はここにしか出ない）
     combos = [
-        (0, 0, 0, 0),
-        (1, 0, 0, 0),
-        (2, 0, 0, 0),
-        (3, 0, 0, 0),
-        (len(habits), len(dailies), len(practices), 0),
-        (len(habits), len(dailies), len(practices), 1),
-        (len(habits), len(dailies), len(practices), len(challenges)),
-        (len(habits) - 1, len(dailies), len(practices), 1),
-        (0, 1, 0, 0),
-        (0, 0, 1, 0),
-        (1, 1, 1, 1),
+        (0, 0, 0),
+        (1, 0, 0),
+        (2, 0, 0),
+        (3, 0, 0),
+        (0, 1, 0),
+        (0, 2, 0),
+        (0, 3, 0),
+        (0, 4, 0),
+        (0, 5, 0),
+        (len(habits), len(dailies), 0),
+        (len(habits), len(dailies), 1),
+        (len(habits), len(dailies), len(challenges)),
+        (len(habits) - 1, len(dailies), 1),
+        (len(habits), len(dailies) - 1, 1),
+        (1, 1, 1),
     ]
     days = ["2026-07-21", "2026-07-25", "2026-07-26", "2026-08-27", "2026-08-31", "2026-08-15"]
     for day in days:
@@ -423,7 +424,7 @@ def dump_judge() -> None:
     # 中止（雨天）は満点扱い
     cancelable = [h["key"] for h in doc.get("habits", []) if h.get("cancelable")]
     if cancelable:
-        s = statuses(len(habits), len(dailies), len(practices))
+        s = statuses(len(habits), len(dailies))
         s[cancelable[0]] = "cancelled"
         cases.append(
             {
@@ -741,7 +742,6 @@ def dump_state() -> None:
         definition = parse_definition(stored)
         habits = [h["key"] for h in stored.get("habits", [])]
         dailies = [h["key"] for h in stored.get("daily_homework", [])]
-        practices = [h["key"] for h in stored.get("practice_homework", [])]
         challenges = [h["key"] for h in stored.get("special_challenges", [])]
         one_shots = [h["key"] for h in stored.get("one_shot_homework", [])]
         preps = [h["key"] for h in stored.get("school_start_items", [])]
@@ -784,7 +784,7 @@ def dump_state() -> None:
         # 3) 満点＋チャレンジ（数日ぶん積む＝ごほうびランクとストリークが動く）
         for offset in range(4, 9):
             d = definition.start + timedelta(days=offset)
-            for key in habits + dailies + practices + challenges:
+            for key in habits + dailies + challenges:
                 store.set_check_status(child, d, key, "done", db_path=db)
         snapshot("満点が5日つづいた", definition.start + timedelta(days=10))
 
@@ -803,7 +803,7 @@ def dump_state() -> None:
             snapshot("中止をふくむ日", definition.start + timedelta(days=10))
 
         # 6) メモ（text / choice / duration）
-        for item in definition.daily_homework + definition.practice_homework:
+        for item in definition.daily_homework:
             if not item.meta:
                 continue
             meta = {}

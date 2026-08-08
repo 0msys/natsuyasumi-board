@@ -39,17 +39,15 @@ export function buildTodoSpeechText(args: {
 	const sentences: string[] = [`${childKana}さん。`];
 
 	const habitDaily = items.filter((i) => i.kind === 'habit' || i.kind === 'daily');
-	const practice = items.filter((i) => i.kind === 'practice');
 	const oneShot = items.filter((i) => i.kind === 'one_shot');
 	const prep = items.filter((i) => i.kind === 'school_start');
 
 	if (awayLabel && inPeriod) sentences.push(line('away'));
 
-	if (!habitDaily.length && !practice.length && !oneShot.length) {
+	if (!habitDaily.length && !oneShot.length) {
 		if (inPeriod) sentences.push(line('all_done'));
 	} else {
 		if (habitDaily.length) sentences.push(line('habit_daily', { labels: joinLabels(habitDaily, grade) }));
-		if (practice.length) sentences.push(line('practice'));
 		if (oneShot.length) sentences.push(line('one_shot', { labels: joinLabels(oneShot, grade) }));
 	}
 
