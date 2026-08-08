@@ -28,9 +28,14 @@ export const backupApi = {
 				.then(async (known) => {
 					if (known !== null) return;
 					const granted = await askPersist();
-					await mutate((db) => {
-						db.meta.persisted = granted;
-					});
+					// 記録は1つも変わっていない。local を外すと、persist が使えない端末では
+					// これがタブを開くたびに走り、「そのあと N件」だけが積み上がる。
+					await mutate(
+						(db) => {
+							db.meta.persisted = granted;
+						},
+						{ local: true }
+					);
 				})
 				.catch(() => {
 					// 保存が読めなかった／書けなかっただけ。次に開いたときに頼み直せるよう戻す。
@@ -42,7 +47,8 @@ export const backupApi = {
 		return read((db) => ({
 			supported: true,
 			last_backup_at: db.meta.last_backup_at,
-			// 「6日前」より「そのあと32件つけた」のほうが、催促として効く
+			// 「6日前」より「そのあと32件つけた」のほうが、催促として効く。
+			// seq は記録が変わった書き込みでしか上がらないので、ここは引き算だけでよい。
 			changes_since_backup: Math.max(0, db.meta.seq - db.meta.last_backup_seq),
 			persisted: db.meta.persisted,
 			storage_ephemeral: isStorageUnavailable(),
@@ -51,14 +57,18 @@ export const backupApi = {
 	},
 
 	backupExportAll: () =>
-		mutate((db) => {
-			const now = nowEpochSec();
-			const built = buildBackup(db, now);
-			// 「いつ・どこまで出したか」を覚えて、次の催促の基準にする
-			db.meta.last_backup_at = now;
-			db.meta.last_backup_seq = db.meta.seq;
-			return built;
-		}),
+		// 書き出しそのものは記録を変えない（local）。
+		mutate(
+			(db) => {
+				const now = nowEpochSec();
+				const built = buildBackup(db, now);
+				// 「いつ・どこまで出したか」を覚えて、次の催促の基準にする
+				db.meta.last_backup_at = now;
+				db.meta.last_backup_seq = db.meta.seq;
+				return built;
+			},
+			{ local: true }
+		),
 
 	backupImportAll: async (payload: unknown) => {
 		// 置きかえる前に中身を確かめる。壊れたファイルで空にしてしまうと、
@@ -75,7 +85,11 @@ export const backupApi = {
 	},
 
 	backupDismissHomeHint: () =>
-		mutate((db) => {
-			db.meta.home_hint_dismissed = true;
-		}).then(() => undefined)
+		// 案内を閉じただけ。記録は変わっていない。
+		mutate(
+			(db) => {
+				db.meta.home_hint_dismissed = true;
+			},
+			{ local: true }
+		).then(() => undefined)
 };

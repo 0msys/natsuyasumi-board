@@ -7,6 +7,7 @@
 	import { resolve } from '$app/paths';
 	import { api } from '$lib/api';
 	import { childErrorText } from '$lib/api/apiError';
+	import { backupLevel } from '$lib/backup/level';
 	import type {
 		SummerCheckStatus,
 		SummerDecision,
@@ -180,10 +181,11 @@
 			.backupStatus()
 			.then((s) => {
 				if (!s.supported) return;
-				const days = s.last_backup_at ? (Date.now() / 1000 - s.last_backup_at) / 86400 : Infinity;
+				// しきい値の判定は $lib/backup/level ただ1か所（せっていの BackupCard と同じもの）。
+				// ここに書き写すと、カードは普通の見た目なのに歯車だけ赤い、という日ができる。
 				// 保存そのものが効いていない端末でも印を点ける。子どもの画面に文言は出さないが、
 				// 親がせっていを開けば理由が書いてある。
-				backupNeeded = s.storage_ephemeral || days > 7 || s.changes_since_backup > 50;
+				backupNeeded = s.storage_ephemeral || backupLevel(s) !== 'ok';
 			})
 			.catch(() => {});
 		// VOICEVOX の死活を1回だけ確認（無ければ音声ボタンを出さない）
