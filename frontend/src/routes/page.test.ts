@@ -13,6 +13,9 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from 'bun:test';
 import { render } from '@testing-library/svelte';
 import type { SummerState } from '$lib/api';
+// ApiError は $lib/api/contract から取る（$lib/api はモックが丸ごと差し替えるので、
+// そちら経由だと undefined になる）。api の実装は両方ともこれを投げる。
+import { ApiError } from '$lib/api/contract';
 import { stripRuby } from '$lib/summer/ruby';
 import { setApi } from '../test-support/apiMock';
 import '../test-support/appMocks'; // ページが $app/paths（resolve）を使うので差し替えが要る
@@ -32,6 +35,8 @@ function hanaRankUp(): SummerState {
 let nextState: SummerState = hana();
 let writeFails = false;
 let releaseWrite: (() => void) | null = null;
+/** 書き込みが失敗したときに api が投げるもの（既定は docker 版＝JSON 本文つき）. */
+let writeError: unknown = null;
 
 // 読み上げ（$lib/summer/speakText）は差し替えないこと——本物を検査している
 // speakText.test.ts を巻き添えで壊す。このページは ttsStatus を available:false に
@@ -83,13 +88,16 @@ beforeEach(() => {
 	nextState = hana();
 	writeFails = false;
 	releaseWrite = null;
+	// 書き込みが弾かれたときの形（docker 版＝JSON 本文つきの 400）。
+	// 子どもあての文言を持つのは 400 だけなので、status も実物に合わせる。
+	writeError = new ApiError(400, '{"detail": "かきこめなかった"}', '/api/summer/check/set');
 	setApi({
 		summerState: async () => clone(nextState),
 		summerSetCheck: async () => {
 			await new Promise<void>((resolve) => {
 				releaseWrite = resolve;
 			});
-			if (writeFails) throw new Error('/api/summer/check/set → 500 {"detail": "かきこめなかった"}');
+			if (writeFails) throw writeError;
 			return { status: 'done' };
 		},
 		summerMediaTimerState: async () => ({
@@ -195,5 +203,48 @@ describe('子どもページ・切替の後始末', () => {
 		expect(rankBannerShown()).toBe(false); // まだ遅延中（満点花火が先）
 
 		expect(await advance(20_000, rankBannerShown)).toBe(true);
+	});
+});
+
+// 出す・出さないの判断は上の describe、ここは「何と書いてあるか」。
+// ひらがなの画面なので、数字も英語も混ぜない（文言の組み立ては $lib/api/apiError）。
+describe('子どもページ・失敗の文言', () => {
+	/** 書き込みを1回失敗させて、画面に出た文言を返す. */
+	async function failedWriteText(thrown: unknown): Promise<string> {
+		writeError = thrown;
+		writeFails = true;
+		const r = mountPage(hana());
+		doneButton(r).click();
+		await drain();
+		releaseWrite!();
+		await drain();
+		return r.container.textContent ?? '';
+	}
+
+	it('lite の書き込みエラーに status を混ぜない', async () => {
+		// lite は where 無しで投げるので、message は「400 まだ さきのひは かけないよ」になる。
+		// message を出していたころは、この 400 がそのまま子どもの画面に出ていた。
+		const text = await failedWriteText(new ApiError(400, 'まだ さきのひは かけないよ'));
+		expect(text).toContain('まだ さきのひは かけないよ');
+		expect(text).not.toContain('400');
+	});
+
+	it('api の文言でない失敗は、決まった一言に畳む', async () => {
+		// 読み上げ再生の DOMException や通信断がこれ。英語のまま出すわけにいかない。
+		const text = await failedWriteText(new Error('Failed to fetch'));
+		expect(text).not.toContain('Failed to fetch');
+		expect(text).toContain('もういちど');
+	});
+
+	it('本文が空の失敗でも、何か出す（黙って消えない）', async () => {
+		const text = await failedWriteText(new ApiError(502, '', '/api/summer/check/set'));
+		expect(text).toContain('もういちど');
+	});
+
+	it('定義が壊れている 503 は、日本語でも子どもの画面に出さない', async () => {
+		// lite の shared.ts / docker の summer.py が投げる形。親あての文言。
+		const text = await failedWriteText(new ApiError(503, '「はな」の定義がありません'));
+		expect(text).not.toContain('定義');
+		expect(text).toContain('もういちど');
 	});
 });

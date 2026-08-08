@@ -16,7 +16,7 @@
 	import { api } from '$lib/api';
 	import type { AdminDocument, ChildInfo } from '$lib/api';
 	import Modal from '$lib/Modal.svelte';
-	import { errorDetail } from '$lib/admin/apiError';
+	import { errorDetail } from '$lib/api/apiError';
 	import { downloadJson } from '$lib/admin/download';
 	import BackupCard from '$lib/backup/BackupCard.svelte';
 	import { looksLikeBackup } from '$lib/backup/format';

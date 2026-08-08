@@ -6,6 +6,7 @@
 	import { Settings, Sun, TriangleAlert } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { api } from '$lib/api';
+	import { childErrorText } from '$lib/api/apiError';
 	import type {
 		SummerCheckStatus,
 		SummerDecision,
@@ -207,19 +208,10 @@
 		};
 	});
 
-	// API エラー本文（`path → 400 {"detail": "..."}`）から detail を取り出して表示する
+	// 失敗の文言は $lib/api/apiError に集約してある（管理画面と同じ取り出しかた・
+	// 見せかただけ子ども向け）。ここに書き写すと、片方だけ直った状態にまた戻る。
 	function showError(e: unknown) {
-		const raw = e instanceof Error ? e.message : String(e);
-		const m = raw.match(/\{.*\}$/s);
-		let detail = raw;
-		if (m) {
-			try {
-				detail = (JSON.parse(m[0]) as { detail?: string }).detail ?? raw;
-			} catch {
-				detail = raw;
-			}
-		}
-		errorMsg = detail;
+		errorMsg = childErrorText(e);
 		if (errorTimer) clearTimeout(errorTimer);
 		errorTimer = setTimeout(() => (errorMsg = null), 6000);
 	}

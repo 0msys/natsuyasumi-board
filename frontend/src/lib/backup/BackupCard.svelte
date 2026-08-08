@@ -8,7 +8,7 @@
 	import { Download, HousePlus, Upload, X } from '@lucide/svelte';
 	import { api, type BackupStatus } from '$lib/api';
 	import { downloadJson } from '$lib/admin/download';
-	import { errorDetail } from '$lib/admin/apiError';
+	import { errorDetail } from '$lib/api/apiError';
 
 	let { onImported }: { onImported?: () => void } = $props();
 
