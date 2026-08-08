@@ -281,6 +281,12 @@ def build_state(child: str, today=None, db_path: Path | None = None) -> dict:
         # else 枝に落ちて guide.rows で落ちる（＝リロードするまで真っ白）。null なら
         # 空のカードが1枚出るだけで済む。全端末を1回リロードしたらこの行は消してよい。
         "card_guide": None,
+        # 「くりかえしの宿題」を daily_homework へ統合したあとの互換スタブ（同上）。
+        # 旧画面は practice を配列として {#each} や [...daily, ...practice] に渡すので、
+        # キーごと消すと undefined の展開で `practice is not iterable` になり真っ白に落ちる
+        # （実測で確認済み）。空配列なら見出しだけ出て中身が無い状態で済む。
+        # 全端末を1回リロードしたらこの行は消してよい。
+        "practice_homework": [],
         "history": history,
         "streaks": {
             "perfect_current": streaks.perfect_current,

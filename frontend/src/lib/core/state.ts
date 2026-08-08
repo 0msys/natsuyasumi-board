@@ -232,6 +232,10 @@ export function buildState(args: {
 		// 「今日カードにぬる色」を消したあとの互換スタブ。古い画面が guide === null で
 		// 期間外を描き分けるので、キーごと消すと undefined が else 枝に落ちて壊れる。
 		card_guide: null,
+		// 「くりかえしの宿題」を daily_homework へ統合したあとの互換スタブ（同上）。
+		// 旧画面は practice を配列として展開するので、キーごと消すと壊れる。
+		// docker 版と同じ形を保つ（この state は両版のゴールデンで突き合わせる）。
+		practice_homework: [],
 		history,
 		streaks: {
 			perfect_current: streaks.perfect_current,
