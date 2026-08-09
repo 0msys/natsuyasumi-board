@@ -120,8 +120,15 @@ export const backupApi = {
 				// 手元にあるのに催促が早く出る。どちらのファイルも本物なので断りはしない
 				// （断ると、ちゃんと保存した親に「合わなくなっていた」と言うことになる）。
 				// 覚えるほうを新しいものに寄せる。
-				const at = Math.min(exported_at, nowEpochSec());
-				db.meta.last_backup_at = Math.max(at, db.meta.last_backup_at ?? 0);
+				//
+				// 寄せる相手も未来なら当てにしない。いま入っている日づけが未来になることが
+				// ある——時計が進んでいた端末で確かめた、その端末で取ったバックアップから
+				// 復元した。そのまま抱えこむと、時計が直っても日数が0のまま張りつき、
+				// 次に確かめても新しい（正しい）時刻に上書きされないので、催促が二度と
+				// 出ない。どちらも「いま」までに丸めてから比べる。
+				const now = nowEpochSec();
+				const known = Math.min(db.meta.last_backup_at ?? 0, now);
+				db.meta.last_backup_at = Math.max(Math.min(exported_at, now), known);
 				return { recorded: true };
 			},
 			{ local: true }

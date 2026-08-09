@@ -595,6 +595,28 @@ describe('バックアップの催促', () => {
 		).toBe(at);
 	});
 
+	// 未来の日づけを抱えこむと、時計が直っても日数が0のまま張りつき、次に確かめても
+	// 正しい時刻に上書きされない＝催促が二度と出ない。日づけを戻さない仕掛けが、
+	// そのまま「間違った未来を守る」に化けないことを見る。
+	it('未来の日づけは、確かめ直したときに引きずらない', async () => {
+		await wizard();
+		// 時計が進んでいた端末で取ったバックアップから復元した状況（復元は
+		// last_backup_at を出どころのファイルから引き継ぐ）
+		const { payload } = await api.backupExportAll();
+		const ahead = nowEpochSec() + 365 * 86400;
+		((payload as Record<string, Record<string, { last_backup_at: number }>>).db.meta)
+			.last_backup_at = ahead;
+		await api.backupImportAll(payload);
+		expect((await api.backupStatus()).last_backup_at, '前提: 未来の日づけが入っている').toBe(ahead);
+
+		// この端末で書き出して確かめ直せば、正しい「いま」に戻る
+		await exportAndConfirm();
+		expect(
+			(await api.backupStatus()).last_backup_at,
+			'間違った未来の日づけを抱えたままになっている'
+		).toBeLessThanOrEqual(nowEpochSec());
+	});
+
 	// 催促が測っているのは「手元のファイルの古さ」。確かめた時刻で刻むと、問いかけを
 	// 開いたまま何日も置いてから答えたときに、1週間前のファイルが「きょう」になる
 	// ——次の催促がそこからさらに遅れる。
