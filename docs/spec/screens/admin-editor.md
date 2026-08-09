@@ -30,7 +30,7 @@
 | ごほうび | ランク、平均点、景品 | [ごほうび](../features/admin-settings.md#チャレンジとごほうび) |
 | いっかいもの | 完了型、冊数型の宿題 | [一回もの](../features/admin-settings.md#一回ものと選択宿題) |
 | えらぶ宿題 | 選択グループ、必要数、選択肢 | [選択宿題](../features/admin-settings.md#一回ものと選択宿題) |
-| 新学期 | 準備項目、任意項目 | [新学期](../features/admin-settings.md#新学期と外出) |
+| 新学期 | 準備項目、期限 | [新学期](../features/admin-settings.md#新学期と外出) |
 | おでかけ | 外出名と期間 | [外出](../features/admin-settings.md#新学期と外出) |
 
 ## 保存単位

@@ -7,7 +7,10 @@
 - `ADMIN_PIN`: 管理画面に簡易 PIN ゲートを設けます。
 - `ADMIN_NO_AUTH=1`: 家庭内 LAN で PIN なし運用を選びます。
 
-どちらもない場合は管理機能を無効にします。
+どちらもない場合、Docker Compose の起動ガードは起動を中止します。
+backend と frontend のコンテナは立ち上がりません。
+
+起動ガードを経ない手動セットアップで両方とも設定しなかった場合は、管理機能を無効にします。
 一覧や編集内容は表示せず、起動設定の案内を表示します。
 
 ## PIN
@@ -32,7 +35,8 @@ PIN は子どもの誤操作を防ぐ簡易ゲートです。インターネッ�
 
 ## テスト観点
 
-- PIN 必須、PIN 不要、管理無効の3状態
+- Docker Compose で管理方法が未設定なら起動しないこと
+- 手動セットアップにおける PIN 必須、PIN 不要、管理無効の3状態
 - 正しい PIN と誤った PIN
 - 認証 Cookie 取得後の画面再読込
 - 管理無効時に編集 UI を表示しないこと
@@ -41,6 +45,7 @@ PIN は子どもの誤操作を防ぐ簡易ゲートです。インターネッ�
 
 ## 実装参照
 
+- `docker-compose.yml`
 - `frontend/src/lib/admin/PinGate.svelte`
 - `frontend/src/lib/admin/AdminDisabledNotice.svelte`
 - `backend/app/admin/auth.py`

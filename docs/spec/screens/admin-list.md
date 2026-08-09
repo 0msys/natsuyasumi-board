@@ -7,7 +7,8 @@
 ## 利用条件
 
 - Docker 版で PIN が設定されている場合は、認証後に表示します。
-- Docker 版で管理方法が未設定の場合は、設定方法だけを表示します。
+- Docker Compose 版で管理方法が未設定の場合は、アプリ自体が起動しません。
+- 起動ガードを経ない手動セットアップで管理方法が未設定の場合は、設定方法だけを表示します。
 - lite 版では PIN を表示しません。
 
 ## 機能一覧
@@ -20,9 +21,9 @@
 | ADM-04 | 新規作成 | 新規作成ウィザードへ移動する | 常時 | [新規作成](admin-new.md) |
 | ADM-05 | 来年度を作成 | 最新年度の設定から翌年分を作る | 有効な定義 | [子どもと年度の管理](../features/admin-child-management.md) |
 | ADM-06 | 名前変更 | 定義と記録の子ども名を一括変更する | 定義があるとき | [子どもと年度の管理](../features/admin-child-management.md) |
-| ADM-07 | 定義の削除 | 年度または子どもの定義を削除する | 定義があるとき | [子どもと年度の管理](../features/admin-child-management.md) |
+| ADM-07 | 定義の削除 | その子どもの全年度の定義をまとめて削除する | 定義があるとき | [子どもと年度の管理](../features/admin-child-management.md) |
 | ADM-08 | 定義エクスポート | 1年度分の設定を JSON で保存する | 定義があるとき | [子どもと年度の管理](../features/admin-child-management.md) |
-| ADM-09 | JSON インポート | 定義または端末全体のバックアップを読み込む | JSON ファイル選択時 | [バックアップと復元](../features/backup-restore.md) |
+| ADM-09 | JSON インポート | 定義JSONを読み込む。lite版では端末全体のバックアップも復元する | JSON ファイル選択時 | [バックアップと復元](../features/backup-restore.md) |
 | ADM-10 | 端末バックアップ | lite 版の全設定と記録を保存・復元する | lite 版 | [バックアップと復元](../features/backup-restore.md) |
 | ADM-11 | 保存領域の警告 | 端末保存が永続化されていないことを知らせる | 該当する lite 版環境 | [保存方式と版の違い](../common/storage-variants.md) |
 | ADM-12 | エラー表示 | 一覧取得や各操作の失敗理由を表示する | エラー発生時 | [エラー表示](../common/errors-security.md) |

@@ -38,6 +38,8 @@ Docker 版はサーバ側のデータ領域を別途バックアップします�
 
 設定一覧の「JSON をインポート」は内容を判定します。
 端末バックアップなら全置換、定義 JSON なら新規定義として取り込みます。
+全置換は lite 版だけの機能です。
+Docker 版で端末バックアップを選ぶと確認後に501エラーで拒否します。
 同じ子ども・同じ年度の定義がある場合は定義インポートを拒否します。
 
 ## 保存領域の警告
@@ -53,6 +55,7 @@ IndexedDB の永続化を利用できない場合は、すべての管理画面�
 - 古い確認チケットと未来時刻を拒否すること
 - 復元の確認取消時にデータを変えないこと
 - 全データ置換と定義追加の振り分け
+- Docker 版で端末バックアップの復元を501で拒否すること
 - 壊れた形式、新しい版、同一年度の定義を拒否すること
 - 保存領域警告が全管理画面に出ること
 
@@ -60,5 +63,6 @@ IndexedDB の永続化を利用できない場合は、すべての管理画面�
 
 - `frontend/src/lib/backup/BackupCard.svelte`
 - `frontend/src/lib/backup/StorageWarning.svelte`
+- `frontend/src/lib/api/client.ts`
 - `frontend/src/lib/api/local/backup.ts`
 - `frontend/src/lib/store/backup.ts`
