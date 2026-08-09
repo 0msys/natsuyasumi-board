@@ -125,62 +125,56 @@ describe('管理画面トップのエクスポート', () => {
 		expect(screen.queryByRole('link', { name: 'こちらからほぞん' })).toBeNull();
 	});
 
-	// エクスポートのボタンは押した子どもぶんしか止まらないので、2人ぶんが重なって走る。
-	// あとから来たほうで上書きすると、先のぶんは release() を呼べる者が居なくなり、
-	// 定義の写しを抱えた blob URL がタブを閉じるまで残る。
-	it('2人ぶんが重なっても、解放されない書き出しを残さない', async () => {
-		const r = render(Page, { props: { data: data(['はな', 'たろう']) } });
+	// 重なりを許すと、手がかりを出せる行は1つしか無いので、先に押したぶんが行も
+	// 押し直しリンクも持てない——落とされたときに打つ手が無くなる。重ねて押せることに
+	// 利点は無いので、走っているあいだは全部のボタンを止める。この不変条件が崩れると、
+	// 追い越しにまつわる面倒（誰が行を出すか・誰が待ち表示を消すか・誰が release するか）
+	// がまとめて戻ってくる。
+	it('ほかの子どもの書き出しが走っているあいだは、重ねて押せない', async () => {
+		render(Page, { props: { data: data(['はな', 'たろう']) } });
 		await flush();
 		holdExport = true;
-		const buttons = screen.getAllByRole('button', { name: 'エクスポート（JSON）' });
+		const buttons = screen.getAllByRole('button', {
+			name: 'エクスポート（JSON）'
+		}) as HTMLButtonElement[];
 		await fireEvent.click(buttons[0]);
+		await flush();
+
+		expect(buttons[1].disabled, 'ほかの子どもの書き出しを重ねて始められる').toBe(true);
+		await fireEvent.click(buttons[1]); // 押しても何も起きない
+		await flush();
+		expect(fired, '止めたはずの書き出しが走っている').toEqual([]);
+
+		releaseExport['はな']?.();
+		await flush();
+		expect(buttons[1].disabled, '終わったのにボタンが戻らない').toBe(false);
+	});
+
+	// 続けて書き出したときは、どちらも落ちて、どちらも押し直せる（＝落とされても
+	// 打つ手が残る）。行は最後のものだけが出る。
+	it('続けて書き出せば、どちらも落ちて、押し直せる', async () => {
+		const r = render(Page, { props: { data: data(['はな', 'たろう']) } });
+		await flush();
+		const buttons = screen.getAllByRole('button', { name: 'エクスポート（JSON）' });
+
+		await fireEvent.click(buttons[0]);
+		await flush();
+		expect(screen.getByText(/2026-はな\.json を書き出しました。/)).toBeTruthy();
+		expect(
+			(screen.getByRole('link', { name: 'こちらからほぞん' }) as HTMLAnchorElement).getAttribute(
+				'download'
+			)
+		).toBe('2026-はな.json');
+
 		await fireEvent.click(buttons[1]);
 		await flush();
-
-		releaseExport['はな']?.(); // 先に押したほうが、あとから返る
-		await flush();
-		releaseExport['たろう']?.();
-		await flush();
-
-		// 押したぶんは2人とも落ちる。世代で譲るのは「行を出す番」だけで、
-		// ここで渡すのをやめると、先に押したぶんがファイルも手がかりも無しに消える。
-		expect(fired, '追い越されたぶんが、黙って落ちずに消えている').toEqual([
-			'2026-はな.json',
-			'2026-たろう.json'
-		]);
-		// 出ているのは、あとに押した1人ぶんだけ
+		expect(fired, 'どちらかが落ちていない').toEqual(['2026-はな.json', '2026-たろう.json']);
 		expect(screen.getByText(/2026-たろう\.json を書き出しました。/)).toBeTruthy();
 		expect(screen.queryByText(/2026-はな\.json を書き出しました。/)).toBeNull();
 
 		r.unmount();
-		await flush(); // 行に出さないぶんの解放は次の番に回してある
+		await flush();
 		expect(created.length - revoked.length, '解放されない blob URL が残っている').toBe(0);
-	});
-
-	// 追い越されたぶんの失敗は、あとから押したぶんの結果を汚してはいけない。
-	// 新しいほうは自分の始まりで actionError を消しているので、そのあとに来た
-	// 古いほうのエラーは誰も消さない＝押し直せるリンクと「よみこめませんでした」が
-	// 同時に出る（親には、出せたのか出せなかったのか分からない）。
-	it('追い越されたぶんが転んでも、あとから押したぶんの結果を汚さない', async () => {
-		render(Page, { props: { data: data(['はな', 'たろう']) } });
-		await flush();
-		holdExport = true;
-		failing.add('はな'); // 先に押したほうだけ転ぶ
-		const buttons = screen.getAllByRole('button', { name: 'エクスポート（JSON）' });
-		await fireEvent.click(buttons[0]);
-		await fireEvent.click(buttons[1]);
-		await flush();
-
-		releaseExport['はな']?.(); // 追い越されたほうが、先に転んで返る
-		await flush();
-		releaseExport['たろう']?.();
-		await flush();
-
-		expect(screen.getByText(/2026-たろう\.json を書き出しました。/)).toBeTruthy();
-		expect(
-			screen.queryByText(/つながりませんでした/),
-			'追い越されたぶんの失敗が、成功したリンクと同時に出ている'
-		).toBeNull();
 	});
 
 	// 世代を上げてよいのは「新しく書き出しを押した」と「画面を離れた」の2つだけ。
