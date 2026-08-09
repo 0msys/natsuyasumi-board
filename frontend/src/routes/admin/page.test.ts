@@ -35,7 +35,8 @@ const data = (children = ['はな']) => ({
 	loadError: null
 });
 
-let exportFails: unknown = null;
+/** 転ばせる子ども（空なら全部成功）. */
+let failing: Set<string> = new Set();
 let spies: { mockRestore: () => void }[] = [];
 /** 作った blob URL と、解放した blob URL（数が合わないと定義の写しが残る）. */
 let created: string[] = [];
@@ -47,16 +48,16 @@ let holdExport = false;
 beforeEach(() => {
 	cleanup();
 	resetAppMocks();
-	exportFails = null;
+	failing = new Set();
 	created = [];
 	revoked = [];
 	releaseExport = {};
 	holdExport = false;
 	setApi({
 		adminExportDoc: async (child: string) => {
-			if (exportFails) throw exportFails;
 			// 止めておくときは、返す時点をテスト側が決める（往復を重ねるため）
 			if (holdExport) await new Promise<void>((resolve) => (releaseExport[child] = resolve));
+			if (failing.has(child)) throw new Error('つながりませんでした');
 			return { filename: `2026-${child}.json`, doc: { child } };
 		},
 		// docker 版と同じ（supported:false＝バックアップのカードごと出ない）
@@ -110,7 +111,7 @@ describe('管理画面トップのエクスポート', () => {
 
 	// 取りに行くところで転んだのに「書き出しました」と出ると、いちばん困る種類の嘘になる。
 	it('取得で転んだときは「書き出しました」と言わない', async () => {
-		exportFails = new Error('つながりませんでした');
+		failing.add('はな');
 		await pressExport();
 
 		expect(screen.queryByText(/を書き出しました。/), '出せていないのに出したと言っている').toBeNull();
@@ -140,5 +141,31 @@ describe('管理画面トップのエクスポート', () => {
 
 		r.unmount();
 		expect(created.length - revoked.length, '解放されない blob URL が残っている').toBe(0);
+	});
+
+	// 追い越されたぶんの失敗は、あとから押したぶんの結果を汚してはいけない。
+	// 新しいほうは自分の始まりで actionError を消しているので、そのあとに来た
+	// 古いほうのエラーは誰も消さない＝押し直せるリンクと「よみこめませんでした」が
+	// 同時に出る（親には、出せたのか出せなかったのか分からない）。
+	it('追い越されたぶんが転んでも、あとから押したぶんの結果を汚さない', async () => {
+		render(Page, { props: { data: data(['はな', 'たろう']) } });
+		await flush();
+		holdExport = true;
+		failing.add('はな'); // 先に押したほうだけ転ぶ
+		const buttons = screen.getAllByRole('button', { name: 'エクスポート（JSON）' });
+		await fireEvent.click(buttons[0]);
+		await fireEvent.click(buttons[1]);
+		await flush();
+
+		releaseExport['はな']?.(); // 追い越されたほうが、先に転んで返る
+		await flush();
+		releaseExport['たろう']?.();
+		await flush();
+
+		expect(screen.getByText(/2026-たろう\.json を書き出しました。/)).toBeTruthy();
+		expect(
+			screen.queryByText(/つながりませんでした/),
+			'追い越されたぶんの失敗が、成功したリンクと同時に出ている'
+		).toBeNull();
 	});
 });

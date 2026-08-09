@@ -65,9 +65,16 @@
 			// 黙っていても嘘になる先が無い（手がかりが無いのは困るので、1行は出す）。
 			lastExport = downloadJson(filename, doc);
 		} catch (e) {
+			// 追い越されたぶんの失敗は出さない。ここを素通しにすると、あとから押した
+			// ぶんが成功しているのに「よみこめませんでした」が残る（新しいほうは自分の
+			// 始まりで actionError を消しているので、あとから来たこの1行は誰も消さない）
+			// ＝押し直せるリンクとエラーが同時に出る。
+			if (gen !== exportGen) return;
 			actionError = errorDetail(e);
 		} finally {
-			exportBusy = null;
+			// 待ち表示も、いま走っているぶんのもの。追い越されたぶんが消すと、
+			// まだ待っている子どものボタンが先に押せるようになる。
+			if (gen === exportGen) exportBusy = null;
 		}
 	}
 
