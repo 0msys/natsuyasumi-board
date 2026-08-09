@@ -19,7 +19,7 @@
 | ADM-02 | 定義一覧 | 名前、学年、期間、年度、定義エラーを表示する | 管理機能を利用できるとき | [子どもと年度の管理](../features/admin-child-management.md) |
 | ADM-03 | 編集画面を開く | 選んだ子どもの設定を開く | 定義があるとき | [子ども設定編集](admin-editor.md) |
 | ADM-04 | 新規作成 | 新規作成ウィザードへ移動する | 常時 | [新規作成](admin-new.md) |
-| ADM-05 | 来年度を作成 | 最新年度の設定から翌年分を作る | 有効な定義 | [子どもと年度の管理](../features/admin-child-management.md) |
+| ADM-05 | 来年度を作成 | 最新年度の設定から翌年分を作る | 現在選ばれる年度が有効 | [子どもと年度の管理](../features/admin-child-management.md) |
 | ADM-06 | 名前変更 | 定義と記録の子ども名を一括変更する | 定義があるとき | [子どもと年度の管理](../features/admin-child-management.md) |
 | ADM-07 | 定義の削除 | その子どもの全年度の定義をまとめて削除する | 定義があるとき | [子どもと年度の管理](../features/admin-child-management.md) |
 | ADM-08 | 定義エクスポート | 1年度分の設定を JSON で保存する | 定義があるとき | [子どもと年度の管理](../features/admin-child-management.md) |
