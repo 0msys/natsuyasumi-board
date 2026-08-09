@@ -10,7 +10,7 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from 'bun:test';
 import { cleanup, fireEvent, render, screen } from '@testing-library/svelte';
 import { setApi } from '../../test-support/apiMock';
-import { resetAppMocks } from '../../test-support/appMocks';
+import { resetAppMocks, setConfirmAnswer } from '../../test-support/appMocks';
 
 const Page = (await import('./+page.svelte')).default;
 
@@ -60,6 +60,7 @@ beforeEach(() => {
 			if (failing.has(child)) throw new Error('つながりませんでした');
 			return { filename: `2026-${child}.json`, doc: { child } };
 		},
+		adminCreateNextYear: async () => ({ year: 2027 }),
 		// docker 版と同じ（supported:false＝バックアップのカードごと出ない）
 		backupStatus: async () => ({
 			supported: false,
@@ -167,5 +168,30 @@ describe('管理画面トップのエクスポート', () => {
 			screen.queryByText(/つながりませんでした/),
 			'追い越されたぶんの失敗が、成功したリンクと同時に出ている'
 		).toBeNull();
+	});
+
+	// 世代を上げてよいのは「新しく書き出しを押した」と「画面を離れた」の2つだけ。
+	// 名前の変更や削除でも上げると、往復の途中で世代が変わり、戻ってきたエクスポートが
+	// 自分の待ち表示を消せなくなる＝その子のボタンが、開き直すまで押せないままになる。
+	it('書き出しの途中でほかの操作をしても、ボタンが押せなくならない', async () => {
+		render(Page, { props: { data: data(['はな']) } });
+		await flush();
+		holdExport = true;
+		const exportButton = screen.getByRole('button', {
+			name: 'エクスポート（JSON）'
+		}) as HTMLButtonElement;
+		await fireEvent.click(exportButton);
+		await flush();
+
+		// 待っているあいだに、別の操作が「書き出しました」の行を片づける
+		setConfirmAnswer(true);
+		await fireEvent.click(screen.getByRole('button', { name: '来年（2027年）ぶんをつくる' }));
+		await flush();
+
+		releaseExport['はな']?.();
+		await flush();
+
+		expect(exportButton.disabled, 'エクスポートのボタンが押せないままになっている').toBe(false);
+		expect(screen.getByText(/2026-はな\.json を書き出しました。/)).toBeTruthy();
 	});
 });

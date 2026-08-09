@@ -40,6 +40,17 @@
 	// 走っている書き出しが「まだ自分の番か」を見るための世代。描画には使わない（$state にしない）。
 	// エクスポートのボタンは押した子どもぶんしか止まらないので、2人ぶんが重なって走りうる。
 	let exportGen = 0;
+	/** いま出している行を片づける（走っている往復には触れない）。 */
+	function clearLastExport() {
+		lastExport?.release();
+		lastExport = null;
+	}
+	/** 走っている往復ごと無かったことにする。
+	 *
+	 *  世代を上げてよいのは「新しく書き出しを押した」と「画面を離れた」の2つだけ。
+	 *  名前の変更や削除でもこれを呼ぶと、往復の途中で世代が変わり、戻ってきた
+	 *  エクスポートが自分の待ち表示（exportBusy）を消せなくなる＝その子の
+	 *  エクスポートのボタンが、開き直すまで押せないままになる。 */
 	function dropLastExport() {
 		exportGen++; // 往復の途中のものは、戻ってきても出さない
 		lastExport?.release();
@@ -92,7 +103,7 @@
 			return;
 		nextYearBusy = c.child;
 		actionError = null;
-		dropLastExport();
+		clearLastExport();
 		try {
 			const entry = await api.adminCreateNextYear(c.child);
 			await goto(`${resolve('/admin/[child]', { child: encodeURIComponent(c.child) })}?year=${entry.year}`, {
@@ -116,7 +127,7 @@
 		const trimmed = next.trim();
 		if (!trimmed || trimmed === c.child) return;
 		actionError = null;
-		dropLastExport();
+		clearLastExport();
 		try {
 			await api.adminRenameChild(c.child, trimmed);
 			await invalidateAll();
@@ -129,7 +140,7 @@
 		if (!deleting || deleteName.trim() !== deleting.child || deleteBusy) return;
 		deleteBusy = true;
 		actionError = null;
-		dropLastExport();
+		clearLastExport();
 		try {
 			await api.adminDeleteDefinition(deleting.child);
 			deleting = null;
@@ -148,7 +159,7 @@
 		input.value = ''; // 同じファイルの再選択でも change が発火するように
 		if (!file) return;
 		actionError = null;
-		dropLastExport();
+		clearLastExport();
 		let doc: unknown;
 		try {
 			doc = JSON.parse(await file.text());
