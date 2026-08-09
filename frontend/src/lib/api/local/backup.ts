@@ -58,14 +58,42 @@ export const backupApi = {
 
 	backupExportAll: () =>
 		// 書き出しそのものは記録を変えない（local）。
+		//
+		// 読むだけだが read ではなく mutate を通す。read は書き込みの鍵の外なので、
+		// 別のタブが「いま書いている途中」の1件を含まないファイルが出ることがある。
+		// バックアップで1件落とすのは、この機能の目的そのものに反する。
 		mutate(
 			(db) => {
-				const now = nowEpochSec();
-				const built = buildBackup(db, now);
-				// 「いつ・どこまで出したか」を覚えて、次の催促の基準にする
-				db.meta.last_backup_at = now;
-				db.meta.last_backup_seq = db.meta.seq;
-				return built;
+				// 「いつ・どこまで出したか」は、ここでは記録しない。
+				// ファイルが親の手元にあると分かってから backupMarkSaved(seq) が記録する。
+				// ここで記録していたころは、共有シートを閉じただけでも「さいごの
+				// バックアップ: きょう」になり、催促が1週間消えていた。
+				return { ...buildBackup(db, nowEpochSec()), seq: db.meta.seq };
+			},
+			{ local: true }
+		),
+
+	backupMarkSaved: (seq: number) =>
+		// 催促の基準を進めるだけで、記録は変わっていない（local）。local を外すと通番が
+		// 上がり、印を付けただけで他のタブの催促に1件積む。
+		mutate(
+			(db) => {
+				// min … 手元の記録より先を「済み」にしない。先にすると
+				//        Math.max(0, seq - last_backup_seq) が 0 に潰れたまま戻らず、
+				//        そのあと何を書いても「そのあと0件」＝催促が二度と出ない。
+				//        保存が作り直された端末（IndexedDB が使えず、その場かぎりの
+				//        置き場に落ちた）では、いまの通番のほうが小さい。
+				const upTo = Math.min(seq, db.meta.seq);
+				// 基準は戻さない。待っているあいだに復元した／別のタブがもっと新しいものを
+				// 書き出した、というときに古い「ほぞんできた」が遅れて届くことがある。
+				// そこで戻すと、手元に無いファイルの分まで「まだ」に戻り、復元した直後に
+				// 「そのあと N件」と出る。
+				if (upTo < db.meta.last_backup_seq) return { recorded: false };
+				// 2つの欄は必ずいっしょに動かす。片方だけ動くと「さいごのバックアップ」と
+				// 「そのあと N件」が別々のファイルの話になる。
+				db.meta.last_backup_seq = upTo;
+				db.meta.last_backup_at = nowEpochSec();
+				return { recorded: true };
 			},
 			{ local: true }
 		),

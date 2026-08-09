@@ -184,6 +184,9 @@ export const api: Api = {
 	backupExportAll: () => {
 		throw new ApiError(501, 'この版にまるごとバックアップはありません（./data をコピーしてください）');
 	},
+	backupMarkSaved: () => {
+		throw new ApiError(501, 'この版にまるごとバックアップはありません');
+	},
 	backupImportAll: () => {
 		throw new ApiError(501, 'この版にまるごとバックアップはありません');
 	},

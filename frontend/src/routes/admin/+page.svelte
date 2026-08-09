@@ -17,7 +17,7 @@
 	import type { AdminDocument, ChildInfo } from '$lib/api';
 	import Modal from '$lib/Modal.svelte';
 	import { errorDetail } from '$lib/api/apiError';
-	import { downloadJson } from '$lib/admin/download';
+	import { downloadJson, type DownloadHandle } from '$lib/admin/download';
 	import BackupCard from '$lib/backup/BackupCard.svelte';
 	import { looksLikeBackup } from '$lib/backup/format';
 	import PinGate from '$lib/admin/PinGate.svelte';
@@ -35,13 +35,35 @@
 	let nextYearBusy = $state<string | null>(null);
 	let exportBusy = $state<string | null>(null);
 
+	// 直前に書き出した定義ファイル。出てこなかったときの押し直しに使う。
+	let lastExport = $state<DownloadHandle | null>(null);
+	// 走っている書き出しが「まだ自分の番か」を見るための世代。描画には使わない（$state にしない）。
+	// エクスポートのボタンは押した子どもぶんしか止まらないので、2人ぶんが重なって走りうる。
+	let exportGen = 0;
+	function dropLastExport() {
+		exportGen++; // 往復の途中のものは、戻ってきても出さない
+		lastExport?.release();
+		lastExport = null;
+	}
+	// 画面を離れるときに解放する。
+	$effect(() => () => dropLastExport());
+
 	// 設定を JSON で書き出す（兄弟への流用・他のご家庭との共有・バックアップ）。
 	async function exportDoc(c: ChildInfo) {
 		exportBusy = c.child;
 		actionError = null;
+		dropLastExport();
+		const gen = exportGen;
 		try {
 			const { filename, doc } = await api.adminExportDoc(c.child);
-			downloadJson(filename, doc);
+			// 待っているあいだに別の子どもを押された／画面を離れたなら、こちらは出さない。
+			// 出すと、lastExport が上書きされて release() を呼べる者が居なくなる。
+			if (gen !== exportGen) return;
+			// ここに await を挟まないこと（押した操作の続きとみなされるうちに渡す）。
+			// 出たかどうかは分からないので、書き出したことだけを伝えて押し直せるようにする。
+			// バックアップのカードと違って確認は取らない——ここは催促の基準を持たないので、
+			// 黙っていても嘘になる先が無い（手がかりが無いのは困るので、1行は出す）。
+			lastExport = downloadJson(filename, doc);
 		} catch (e) {
 			actionError = errorDetail(e);
 		} finally {
@@ -63,6 +85,7 @@
 			return;
 		nextYearBusy = c.child;
 		actionError = null;
+		dropLastExport();
 		try {
 			const entry = await api.adminCreateNextYear(c.child);
 			await goto(`${resolve('/admin/[child]', { child: encodeURIComponent(c.child) })}?year=${entry.year}`, {
@@ -86,6 +109,7 @@
 		const trimmed = next.trim();
 		if (!trimmed || trimmed === c.child) return;
 		actionError = null;
+		dropLastExport();
 		try {
 			await api.adminRenameChild(c.child, trimmed);
 			await invalidateAll();
@@ -98,6 +122,7 @@
 		if (!deleting || deleteName.trim() !== deleting.child || deleteBusy) return;
 		deleteBusy = true;
 		actionError = null;
+		dropLastExport();
 		try {
 			await api.adminDeleteDefinition(deleting.child);
 			deleting = null;
@@ -116,6 +141,7 @@
 		input.value = ''; // 同じファイルの再選択でも change が発火するように
 		if (!file) return;
 		actionError = null;
+		dropLastExport();
 		let doc: unknown;
 		try {
 			doc = JSON.parse(await file.text());
@@ -182,6 +208,18 @@
 				class="mb-3 flex items-center gap-2 rounded-lg border border-danger/50 bg-danger/10 px-3 py-2 text-sm text-danger"
 			>
 				<TriangleAlert size={16} class="shrink-0" />{actionError}
+			</div>
+		{/if}
+		<!-- 書き出しは「ブラウザに渡した」までしか分からない。黙って終わると、
+		     クリックが落とされた親には手がかりが1つも残らないので、押し直せる道を出しておく。 -->
+		{#if lastExport}
+			<div class="mb-3 rounded-lg border border-border-dim px-3 py-2 text-sm text-text-dim">
+				{lastExport.filename} を書き出しました。ダウンロードに入っているか確かめてください。
+				出てこないときは<a
+					href={lastExport.url}
+					download={lastExport.filename}
+					class="underline">こちらからほぞん</a
+				>してください。
 			</div>
 		{/if}
 		{#if data.loadError}

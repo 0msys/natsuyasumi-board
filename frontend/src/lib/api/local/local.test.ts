@@ -464,17 +464,84 @@ describe('バックアップの取り込み', () => {
 });
 
 describe('バックアップの催促', () => {
-	it('書き出した直後は「そのあと0件」（自分の書き込みを数えない）', async () => {
+	// 書き出して、そのファイルが手元にあると答えるところまで（画面の2段階を1本にしたもの）。
+	// 通番は書き出したときのものを渡す——ここを「確かめた時点」にすると、待っている
+	// あいだに付けたチェックまで済みに数える。
+	const exportAndConfirm = async () => {
+		const { seq } = await api.backupExportAll();
+		return api.backupMarkSaved(seq);
+	};
+
+	// ここがこの機能のいちばん大事なところ。押しただけで「バックアップした」ことにすると、
+	// 共有シートを閉じただけの親にも「さいごのバックアップ: きょう」と出て、催促が
+	// 1週間消える。そのあいだに端末側の掃除で記録が消えると、戻す先がもう無い。
+	it('書き出しただけでは「バックアップした」ことにしない', async () => {
 		await wizard();
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		const before = (await api.backupStatus()).changes_since_backup;
+
 		await api.backupExportAll();
+
+		const status = await api.backupStatus();
+		expect(status.last_backup_at, '渡しただけで「バックアップした」ことになっている').toBeNull();
+		expect(status.changes_since_backup, '確かめる前に催促が止まっている').toBe(before);
+	});
+
+	it('手元にあると答えたら「そのあと0件」（自分の書き込みを数えない）', async () => {
+		await wizard();
+		expect(await exportAndConfirm()).toEqual({ recorded: true });
 		const status = await api.backupStatus();
 		expect(status.changes_since_backup, '書き出しただけで「変わった」と言っている').toBe(0);
 		expect(status.last_backup_at).not.toBeNull();
 	});
 
+	// 「確かめた時点」の通番で記録すると、この1件がファイルに入っていないのに
+	// 済みに数えられる＝消えたときに戻せない分ができる。
+	it('確かめるまでのあいだに付けたチェックは、ファイルに入っていないので数える', async () => {
+		await wizard();
+		const { seq } = await api.backupExportAll();
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		await api.backupMarkSaved(seq);
+		expect(
+			(await api.backupStatus()).changes_since_backup,
+			'書き出したあとのチェックが「バックアップ済み」に数えられている'
+		).toBe(1);
+	});
+
+	// 復元は last_backup_seq をいまの通番に引き直す。そこへ古い書き出しの
+	// 「ほぞんできた」が遅れて届いても、手元に無いファイルの分まで「まだ」に戻さない。
+	it('復元したあとに古い「ほぞんできた」が届いても、基準を戻さない', async () => {
+		await wizard();
+		const { payload, seq } = await api.backupExportAll();
+		await api.backupImportAll(payload);
+
+		expect(await api.backupMarkSaved(seq), '古い書き出しで基準を書きかえている').toEqual({
+			recorded: false
+		});
+		expect(
+			(await api.backupStatus()).changes_since_backup,
+			'復元した直後なのに「そのあと N件」と出ている'
+		).toBe(0);
+	});
+
+	// 基準が手元の記録より先に行くと、changes_since_backup が 0 に潰れたまま戻らない
+	// ＝そのあと何を書いても催促が二度と出ない（いちばん静かな壊れかた）。
+	it('先の通番で「ほぞんできた」と言われても、催促を止めない', async () => {
+		await wizard();
+		await api.backupMarkSaved(999_999);
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		expect(
+			(await api.backupStatus()).changes_since_backup,
+			'基準が先に行って、催促が出なくなっている'
+		).toBe(1);
+	});
+
 	it('そのあとチェックすると数が増える', async () => {
 		await wizard();
-		await api.backupExportAll();
+		await exportAndConfirm();
 		const k = await keysOf();
 		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
 		expect((await api.backupStatus()).changes_since_backup).toBe(1);
@@ -484,7 +551,7 @@ describe('バックアップの催促', () => {
 	// 「バックアップをおすすめします」に昇格する＝催促が当てにならなくなる。
 	it('端末の事情を書いただけでは数が増えない', async () => {
 		await wizard();
-		await api.backupExportAll();
+		await exportAndConfirm();
 		await api.backupDismissHomeHint();
 		expect(
 			(await api.backupStatus()).changes_since_backup,
@@ -508,7 +575,7 @@ describe('バックアップの催促', () => {
 		const store = pokeablePersistence();
 		setPersistence(store);
 		await wizard();
-		await api.backupExportAll();
+		await exportAndConfirm();
 
 		// 古い版のタブが31回書いた状況
 		const stale = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
@@ -526,7 +593,7 @@ describe('バックアップの催促', () => {
 		const store = pokeablePersistence();
 		setPersistence(store);
 		await wizard();
-		await api.backupExportAll();
+		await exportAndConfirm();
 		// 書き出したあとで、この端末の事情を書く（ホームの案内を閉じた。通番は上がらない）
 		await api.backupDismissHomeHint();
 
