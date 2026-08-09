@@ -113,7 +113,15 @@ export const backupApi = {
 				// 答えると、1週間前のファイルが「きょう」になって次の催促がさらに遅れる。
 				// 先の時刻は受け取らない（時計を進めた端末で書き出したファイルを、あとから
 				// 別の端末で確かめると未来になる）。
-				db.meta.last_backup_at = Math.min(exported_at, nowEpochSec());
+				//
+				// そのうえで、日づけは戻さない。記録が変わらないうちに2つのタブで書き出すと
+				// どちらの控えも同じ通番になり、上の2つの検査をすり抜ける。新しいほうを
+				// 確かめたあとに古いほうの「ほぞんできた」が届くと、より新しいファイルが
+				// 手元にあるのに催促が早く出る。どちらのファイルも本物なので断りはしない
+				// （断ると、ちゃんと保存した親に「合わなくなっていた」と言うことになる）。
+				// 覚えるほうを新しいものに寄せる。
+				const at = Math.min(exported_at, nowEpochSec());
+				db.meta.last_backup_at = Math.max(at, db.meta.last_backup_at ?? 0);
 				return { recorded: true };
 			},
 			{ local: true }

@@ -572,6 +572,29 @@ describe('バックアップの催促', () => {
 		).toBe(before);
 	});
 
+	// 記録が変わらないうちに2つのタブで書き出すと、どちらの控えも同じ通番になる
+	// ＝「先を指している」も「基準より古い」も引っかからない。新しいほうを確かめた
+	// あとに古いほうの「ほぞんできた」が届いても、日づけを戻してはいけない
+	// ——より新しいファイルが手元にあるのに、催促が早く出る。
+	it('同じ通番の古いファイルを確かめても、日づけは戻さない', async () => {
+		await wizard();
+		const { ticket: older } = await api.backupExportAll();
+		const { ticket: newer } = await api.backupExportAll();
+		expect(newer.seq, '前提: 記録が変わっていないので通番は同じ').toBe(older.seq);
+
+		// 新しいほうを先に確かめ、あとから古いほうの「ほぞんできた」が届く
+		await api.backupMarkSaved(newer);
+		const at = (await api.backupStatus()).last_backup_at;
+		expect(
+			await api.backupMarkSaved({ ...older, exported_at: older.exported_at - 600 }),
+			'ちゃんと保存したのに断っている'
+		).toEqual({ recorded: true });
+		expect(
+			(await api.backupStatus()).last_backup_at,
+			'古いほうのファイルで日づけが戻っている'
+		).toBe(at);
+	});
+
 	// 催促が測っているのは「手元のファイルの古さ」。確かめた時刻で刻むと、問いかけを
 	// 開いたまま何日も置いてから答えたときに、1週間前のファイルが「きょう」になる
 	// ——次の催促がそこからさらに遅れる。
