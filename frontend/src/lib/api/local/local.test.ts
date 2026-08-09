@@ -548,6 +548,23 @@ describe('バックアップの催促', () => {
 		).toBe(before);
 	});
 
+	// 世代の印は「この端末の保存が何代目か」なので、復元しても移行先の値が残る
+	// （persisted などと同じ扱い）。出どころの端末の値を持ち込むと、向こうで書き出した
+	// ファイルがこちらの記録の続きに見えてしまう。
+	it('復元しても、世代の印はこの端末のものが残る', async () => {
+		await wizard();
+		const { payload, ticket } = await api.backupExportAll();
+		const mine = await read((db) => db.meta.storage_id);
+		expect(mine, '前提: 書き出しで世代の印が刻まれている').toBe(ticket.storage_id);
+
+		// 別の端末で取ったバックアップ（世代の印が違う）から復元する
+		((payload as Record<string, Record<string, { storage_id: string }>>).db.meta).storage_id =
+			'べつの端末';
+		await api.backupImportAll(payload);
+
+		expect(await read((db) => db.meta.storage_id), '出どころの端末の印を持ち込んでいる').toBe(mine);
+	});
+
 	// 通番の大小だけでは世代を見分けられない。保存が作り直されると 0 から振り直されるので、
 	// 入れ直した記録が、消される前に書き出したファイルの通番にそのうち追いつく。追いついた
 	// あとは「先を指している」検査を素通りするため、無関係なファイルで済みにできてしまう。
@@ -642,6 +659,21 @@ describe('バックアップの催促', () => {
 	// 催促が測っているのは「手元のファイルの古さ」。確かめた時刻で刻むと、問いかけを
 	// 開いたまま何日も置いてから答えたときに、1週間前のファイルが「きょう」になる
 	// ——次の催促がそこからさらに遅れる。
+	// 控えの中身そのものを1度は見ておく。ほかの検査はどれも exported_at を差し替えてから
+	// 渡しているので、書き出しがここに何を入れていても（0 でも、別の欄でも）通ってしまう。
+	it('控えには、書き出したその時刻が入っている', async () => {
+		await wizard();
+		const before = nowEpochSec();
+		const { ticket } = await api.backupExportAll();
+		const after = nowEpochSec();
+
+		expect(ticket.exported_at, '書き出した時刻が入っていない').toBeGreaterThanOrEqual(before);
+		expect(ticket.exported_at).toBeLessThanOrEqual(after);
+		// そのまま渡せば、その時刻がそのまま刻まれる（丸めも読み替えもされない）
+		await api.backupMarkSaved(ticket);
+		expect((await api.backupStatus()).last_backup_at).toBe(ticket.exported_at);
+	});
+
 	it('日づけは、確かめた時刻ではなく書き出した時刻', async () => {
 		await wizard();
 		const { ticket } = await api.backupExportAll();

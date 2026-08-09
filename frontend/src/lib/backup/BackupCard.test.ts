@@ -186,6 +186,22 @@ describe('バックアップのカード', () => {
 		]);
 	});
 
+	// まるごと復元の口は、このカードの「もどす」だけではない（管理画面トップの
+	// 「JSON をインポート」からも置きかわる）。あちらから置きかえたときに問いかけが
+	// 残ると、そのファイルには入っていない中身まで「ほぞんできた」と答えられてしまう。
+	it('外から復元されるときは、問いかけを落とせる', async () => {
+		const r = await mountCard();
+		await pressExport();
+		expect(screen.getByText('ファイルは ほぞんできましたか？')).toBeTruthy();
+
+		(r.component as unknown as { resetForRestore(): void }).resetForRestore();
+		await flush();
+
+		expect(screen.queryByText('ファイルは ほぞんできましたか？'), '問いかけが残っている').toBeNull();
+		expect(revoked, '抱えていた写しを解放していない').toEqual([created[0]]);
+		expect(marked, '落としただけで記録している').toEqual([]);
+	});
+
 	// blob URL が抱えているのは記録まるごとの写し。解放できる者が誰も居ない状態で作ると、
 	// タブを閉じるまで残る。往復の途中で画面を離れるのは、いちばん起きやすい経路
 	// （管理画面の「子どもページへ」はカードのすぐ上にある）。

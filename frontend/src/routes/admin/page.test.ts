@@ -38,6 +38,8 @@ const data = (children = ['はな']) => ({
 /** 転ばせる子ども（空なら全部成功）. */
 let failing: Set<string> = new Set();
 let spies: { mockRestore: () => void }[] = [];
+/** 実際に押された <a download> のファイル名（＝端末に落ちにいったもの）. */
+let fired: string[] = [];
 /** 作った blob URL と、解放した blob URL（数が合わないと定義の写しが残る）. */
 let created: string[] = [];
 let revoked: string[] = [];
@@ -49,6 +51,7 @@ beforeEach(() => {
 	cleanup();
 	resetAppMocks();
 	failing = new Set();
+	fired = [];
 	created = [];
 	revoked = [];
 	releaseExport = {};
@@ -75,7 +78,10 @@ beforeEach(() => {
 	spies = [
 		spyOn(document, 'createElement').mockImplementation(((tag: string) => {
 			const el = realCreate(tag);
-			if (tag === 'a') (el as HTMLAnchorElement).click = () => {};
+			if (tag === 'a') {
+				const a = el as HTMLAnchorElement;
+				a.click = () => fired.push(a.download);
+			}
 			return el;
 		}) as never),
 		spyOn(URL, 'createObjectURL').mockImplementation(((() => {
@@ -136,11 +142,18 @@ describe('管理画面トップのエクスポート', () => {
 		releaseExport['たろう']?.();
 		await flush();
 
+		// 押したぶんは2人とも落ちる。世代で譲るのは「行を出す番」だけで、
+		// ここで渡すのをやめると、先に押したぶんがファイルも手がかりも無しに消える。
+		expect(fired, '追い越されたぶんが、黙って落ちずに消えている').toEqual([
+			'2026-はな.json',
+			'2026-たろう.json'
+		]);
 		// 出ているのは、あとに押した1人ぶんだけ
 		expect(screen.getByText(/2026-たろう\.json を書き出しました。/)).toBeTruthy();
 		expect(screen.queryByText(/2026-はな\.json を書き出しました。/)).toBeNull();
 
 		r.unmount();
+		await flush(); // 行に出さないぶんの解放は次の番に回してある
 		expect(created.length - revoked.length, '解放されない blob URL が残っている').toBe(0);
 	});
 

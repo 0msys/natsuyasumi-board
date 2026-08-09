@@ -35,6 +35,10 @@
 	let nextYearBusy = $state<string | null>(null);
 	let exportBusy = $state<string | null>(null);
 
+	// まるごと復元は、この画面に口が2つある（カードの「もどす」と、下の「JSON をインポート」）。
+	// あちらから置きかえるときは、カードの問いかけを先に落としてもらう必要がある。
+	let backupCard = $state<ReturnType<typeof BackupCard> | undefined>(undefined);
+
 	// 直前に書き出した定義ファイル。出てこなかったときの押し直しに使う。
 	let lastExport = $state<DownloadHandle | null>(null);
 	// 走っている書き出しが「まだ自分の番か」を見るための世代。描画には使わない（$state にしない）。
@@ -67,14 +71,22 @@
 		const gen = exportGen;
 		try {
 			const { filename, doc } = await api.adminExportDoc(c.child);
-			// 待っているあいだに別の子どもを押された／画面を離れたなら、こちらは出さない。
-			// 出すと、lastExport が上書きされて release() を呼べる者が居なくなる。
-			if (gen !== exportGen) return;
 			// ここに await を挟まないこと（押した操作の続きとみなされるうちに渡す）。
 			// 出たかどうかは分からないので、書き出したことだけを伝えて押し直せるようにする。
 			// バックアップのカードと違って確認は取らない——ここは催促の基準を持たないので、
 			// 黙っていても嘘になる先が無い（手がかりが無いのは困るので、1行は出す）。
-			lastExport = downloadJson(filename, doc);
+			//
+			// 取ってきたぶんは、追い越されていても必ず落とす。世代で見ているのは
+			// 「行を出す番」だけ——ここで渡すのをやめると、先に押したぶんがファイルも
+			// 手がかりも無しに消える（この画面が潰しにきた「黙って終わる書き出し」そのもの）。
+			const handle = downloadJson(filename, doc);
+			if (gen !== exportGen) {
+				// 行に出さないぶんは自分で片づける。lastExport に入れないので、
+				// ほかに release() を呼べる者が居ない。
+				setTimeout(() => handle.release(), 0);
+				return;
+			}
+			lastExport = handle;
 		} catch (e) {
 			// 追い越されたぶんの失敗は出さない。ここを素通しにすると、あとから押した
 			// ぶんが成功しているのに「よみこめませんでした」が残る（新しいほうは自分の
@@ -186,6 +198,9 @@
 					importBusy = false;
 					return;
 				}
+				// 置きかえる前に、カードの問いかけを落とす（BackupCard.importAll と同じ順番）。
+				// 残すと、そのファイルには入っていない中身まで「ほぞんできた」と答えられる。
+				backupCard?.resetForRestore();
 				await api.backupImportAll(doc);
 			} else {
 				await api.adminImportDefinition(doc as AdminDocument);
@@ -247,7 +262,7 @@
 		{/if}
 
 		<!-- ブラウザ保存の版だけ出る（記録がこの端末の中にしか無いので） -->
-		<BackupCard onImported={() => invalidateAll()} />
+		<BackupCard bind:this={backupCard} onImported={() => invalidateAll()} />
 
 		<div class="flex flex-col gap-3">
 			{#each data.definitions as c (c.child)}
