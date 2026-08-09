@@ -17,7 +17,7 @@
 	import type { AdminDocument, ChildInfo } from '$lib/api';
 	import Modal from '$lib/Modal.svelte';
 	import { errorDetail } from '$lib/api/apiError';
-	import { downloadJson } from '$lib/admin/download';
+	import { downloadJson, type DownloadHandle } from '$lib/admin/download';
 	import BackupCard from '$lib/backup/BackupCard.svelte';
 	import { looksLikeBackup } from '$lib/backup/format';
 	import PinGate from '$lib/admin/PinGate.svelte';
@@ -35,17 +35,68 @@
 	let nextYearBusy = $state<string | null>(null);
 	let exportBusy = $state<string | null>(null);
 
+	// まるごと復元は、この画面に口が2つある（カードの「もどす」と、下の「JSON をインポート」）。
+	// あちらから置きかえるときは、カードの問いかけを先に落としてもらう必要がある。
+	let backupCard = $state<ReturnType<typeof BackupCard> | undefined>(undefined);
+
+	// 直前に書き出した定義ファイル。出てこなかったときの押し直しに使う。
+	let lastExport = $state<DownloadHandle | null>(null);
+	// 走っている書き出しが「まだ自分の番か」を見るための世代。描画には使わない（$state にしない）。
+	// 書き出しどうしは重ならない（走っているあいだは全部のボタンが止まる）ので、ここで
+	// 効くのは「画面を離れた」だけ。それでも見ているのは、離れたあとに戻ってきたぶんが
+	// release() を呼べる者の居ない blob URL を残さないため。
+	let exportGen = 0;
+	/** いま出している行を片づける（走っている往復には触れない）。 */
+	function clearLastExport() {
+		lastExport?.release();
+		lastExport = null;
+	}
+	/** 走っている往復ごと無かったことにする。
+	 *
+	 *  世代を上げてよいのは「新しく書き出しを押した」と「画面を離れた」の2つだけ。
+	 *  名前の変更や削除でもこれを呼ぶと、往復の途中で世代が変わり、戻ってきた
+	 *  エクスポートが自分の待ち表示（exportBusy）を消せなくなる＝その子の
+	 *  エクスポートのボタンが、開き直すまで押せないままになる。 */
+	function dropLastExport() {
+		exportGen++; // 往復の途中のものは、戻ってきても出さない
+		lastExport?.release();
+		lastExport = null;
+	}
+	// 画面を離れるときに解放する。
+	$effect(() => () => dropLastExport());
+
 	// 設定を JSON で書き出す（兄弟への流用・他のご家庭との共有・バックアップ）。
 	async function exportDoc(c: ChildInfo) {
 		exportBusy = c.child;
 		actionError = null;
+		dropLastExport();
+		const gen = exportGen;
 		try {
 			const { filename, doc } = await api.adminExportDoc(c.child);
-			downloadJson(filename, doc);
+			// ここに await を挟まないこと（押した操作の続きとみなされるうちに渡す）。
+			// 出たかどうかは分からないので、書き出したことだけを伝えて押し直せるようにする。
+			// バックアップのカードと違って確認は取らない——ここは催促の基準を持たないので、
+			// 黙っていても嘘になる先が無い（手がかりが無いのは困るので、1行は出す）。
+			//
+			// 取ってきたぶんは、追い越されていても必ず落とす。世代で見ているのは
+			// 「行を出す番」だけ——ここで渡すのをやめると、先に押したぶんがファイルも
+			// 手がかりも無しに消える（この画面が潰しにきた「黙って終わる書き出し」そのもの）。
+			const handle = downloadJson(filename, doc);
+			if (gen !== exportGen) {
+				// 行に出さないぶんは自分で片づける。lastExport に入れないので、
+				// ほかに release() を呼べる者が居ない。
+				setTimeout(() => handle.release(), 0);
+				return;
+			}
+			lastExport = handle;
 		} catch (e) {
+			// 成功のときと同じ理由で、自分の番でなければ触らない（いまは画面を離れたとき
+			// だけがこれに当たる）。重ねて押せるようにするなら、ここの検査が「あとから
+			// 押したぶんが成功しているのに、先のぶんのエラーが残る」を防ぐ側になる。
+			if (gen !== exportGen) return;
 			actionError = errorDetail(e);
 		} finally {
-			exportBusy = null;
+			if (gen === exportGen) exportBusy = null;
 		}
 	}
 
@@ -63,6 +114,7 @@
 			return;
 		nextYearBusy = c.child;
 		actionError = null;
+		clearLastExport();
 		try {
 			const entry = await api.adminCreateNextYear(c.child);
 			await goto(`${resolve('/admin/[child]', { child: encodeURIComponent(c.child) })}?year=${entry.year}`, {
@@ -86,6 +138,7 @@
 		const trimmed = next.trim();
 		if (!trimmed || trimmed === c.child) return;
 		actionError = null;
+		clearLastExport();
 		try {
 			await api.adminRenameChild(c.child, trimmed);
 			await invalidateAll();
@@ -98,6 +151,7 @@
 		if (!deleting || deleteName.trim() !== deleting.child || deleteBusy) return;
 		deleteBusy = true;
 		actionError = null;
+		clearLastExport();
 		try {
 			await api.adminDeleteDefinition(deleting.child);
 			deleting = null;
@@ -116,6 +170,7 @@
 		input.value = ''; // 同じファイルの再選択でも change が発火するように
 		if (!file) return;
 		actionError = null;
+		clearLastExport();
 		let doc: unknown;
 		try {
 			doc = JSON.parse(await file.text());
@@ -142,6 +197,9 @@
 					importBusy = false;
 					return;
 				}
+				// 置きかえる前に、カードの問いかけを落とす（BackupCard.importAll と同じ順番）。
+				// 残すと、そのファイルには入っていない中身まで「ほぞんできた」と答えられる。
+				backupCard?.resetForRestore();
 				await api.backupImportAll(doc);
 			} else {
 				await api.adminImportDefinition(doc as AdminDocument);
@@ -184,6 +242,18 @@
 				<TriangleAlert size={16} class="shrink-0" />{actionError}
 			</div>
 		{/if}
+		<!-- 書き出しは「ブラウザに渡した」までしか分からない。黙って終わると、
+		     クリックが落とされた親には手がかりが1つも残らないので、押し直せる道を出しておく。 -->
+		{#if lastExport}
+			<div class="mb-3 rounded-lg border border-border-dim px-3 py-2 text-sm text-text-dim">
+				{lastExport.filename} を書き出しました。ダウンロードに入っているか確かめてください。
+				出てこないときは<a
+					href={lastExport.url}
+					download={lastExport.filename}
+					class="underline">こちらからほぞん</a
+				>してください。
+			</div>
+		{/if}
 		{#if data.loadError}
 			<div class="mb-3 rounded-lg border border-danger/50 bg-danger/10 px-3 py-2 text-sm text-danger">
 				{data.loadError}
@@ -191,7 +261,7 @@
 		{/if}
 
 		<!-- ブラウザ保存の版だけ出る（記録がこの端末の中にしか無いので） -->
-		<BackupCard onImported={() => invalidateAll()} />
+		<BackupCard bind:this={backupCard} onImported={() => invalidateAll()} />
 
 		<div class="flex flex-col gap-3">
 			{#each data.definitions as c (c.child)}
@@ -244,9 +314,13 @@
 								<CalendarPlus size={16} />
 							</button>
 						{/if}
+						<!-- 走っているあいだは、どの子どもの書き出しも止める（押した子どもぶんだけ
+						     ではなく）。手がかりを出せる行は1つしか無いので、重ねて押せると
+						     先に押したぶんが行も押し直しリンクも持てない——落とされたときに
+						     打つ手が無くなる。重ねて押せることに利点は無い。 -->
 						<button
 							type="button"
-							disabled={exportBusy === c.child}
+							disabled={exportBusy !== null}
 							onclick={() => exportDoc(c)}
 							title="エクスポート（JSON）"
 							aria-label="エクスポート（JSON）"

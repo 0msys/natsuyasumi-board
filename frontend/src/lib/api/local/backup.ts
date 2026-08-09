@@ -2,7 +2,11 @@
 import { nowEpochSec } from '$lib/core/clock';
 import { isStorageUnavailable, mutate, read, replaceAll } from '$lib/store/db';
 import { buildBackup, parseBackup } from '$lib/store/backup';
-import { ApiError } from '../contract';
+import { ApiError, type BackupTicket } from '../contract';
+
+/** 保存の世代につける印。作り直された保存と別物になればよく、当てにくさは要らない。 */
+const newStorageId = (): string =>
+	`${nowEpochSec().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 
 /** 保存の持続をブラウザに頼む。断られても案内は出さない（親に打つ手が無い）。 */
 async function askPersist(): Promise<boolean | null> {
@@ -58,14 +62,78 @@ export const backupApi = {
 
 	backupExportAll: () =>
 		// 書き出しそのものは記録を変えない（local）。
+		//
+		// 読むだけだが read ではなく mutate を通す。read は書き込みの鍵の外なので、
+		// 別のタブが「いま書いている途中」の1件を含まないファイルが出ることがある。
+		// バックアップで1件落とすのは、この機能の目的そのものに反する。
 		mutate(
 			(db) => {
+				// 「いつ・どこまで出したか」は、ここでは記録しない。
+				// ファイルが親の手元にあると分かってから backupMarkSaved(seq) が記録する。
+				// ここで記録していたころは、共有シートを閉じただけでも「さいごの
+				// バックアップ: きょう」になり、催促が1週間消えていた。
 				const now = nowEpochSec();
 				const built = buildBackup(db, now);
-				// 「いつ・どこまで出したか」を覚えて、次の催促の基準にする
-				db.meta.last_backup_at = now;
-				db.meta.last_backup_seq = db.meta.seq;
-				return built;
+				// 保存の世代は、はじめて書き出すときに刻む（この欄のためだけに全員へ
+				// 書き込みを走らせない）。作り直された保存には無いので、そこで別物になる。
+				db.meta.storage_id ??= newStorageId();
+				return {
+					...built,
+					ticket: { seq: db.meta.seq, exported_at: now, storage_id: db.meta.storage_id }
+				};
+			},
+			{ local: true }
+		),
+
+	backupMarkSaved: ({ seq, exported_at, storage_id }: BackupTicket) =>
+		// 催促の基準を進めるだけで、記録は変わっていない（local）。local を外すと通番が
+		// 上がり、印を付けただけで他のタブの催促に1件積む。
+		mutate(
+			(db) => {
+				// 別の世代の保存で書き出したファイルは、通番が届いていても受け取らない。
+				// 保存が作り直されると通番は 0 から振り直されるので、消される前に書き出した
+				// ファイルの通番に、入れ直した記録がそのうち追いつく。そこで数だけを見て
+				// 通すと、そのファイルに入っていない記録まで「済み」になる——催促は黙るのに、
+				// 戻せる先はどこにも無い。大小ではなく、同じ世代かどうかで決める。
+				if (storage_id !== db.meta.storage_id) return { recorded: false };
+				// 同じ世代なら通番は比べられる。手元の記録より先を指すことは無いはずだが、
+				// 念のため受け取らない（先を刻むと changes_since_backup が 0 に潰れたまま
+				// 戻らず、そのあと何を書いても催促が出なくなる）。
+				if (seq > db.meta.seq) return { recorded: false };
+				// 基準は戻さない。待っているあいだに復元した／別のタブがもっと新しいものを
+				// 書き出した、というときに古い「ほぞんできた」が遅れて届くことがある。
+				// そこで戻すと、手元に無いファイルの分まで「まだ」に戻り、復元した直後に
+				// 「そのあと N件」と出る。
+				if (seq < db.meta.last_backup_seq) return { recorded: false };
+				// 日づけは「確かめた時刻」ではなく「そのファイルを作った時刻」。催促が測って
+				// いるのは手元のファイルの古さなので、問いかけを開いたまま何日も置いてから
+				// 答えると、1週間前のファイルが「きょう」になって次の催促がさらに遅れる。
+				//
+				// その時刻が「いま」より先を指しているなら、決めようがないので受け取らない。
+				// 書き出したときは時計が進んでいて、そのあと直った、という状態。ここで「いま」
+				// まで丸めると、何日も前のファイルを「きょう作った」ことにしてしまう——丸めた
+				// 値はどのファイルの時刻でもない。2つの欄はいっしょにしか動かせないので、
+				// 日づけの決められない控えは丸ごと断る（催促は残り、書き出し直せばすぐ済む）。
+				const now = nowEpochSec();
+				if (exported_at > now) return { recorded: false };
+
+				// 2つの欄は必ずいっしょに動かす。片方だけ動くと「さいごのバックアップ」と
+				// 「そのあと N件」が別々のファイルの話になる。
+				db.meta.last_backup_seq = seq;
+				// 日づけは戻さない。記録が変わらないうちに2つのタブで書き出すと、どちらの控えも
+				// 同じ通番になって上の検査をすり抜ける。新しいほうを確かめたあとに古いほうの
+				// 「ほぞんできた」が届くと、より新しいファイルが手元にあるのに催促が早く出る。
+				// どちらのファイルも本物なので断りはしない（断ると、ちゃんと保存した親に
+				// 「合わなくなっていた」と言うことになる）。覚えるほうを新しいものに寄せる。
+				//
+				// ただし、いま入っている日づけが未来なら比べる相手から外す。未来が入るのは、
+				// 時計が進んでいた端末で取ったバックアップから復元したとき。抱えこむと、時計が
+				// 直っても日数が0のまま張りつき、確かめ直しても上書きされない＝催促が二度と
+				// 出ない。ここも「いま」に丸めてから比べてはいけない（丸めた値が、3日前の
+				// ファイルの時刻に勝ってしまう）。
+				const known = db.meta.last_backup_at ?? 0;
+				db.meta.last_backup_at = known > now ? exported_at : Math.max(exported_at, known);
+				return { recorded: true };
 			},
 			{ local: true }
 		),

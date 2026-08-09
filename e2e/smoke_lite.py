@@ -11,7 +11,7 @@
   ④ リロードしても記録が残る＝IndexedDB に本当に書けている
   ⑤ 管理画面まで行ける
   ⑥ 読み上げの欄が出ていない（lite には機能が無いので、出ると案内が嘘になる）
-  ⑦ バックアップを取って、消して、戻せる（＝消えても取り返せる）
+  ⑦ バックアップを取って、手元にあると答えて、消して、戻せる（＝消えても取り返せる）
   ⑧ Service Worker が入り、圏外でも各ページが開ける（ホーム画面に追加した先での想定）
   ⑨ 保存が使えない端末（プライベートブラウズ相当）では、設定を入れる前に警告が出る
   ⑩ 要るものが揃わないときは Service Worker を入れない（古いキャッシュを消さない）
@@ -120,7 +120,7 @@ async def main() -> int:
         if "よみあげの こえ" in admin:
             problems.append("⑥ lite に無いはずの読み上げの欄が出ている")
 
-        # ⑦ バックアップの往復（取る → 消す → 戻す）
+        # ⑦ バックアップの往復（取る → 手元にあると答える → 消す → 戻す）
         async with page.expect_download() as dl_info:
             await page.get_by_role("button", name="バックアップする").click()
         download = await dl_info.value
@@ -128,6 +128,28 @@ async def main() -> int:
         if backup_path is None:
             problems.append("⑦ バックアップのファイルを受け取れなかった")
         else:
+            # 押しただけでは「バックアップした」ことにならない（届いたかは分からないので、
+            # ここで刻むと共有シートを閉じただけの人も催促から外れる）。
+            # 見るのは画面ではなく保存のほう——書き込んでいても画面を据え置く作りだと、
+            # その場の表示では気づけない。いちど読み直してから確かめる。
+            await page.reload(wait_until="networkidle")
+            await page.wait_for_timeout(600)
+            if "さいごのバックアップ" in await page.inner_text("body"):
+                problems.append("⑦ 確かめる前に「さいごのバックアップ」が記録されている")
+
+            # 読み直したので問いかけは消えている。もう一度出して、今度は手元にあると答える。
+            async with page.expect_download():
+                await page.get_by_role("button", name="バックアップする").click()
+            # 出ていないなら待たずに報告する（30秒待って落ちるより、何が起きたか読める）
+            confirm = page.get_by_role("button", name="ほぞんできた")
+            if await confirm.count() == 0:
+                problems.append("⑦ 「ほぞんできた」の確認が出ていない")
+            else:
+                await confirm.click()
+                await page.wait_for_timeout(400)
+                if "さいごのバックアップ: きょう" not in await page.inner_text("body"):
+                    problems.append("⑦ 「ほぞんできた」を押しても記録されていない")
+
             # 子どもごと消してから、バックアップで戻す
             await page.get_by_role("button", name="削除", exact=False).first.click()
             await page.wait_for_timeout(300)

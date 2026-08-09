@@ -120,12 +120,40 @@ export type Api = {
 	// lite はブラウザの中にしか記録が無い。iOS Safari は「7日間ひらかなかったサイト」の
 	// 保存データを消すことがあるので、消えたときに戻せる道と、催促する材料が要る。
 	backupStatus(): Promise<BackupStatus>;
-	/** いまの中身を書き出し、「最後にバックアップした時点」を記録する。 */
-	backupExportAll(): Promise<{ filename: string; payload: unknown }>;
+	/** いまの中身を書き出す。ここでは「バックアップした」ことにしない。
+	 *
+	 *  ファイルが親の手元に残ったかは、書き出した側からは分からない——共有シートを
+	 *  閉じても、ダウンロードが止められても、こちらには何も返ってこない。届く前に
+	 *  記録すると「さいごのバックアップ: きょう」と出たまま催促が1週間消え、その間に
+	 *  端末側の掃除で記録が消えると取り返しがつかない。
+	 *  ticket は「そのファイルが何であるか」の控え。そのまま backupMarkSaved に渡す。 */
+	backupExportAll(): Promise<{ filename: string; payload: unknown; ticket: BackupTicket }>;
+	/** 書き出したファイルが手元にあると分かった時点で、催促の基準を進める。
+	 *
+	 *  ticket は backupExportAll() が返したものをそのまま渡すこと。呼んだ時点の値で
+	 *  刻むと、書き出してから確かめるまでに付けたチェック（そのファイルには入って
+	 *  いない）まで「バックアップ済み」に数え、日づけも実際より新しくなる
+	 *  ＝どちらも「消えても戻せる」の見積もりを甘いほうへずらす。
+	 *  recorded:false は進めなかった、の意味。ファイルがいまの記録と噛み合わないとき
+	 *  （復元した・別のタブがもっと新しいものを書き出した・保存が作り直された）。 */
+	backupMarkSaved(ticket: BackupTicket): Promise<{ recorded: boolean }>;
 	/** バックアップで丸ごと置き換える（取り込む前に画面側で確認を取ること）。 */
 	backupImportAll(payload: unknown): Promise<{ ok: boolean }>;
 	/** 「ホーム画面に追加」の案内を閉じた、を覚える。 */
 	backupDismissHomeHint(): Promise<void>;
+};
+
+/** 書き出したファイルが「何であるか」の控え。書き出しが渡し、確かめるときに返す。
+ *
+ *  3つとも「そのファイル」の話で、確かめた時点の話ではない。ここを呼んだ時点の値に
+ *  すり替えると、ファイルに入っていないものまで済みに数える。 */
+export type BackupTicket = {
+	/** そのファイルに入っている記録の通番。 */
+	seq: number;
+	/** そのファイルを作った時刻（催促が測るのは、手元のファイルの古さ）。 */
+	exported_at: number;
+	/** 書き出したときの保存の世代（作り直された保存を、通番の大小と別に見分ける）。 */
+	storage_id: string;
 };
 
 export type BackupStatus = {

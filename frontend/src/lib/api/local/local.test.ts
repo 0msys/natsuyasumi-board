@@ -464,17 +464,251 @@ describe('バックアップの取り込み', () => {
 });
 
 describe('バックアップの催促', () => {
-	it('書き出した直後は「そのあと0件」（自分の書き込みを数えない）', async () => {
+	// 書き出して、そのファイルが手元にあると答えるところまで（画面の2段階を1本にしたもの）。
+	// 通番は書き出したときのものを渡す——ここを「確かめた時点」にすると、待っている
+	// あいだに付けたチェックまで済みに数える。
+	const exportAndConfirm = async () => {
+		const { ticket } = await api.backupExportAll();
+		return api.backupMarkSaved(ticket);
+	};
+
+	// ここがこの機能のいちばん大事なところ。押しただけで「バックアップした」ことにすると、
+	// 共有シートを閉じただけの親にも「さいごのバックアップ: きょう」と出て、催促が
+	// 1週間消える。そのあいだに端末側の掃除で記録が消えると、戻す先がもう無い。
+	it('書き出しただけでは「バックアップした」ことにしない', async () => {
 		await wizard();
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		const before = (await api.backupStatus()).changes_since_backup;
+
 		await api.backupExportAll();
+
+		const status = await api.backupStatus();
+		expect(status.last_backup_at, '渡しただけで「バックアップした」ことになっている').toBeNull();
+		expect(status.changes_since_backup, '確かめる前に催促が止まっている').toBe(before);
+	});
+
+	it('手元にあると答えたら「そのあと0件」（自分の書き込みを数えない）', async () => {
+		await wizard();
+		expect(await exportAndConfirm()).toEqual({ recorded: true });
 		const status = await api.backupStatus();
 		expect(status.changes_since_backup, '書き出しただけで「変わった」と言っている').toBe(0);
 		expect(status.last_backup_at).not.toBeNull();
 	});
 
+	// 「確かめた時点」の通番で記録すると、この1件がファイルに入っていないのに
+	// 済みに数えられる＝消えたときに戻せない分ができる。
+	it('確かめるまでのあいだに付けたチェックは、ファイルに入っていないので数える', async () => {
+		await wizard();
+		const { ticket } = await api.backupExportAll();
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		await api.backupMarkSaved(ticket);
+		expect(
+			(await api.backupStatus()).changes_since_backup,
+			'書き出したあとのチェックが「バックアップ済み」に数えられている'
+		).toBe(1);
+	});
+
+	// 復元は last_backup_seq をいまの通番に引き直す。そこへ古い書き出しの
+	// 「ほぞんできた」が遅れて届いても、手元に無いファイルの分まで「まだ」に戻さない。
+	it('復元したあとに古い「ほぞんできた」が届いても、基準を戻さない', async () => {
+		await wizard();
+		const { payload, ticket } = await api.backupExportAll();
+		await api.backupImportAll(payload);
+
+		expect(await api.backupMarkSaved(ticket), '古い書き出しで基準を書きかえている').toEqual({
+			recorded: false
+		});
+		expect(
+			(await api.backupStatus()).changes_since_backup,
+			'復元した直後なのに「そのあと N件」と出ている'
+		).toBe(0);
+	});
+
+	// 手元にあるファイルの通番のほうが先を指すことがある——保存が消えて作り直され、
+	// 通番が 0 から振り直された端末（IndexedDB が使えずその場かぎりの置き場に落ちた、
+	// サイトデータを消された）。ここで数を合わせにいくと、そのファイルには入っていない
+	// 作り直したあとの記録まで「済み」に数える。催促は黙るのに、戻せる先はどこにも無い。
+	it('手元の記録より先を指すファイルは、済みにしない', async () => {
+		await wizard();
+		const { ticket } = await api.backupExportAll();
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		const before = (await api.backupStatus()).changes_since_backup;
+		expect(before, '前提: 数えるものがある').toBeGreaterThan(0);
+
+		expect(
+			await api.backupMarkSaved({ ...ticket, seq: ticket.seq + 1000 }),
+			'この記録の続きでないファイルで済みにしている'
+		).toEqual({ recorded: false });
+		expect(
+			(await api.backupStatus()).changes_since_backup,
+			'ファイルに入っていない分まで催促から消えている'
+		).toBe(before);
+	});
+
+	// 世代の印は「この端末の保存が何代目か」なので、復元しても移行先の値が残る
+	// （persisted などと同じ扱い）。出どころの端末の値を持ち込むと、向こうで書き出した
+	// ファイルがこちらの記録の続きに見えてしまう。
+	it('復元しても、世代の印はこの端末のものが残る', async () => {
+		await wizard();
+		const { payload, ticket } = await api.backupExportAll();
+		const mine = await read((db) => db.meta.storage_id);
+		expect(mine, '前提: 書き出しで世代の印が刻まれている').toBe(ticket.storage_id);
+
+		// 別の端末で取ったバックアップ（世代の印が違う）から復元する
+		((payload as Record<string, Record<string, { storage_id: string }>>).db.meta).storage_id =
+			'べつの端末';
+		await api.backupImportAll(payload);
+
+		expect(await read((db) => db.meta.storage_id), '出どころの端末の印を持ち込んでいる').toBe(mine);
+	});
+
+	// 通番の大小だけでは世代を見分けられない。保存が作り直されると 0 から振り直されるので、
+	// 入れ直した記録が、消される前に書き出したファイルの通番にそのうち追いつく。追いついた
+	// あとは「先を指している」検査を素通りするため、無関係なファイルで済みにできてしまう。
+	it('保存が作り直されたら、通番が届いていても済みにしない', async () => {
+		await wizard();
+		const { ticket } = await api.backupExportAll();
+
+		// サイトデータを消された／IndexedDB が開けず作り直した、のあと入れ直した状況。
+		// 通番は 0 から振り直され、ここでは書き出したときと同じところまで戻ってくる。
+		setPersistence(memoryPersistence());
+		await wizard();
+		const before = (await api.backupStatus()).changes_since_backup;
+		expect(before, '前提: 通番が書き出したときに追いついている').toBe(ticket.seq);
+
+		expect(
+			await api.backupMarkSaved(ticket),
+			'消される前のファイルで、入れ直した記録まで済みにしている'
+		).toEqual({ recorded: false });
+		expect(
+			(await api.backupStatus()).changes_since_backup,
+			'ファイルに入っていない分まで催促から消えている'
+		).toBe(before);
+	});
+
+	// 記録が変わらないうちに2つのタブで書き出すと、どちらの控えも同じ通番になる
+	// ＝「先を指している」も「基準より古い」も引っかからない。新しいほうを確かめた
+	// あとに古いほうの「ほぞんできた」が届いても、日づけを戻してはいけない
+	// ——より新しいファイルが手元にあるのに、催促が早く出る。
+	it('同じ通番の古いファイルを確かめても、日づけは戻さない', async () => {
+		await wizard();
+		const { ticket: older } = await api.backupExportAll();
+		const { ticket: newer } = await api.backupExportAll();
+		expect(newer.seq, '前提: 記録が変わっていないので通番は同じ').toBe(older.seq);
+
+		// 新しいほうを先に確かめ、あとから古いほうの「ほぞんできた」が届く
+		await api.backupMarkSaved(newer);
+		const at = (await api.backupStatus()).last_backup_at;
+		expect(
+			await api.backupMarkSaved({ ...older, exported_at: older.exported_at - 600 }),
+			'ちゃんと保存したのに断っている'
+		).toEqual({ recorded: true });
+		expect(
+			(await api.backupStatus()).last_backup_at,
+			'古いほうのファイルで日づけが戻っている'
+		).toBe(at);
+	});
+
+	// 未来の日づけを抱えこむと、時計が直っても日数が0のまま張りつき、次に確かめても
+	// 正しい時刻に上書きされない＝催促が二度と出ない。日づけを戻さない仕掛けが、
+	// そのまま「間違った未来を守る」に化けないことを見る。
+	it('未来の日づけは、確かめ直したときに引きずらない', async () => {
+		await wizard();
+		// 時計が進んでいた端末で取ったバックアップから復元した状況（復元は
+		// last_backup_at を出どころのファイルから引き継ぐ）
+		const { payload } = await api.backupExportAll();
+		const ahead = nowEpochSec() + 365 * 86400;
+		((payload as Record<string, Record<string, { last_backup_at: number }>>).db.meta)
+			.last_backup_at = ahead;
+		await api.backupImportAll(payload);
+		expect((await api.backupStatus()).last_backup_at, '前提: 未来の日づけが入っている').toBe(ahead);
+
+		// この端末で書き出して確かめ直せば、正しい「いま」に戻る
+		await exportAndConfirm();
+		expect(
+			(await api.backupStatus()).last_backup_at,
+			'間違った未来の日づけを抱えたままになっている'
+		).toBeLessThanOrEqual(nowEpochSec());
+	});
+
+	// 未来の値を「いま」まで丸めて比べると、丸めた値がどのファイルの時刻でもないのに
+	// 勝ってしまう。手元にあるのが3日前のファイルなら、日づけも3日前でなければ
+	// ならない（「きょう」にすると、催促がそのぶん遅れる）。
+	it('未来の日づけを、いまのファイルがある証拠にしない', async () => {
+		await wizard();
+		const { payload } = await api.backupExportAll();
+		const ahead = nowEpochSec() + 365 * 86400;
+		((payload as Record<string, Record<string, { last_backup_at: number }>>).db.meta)
+			.last_backup_at = ahead;
+		await api.backupImportAll(payload);
+
+		// 復元したあとに書き出して、そのまま3日置いてから「ほぞんできた」を押した
+		const { ticket } = await api.backupExportAll();
+		const threeDaysAgo = nowEpochSec() - 3 * 86400;
+		await api.backupMarkSaved({ ...ticket, exported_at: threeDaysAgo });
+
+		expect(
+			(await api.backupStatus()).last_backup_at,
+			'3日前のファイルしか無いのに「きょう」になっている'
+		).toBe(threeDaysAgo);
+	});
+
+	// 催促が測っているのは「手元のファイルの古さ」。確かめた時刻で刻むと、問いかけを
+	// 開いたまま何日も置いてから答えたときに、1週間前のファイルが「きょう」になる
+	// ——次の催促がそこからさらに遅れる。
+	// 控えの中身そのものを1度は見ておく。ほかの検査はどれも exported_at を差し替えてから
+	// 渡しているので、書き出しがここに何を入れていても（0 でも、別の欄でも）通ってしまう。
+	it('控えには、書き出したその時刻が入っている', async () => {
+		await wizard();
+		const before = nowEpochSec();
+		const { ticket } = await api.backupExportAll();
+		const after = nowEpochSec();
+
+		expect(ticket.exported_at, '書き出した時刻が入っていない').toBeGreaterThanOrEqual(before);
+		expect(ticket.exported_at).toBeLessThanOrEqual(after);
+		// そのまま渡せば、その時刻がそのまま刻まれる（丸めも読み替えもされない）
+		await api.backupMarkSaved(ticket);
+		expect((await api.backupStatus()).last_backup_at).toBe(ticket.exported_at);
+	});
+
+	it('日づけは、確かめた時刻ではなく書き出した時刻', async () => {
+		await wizard();
+		const { ticket } = await api.backupExportAll();
+		const threeDaysAgo = nowEpochSec() - 3 * 86400;
+		await api.backupMarkSaved({ ...ticket, exported_at: threeDaysAgo });
+		expect(
+			(await api.backupStatus()).last_backup_at,
+			'確かめた時刻で刻んでいる（古いファイルが「きょう」になる）'
+		).toBe(threeDaysAgo);
+
+	});
+
+	// 書き出したときは時計が進んでいて、そのあと直った、という控え。時刻が決めようが
+	// ないので受け取らない。「いま」まで丸めると、何日も前のファイルが「きょう作った」
+	// ことになり、催促がそのぶん遅れる（丸めた値は、どのファイルの時刻でもない）。
+	it('先の時刻を指す控えは、いまに丸めずに断る', async () => {
+		await wizard();
+		const { ticket } = await api.backupExportAll();
+		const before = await api.backupStatus();
+
+		expect(
+			await api.backupMarkSaved({ ...ticket, exported_at: nowEpochSec() + 3 * 86400 }),
+			'日づけの決められない控えで済みにしている'
+		).toEqual({ recorded: false });
+
+		const after = await api.backupStatus();
+		expect(after.last_backup_at, '当てにならない時刻を刻んでいる').toBe(before.last_backup_at);
+		expect(after.changes_since_backup, '断ったのに基準だけ動いている').toBe(
+			before.changes_since_backup
+		);
+	});
+
 	it('そのあとチェックすると数が増える', async () => {
 		await wizard();
-		await api.backupExportAll();
+		await exportAndConfirm();
 		const k = await keysOf();
 		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
 		expect((await api.backupStatus()).changes_since_backup).toBe(1);
@@ -484,7 +718,7 @@ describe('バックアップの催促', () => {
 	// 「バックアップをおすすめします」に昇格する＝催促が当てにならなくなる。
 	it('端末の事情を書いただけでは数が増えない', async () => {
 		await wizard();
-		await api.backupExportAll();
+		await exportAndConfirm();
 		await api.backupDismissHomeHint();
 		expect(
 			(await api.backupStatus()).changes_since_backup,
@@ -508,7 +742,7 @@ describe('バックアップの催促', () => {
 		const store = pokeablePersistence();
 		setPersistence(store);
 		await wizard();
-		await api.backupExportAll();
+		await exportAndConfirm();
 
 		// 古い版のタブが31回書いた状況
 		const stale = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
@@ -526,7 +760,7 @@ describe('バックアップの催促', () => {
 		const store = pokeablePersistence();
 		setPersistence(store);
 		await wizard();
-		await api.backupExportAll();
+		await exportAndConfirm();
 		// 書き出したあとで、この端末の事情を書く（ホームの案内を閉じた。通番は上がらない）
 		await api.backupDismissHomeHint();
 

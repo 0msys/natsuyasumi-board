@@ -61,6 +61,18 @@ export type Meta = {
 	last_backup_at: number | null;
 	/** さいごに書き出した時点の seq。 */
 	last_backup_seq: number;
+	/**
+	 * この保存の世代。書き出したファイルが「この記録の続き」かを見分けるためだけにある。
+	 *
+	 * seq は保存が作り直されると 0 から振り直されるので、数の大小では世代を見分けられない。
+	 * サイトデータを消されたあと入れ直した記録が、消される前に書き出したファイルと同じ
+	 * 通番まで進むと、そのファイルで「済み」にできてしまう——催促は黙るのに、戻せる先は
+	 * どこにも無い。書き出すときに刻んで、確かめるときに突き合わせる。
+	 *
+	 * 書き出しの道でしか要らないので、最初に書き出すまでは null（この欄のためだけに
+	 * 全員へ書き込みを走らせない）。
+	 */
+	storage_id: string | null;
 	/** navigator.storage.persist() の結果（まだ聞いていなければ null）。 */
 	persisted: boolean | null;
 	/** 最後に見た「今日」。端末の日付が巻き戻ったことに気づくため。 */
@@ -121,6 +133,7 @@ export function emptyDb(): Db {
 			seq: 0,
 			last_backup_at: null,
 			last_backup_seq: 0,
+			storage_id: null,
 			persisted: null,
 			last_seen_day: null,
 			home_hint_dismissed: false
