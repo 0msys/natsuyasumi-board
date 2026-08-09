@@ -10,6 +10,7 @@
 // 離脱ガードがあるので、編集中に新しい版へ強制的に切り替わるのがいちばん困る。
 // 既定どおり「次に全部のタブを閉じて開き直したとき」に入れ替わればよい。
 import { base, build, files, prerendered, version } from '$service-worker';
+import { splitCacheTargets } from '$lib/sw/assets';
 
 const sw = self as unknown as ServiceWorkerGlobalScope;
 
@@ -22,18 +23,22 @@ const CACHE = `nyb-v${version}`;
 // 静的サイトの出力なので build にも files にも入らない＝名指しで控える必要がある。
 const FALLBACK = `${base}/404.html`;
 
-// 圏外で1ページでも開くのに、どうしても要るもの。
-//   build       … その版の JS と CSS（欠けると画面が組み立たない）
-//   入れ物 1枚  … prerendered の先頭（サブパス直下＝ / のページ）
-// prerendered を入れ忘れると、控えてあるのは JS と CSS だけになり、
-// 圏外で開いたときに肝心の HTML が無くて何も出せない。
-const SHELL = prerendered[0];
-const ESSENTIAL = SHELL ? [...build, SHELL] : [...build];
-
-// 無くても「開けなくなる」ことはないもの。アイコン・manifest・ほかのページ、
-// それに 404.html（動的ルートの入れ物。GitHub Pages には在るが、ローカルの
-// preview では配られない＝ここで必須にすると開発中だけ Service Worker が入らない）。
-const OPTIONAL = [...files, ...prerendered.slice(1), FALLBACK].filter((url) => url !== SHELL);
+// 控える先を2つに分ける（分けかたと理由は $lib/sw/assets）。
+//
+//   ESSENTIAL … 圏外で1ページでも開くのにどうしても要るもの。その版の JS と CSS に、
+//               サブパス直下（/）のページの HTML を1枚。入れ物を控え忘れると、
+//               あるのは JS と CSS だけになり、圏外では何も出せない。
+//               どれがその1枚かは prerendered の並び順ではなく名指しで決める。
+//   OPTIONAL  … 無くても「開けなくなる」ことはないもの。アイコン・manifest・ほかのページ、
+//               それに 404.html（動的ルートの入れ物。GitHub Pages には在るが、ローカルの
+//               preview では配られない＝必須にすると開発中だけ Service Worker が入らない）。
+const { shell: SHELL, essential: ESSENTIAL, optional: OPTIONAL } = splitCacheTargets({
+	build,
+	files,
+	prerendered,
+	base,
+	fallback: FALLBACK
+});
 
 /** 控える対象ぜんぶ（fetch 側が「内容ごとに名前が変わるもの」を見分けるのに使う）。 */
 const ASSETS = [...ESSENTIAL, ...OPTIONAL];
@@ -95,7 +100,10 @@ sw.addEventListener('fetch', (event) => {
 				// /admin/はな のような動的なパスは、そもそも同じ URL の控えを持てない
 				// （子どもの名前は列挙できない）ので、ここに来るのが普通の経路になる。
 				if (request.mode === 'navigate') {
-					const shell = (await cache.match(FALLBACK)) ?? (await cache.match(`${base}/`));
+					// 控えたのと同じ入れ物を出す。ここに `${base}/` を書き写すと、
+					// 控える側の判断が変わったときに片方だけずれて、圏外で空振りする。
+					const shell =
+						(await cache.match(FALLBACK)) ?? (SHELL ? await cache.match(SHELL) : undefined);
 					if (shell) return shell;
 				}
 				throw new Error('オフラインで、控えもありません');
