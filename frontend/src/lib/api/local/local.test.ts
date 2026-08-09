@@ -652,11 +652,26 @@ describe('バックアップの催促', () => {
 			'確かめた時刻で刻んでいる（古いファイルが「きょう」になる）'
 		).toBe(threeDaysAgo);
 
-		// 先の時刻は受け取らない（時計を進めた端末で書き出したファイルを、あとから
-		// 別の端末で確かめると未来になる。未来だと日数が0のまま止まる）
-		const { ticket: ticket2 } = await api.backupExportAll();
-		await api.backupMarkSaved({ ...ticket2, exported_at: nowEpochSec() + 86400 });
-		expect((await api.backupStatus()).last_backup_at).toBeLessThanOrEqual(nowEpochSec());
+	});
+
+	// 書き出したときは時計が進んでいて、そのあと直った、という控え。時刻が決めようが
+	// ないので受け取らない。「いま」まで丸めると、何日も前のファイルが「きょう作った」
+	// ことになり、催促がそのぶん遅れる（丸めた値は、どのファイルの時刻でもない）。
+	it('先の時刻を指す控えは、いまに丸めずに断る', async () => {
+		await wizard();
+		const { ticket } = await api.backupExportAll();
+		const before = await api.backupStatus();
+
+		expect(
+			await api.backupMarkSaved({ ...ticket, exported_at: nowEpochSec() + 3 * 86400 }),
+			'日づけの決められない控えで済みにしている'
+		).toEqual({ recorded: false });
+
+		const after = await api.backupStatus();
+		expect(after.last_backup_at, '当てにならない時刻を刻んでいる').toBe(before.last_backup_at);
+		expect(after.changes_since_backup, '断ったのに基準だけ動いている').toBe(
+			before.changes_since_backup
+		);
 	});
 
 	it('そのあとチェックすると数が増える', async () => {
