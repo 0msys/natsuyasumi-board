@@ -374,10 +374,13 @@ export async function replaceAll(raw: unknown): Promise<void> {
 		//   last_seen_day       … 日付の巻き戻り検知は、この端末の時計の話
 		// バックアップは「端末を替えるときの引き継ぎ」として案内しているので、
 		// ここは移行先の値を残す。
+		//   storage_id         … この端末の保存が何代目か。出どころの端末の値を持ち込むと、
+		//                        向こうで書き出したファイルがこちらの記録の続きに見える
 		const local = {
 			persisted: db.meta.persisted,
 			home_hint_dismissed: db.meta.home_hint_dismissed,
-			last_seen_day: db.meta.last_seen_day
+			last_seen_day: db.meta.last_seen_day,
+			storage_id: db.meta.storage_id
 		};
 		for (const key of Object.keys(db)) delete (db as Record<string, unknown>)[key];
 		Object.assign(db, next);

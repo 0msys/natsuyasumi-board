@@ -11,7 +11,7 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from 'bun:test';
 import { cleanup, fireEvent, render, screen } from '@testing-library/svelte';
 import { setApi } from '../../test-support/apiMock';
-import type { BackupStatus } from '$lib/api';
+import type { BackupStatus, BackupTicket } from '$lib/api';
 
 const BackupCard = (await import('./BackupCard.svelte')).default;
 
@@ -28,8 +28,8 @@ const STATUS: BackupStatus = {
 };
 
 let status: BackupStatus;
-/** backupMarkSaved に渡された引数（呼ばれた順）. */
-let marked: { seq: number; exportedAt: number }[];
+/** backupMarkSaved に渡された控え（呼ばれた順）. */
+let marked: BackupTicket[];
 /** backupMarkSaved の答え（既定は「進めた」）. */
 let markRecorded: boolean;
 let exportSeq: number;
@@ -63,12 +63,11 @@ beforeEach(() => {
 			return {
 				filename: 'natsuyasumi-board-2026-08-09.json',
 				payload: { db: {} },
-				seq: exportSeq,
-				exported_at: exportedAt
+				ticket: { seq: exportSeq, exported_at: exportedAt, storage_id: 'gen-1' }
 			};
 		},
-		backupMarkSaved: async (seq: number, exportedAt2: number) => {
-			marked.push({ seq, exportedAt: exportedAt2 });
+		backupMarkSaved: async (ticket: BackupTicket) => {
+			marked.push(ticket);
 			if (markRecorded) {
 				status = { ...status, last_backup_at: 1_786_000_000, changes_since_backup: 0 };
 			}
@@ -127,8 +126,8 @@ describe('バックアップのカード', () => {
 		await fireEvent.click(screen.getByRole('button', { name: 'ほぞんできた' }));
 		await flush();
 
-		expect(marked, '書き出したときの通番と時刻を渡していない').toEqual([
-			{ seq: 7, exportedAt: 1_785_900_000 }
+		expect(marked, '書き出したときの控えをそのまま渡していない').toEqual([
+			{ seq: 7, exported_at: 1_785_900_000, storage_id: 'gen-1' }
 		]);
 		expect(screen.getByText(/natsuyasumi-board-2026-08-09\.json をほぞんしました。/)).toBeTruthy();
 		expect(screen.queryByText('ファイルは ほぞんできましたか？'), '問いかけが残っている').toBeNull();
@@ -155,7 +154,7 @@ describe('バックアップのカード', () => {
 		await fireEvent.click(screen.getByRole('button', { name: 'ほぞんできた' }));
 		await flush();
 
-		expect(marked).toEqual([{ seq: 7, exportedAt: 1_785_900_000 }]);
+		expect(marked).toEqual([{ seq: 7, exported_at: 1_785_900_000, storage_id: 'gen-1' }]);
 		expect(screen.queryByText(/をほぞんしました。/), '断られたのに成功と言っている').toBeNull();
 		expect(screen.getByText(/日づけは変えませんでした/)).toBeTruthy();
 	});
@@ -183,7 +182,7 @@ describe('バックアップのカード', () => {
 		await fireEvent.click(screen.getByRole('button', { name: 'ほぞんできた' }));
 		await flush();
 		expect(marked, '古いほうの書き出しで記録している').toEqual([
-			{ seq: 9, exportedAt: 1_785_900_500 }
+			{ seq: 9, exported_at: 1_785_900_500, storage_id: 'gen-1' }
 		]);
 	});
 

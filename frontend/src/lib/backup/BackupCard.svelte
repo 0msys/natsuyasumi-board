@@ -6,7 +6,7 @@
 	// ホーム画面に追加したものは対象外になるので、まずそれを勧め、そのうえで
 	// 「消えても戻せる」ようバックアップを促す。
 	import { Download, HousePlus, Upload, X } from '@lucide/svelte';
-	import { api, type BackupStatus } from '$lib/api';
+	import { api, type BackupStatus, type BackupTicket } from '$lib/api';
 	import { downloadJson, type DownloadHandle } from '$lib/admin/download';
 	import { errorDetail } from '$lib/api/apiError';
 	import { backupLevel, daysSinceBackup } from './level';
@@ -20,11 +20,7 @@
 	let fileEl = $state<HTMLInputElement | undefined>(undefined);
 	// 書き出したけれど、まだ「手元にある」と確かめていないファイル。
 	// これがあるあいだ、催促の基準（さいごのバックアップ）は動かさない。
-	let pending = $state<{
-		seq: number;
-		exportedAt: number;
-		handle: DownloadHandle;
-	} | null>(null);
+	let pending = $state<{ ticket: BackupTicket; handle: DownloadHandle } | null>(null);
 	// 走っている書き出しが「まだ自分の番か」を見るための世代。描画には使わない（$state にしない）。
 	let pendingGen = 0;
 
@@ -69,14 +65,14 @@
 		dropPending();
 		const gen = pendingGen;
 		try {
-			const { filename, payload, seq, exported_at } = await api.backupExportAll();
+			const { filename, payload, ticket } = await api.backupExportAll();
 			// 待っているあいだに画面を離れた（＝ティアダウンが走り終わった）なら、渡す先も
 			// 聞く相手ももういない。ここで作ると、release() を呼べる者が誰も居ない blob URL
 			// ——記録まるごとの写し——がタブを閉じるまで残る。
 			if (gen !== pendingGen) return;
 			// ここに await を挟まないこと。押した操作の続きとみなされるうちに渡す
 			// （間が空くと、こちらが仕込んだクリックが黙って落とされることがある）。
-			pending = { seq, exportedAt: exported_at, handle: downloadJson(filename, payload) };
+			pending = { ticket, handle: downloadJson(filename, payload) };
 		} catch (e) {
 			error = errorDetail(e);
 		} finally {
@@ -87,11 +83,11 @@
 	// 親が「ほぞんできた」と答えたときだけ、催促の基準を進める。
 	async function confirmSaved() {
 		if (!pending) return;
-		const { seq, exportedAt, handle } = pending;
+		const { ticket, handle } = pending;
 		busy = true;
 		error = null;
 		try {
-			const { recorded } = await api.backupMarkSaved(seq, exportedAt);
+			const { recorded } = await api.backupMarkSaved(ticket);
 			if (recorded) {
 				notice = `${handle.filename} をほぞんしました。`;
 			} else {

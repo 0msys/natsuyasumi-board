@@ -468,8 +468,8 @@ describe('バックアップの催促', () => {
 	// 通番は書き出したときのものを渡す——ここを「確かめた時点」にすると、待っている
 	// あいだに付けたチェックまで済みに数える。
 	const exportAndConfirm = async () => {
-		const { seq, exported_at } = await api.backupExportAll();
-		return api.backupMarkSaved(seq, exported_at);
+		const { ticket } = await api.backupExportAll();
+		return api.backupMarkSaved(ticket);
 	};
 
 	// ここがこの機能のいちばん大事なところ。押しただけで「バックアップした」ことにすると、
@@ -500,10 +500,10 @@ describe('バックアップの催促', () => {
 	// 済みに数えられる＝消えたときに戻せない分ができる。
 	it('確かめるまでのあいだに付けたチェックは、ファイルに入っていないので数える', async () => {
 		await wizard();
-		const { seq, exported_at } = await api.backupExportAll();
+		const { ticket } = await api.backupExportAll();
 		const k = await keysOf();
 		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
-		await api.backupMarkSaved(seq, exported_at);
+		await api.backupMarkSaved(ticket);
 		expect(
 			(await api.backupStatus()).changes_since_backup,
 			'書き出したあとのチェックが「バックアップ済み」に数えられている'
@@ -514,12 +514,12 @@ describe('バックアップの催促', () => {
 	// 「ほぞんできた」が遅れて届いても、手元に無いファイルの分まで「まだ」に戻さない。
 	it('復元したあとに古い「ほぞんできた」が届いても、基準を戻さない', async () => {
 		await wizard();
-		const { payload, seq, exported_at } = await api.backupExportAll();
+		const { payload, ticket } = await api.backupExportAll();
 		await api.backupImportAll(payload);
 
-		expect(await api.backupMarkSaved(seq, exported_at), '古い書き出しで基準を書きかえている').toEqual(
-			{ recorded: false }
-		);
+		expect(await api.backupMarkSaved(ticket), '古い書き出しで基準を書きかえている').toEqual({
+			recorded: false
+		});
 		expect(
 			(await api.backupStatus()).changes_since_backup,
 			'復元した直後なのに「そのあと N件」と出ている'
@@ -532,15 +532,39 @@ describe('バックアップの催促', () => {
 	// 作り直したあとの記録まで「済み」に数える。催促は黙るのに、戻せる先はどこにも無い。
 	it('手元の記録より先を指すファイルは、済みにしない', async () => {
 		await wizard();
-		const { seq } = await api.backupExportAll();
+		const { ticket } = await api.backupExportAll();
 		const k = await keysOf();
 		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
 		const before = (await api.backupStatus()).changes_since_backup;
 		expect(before, '前提: 数えるものがある').toBeGreaterThan(0);
 
 		expect(
-			await api.backupMarkSaved(seq + 1000, nowEpochSec()),
+			await api.backupMarkSaved({ ...ticket, seq: ticket.seq + 1000 }),
 			'この記録の続きでないファイルで済みにしている'
+		).toEqual({ recorded: false });
+		expect(
+			(await api.backupStatus()).changes_since_backup,
+			'ファイルに入っていない分まで催促から消えている'
+		).toBe(before);
+	});
+
+	// 通番の大小だけでは世代を見分けられない。保存が作り直されると 0 から振り直されるので、
+	// 入れ直した記録が、消される前に書き出したファイルの通番にそのうち追いつく。追いついた
+	// あとは「先を指している」検査を素通りするため、無関係なファイルで済みにできてしまう。
+	it('保存が作り直されたら、通番が届いていても済みにしない', async () => {
+		await wizard();
+		const { ticket } = await api.backupExportAll();
+
+		// サイトデータを消された／IndexedDB が開けず作り直した、のあと入れ直した状況。
+		// 通番は 0 から振り直され、ここでは書き出したときと同じところまで戻ってくる。
+		setPersistence(memoryPersistence());
+		await wizard();
+		const before = (await api.backupStatus()).changes_since_backup;
+		expect(before, '前提: 通番が書き出したときに追いついている').toBe(ticket.seq);
+
+		expect(
+			await api.backupMarkSaved(ticket),
+			'消される前のファイルで、入れ直した記録まで済みにしている'
 		).toEqual({ recorded: false });
 		expect(
 			(await api.backupStatus()).changes_since_backup,
@@ -553,9 +577,9 @@ describe('バックアップの催促', () => {
 	// ——次の催促がそこからさらに遅れる。
 	it('日づけは、確かめた時刻ではなく書き出した時刻', async () => {
 		await wizard();
-		const { seq } = await api.backupExportAll();
+		const { ticket } = await api.backupExportAll();
 		const threeDaysAgo = nowEpochSec() - 3 * 86400;
-		await api.backupMarkSaved(seq, threeDaysAgo);
+		await api.backupMarkSaved({ ...ticket, exported_at: threeDaysAgo });
 		expect(
 			(await api.backupStatus()).last_backup_at,
 			'確かめた時刻で刻んでいる（古いファイルが「きょう」になる）'
@@ -563,8 +587,8 @@ describe('バックアップの催促', () => {
 
 		// 先の時刻は受け取らない（時計を進めた端末で書き出したファイルを、あとから
 		// 別の端末で確かめると未来になる。未来だと日数が0のまま止まる）
-		const { seq: seq2 } = await api.backupExportAll();
-		await api.backupMarkSaved(seq2, nowEpochSec() + 86400);
+		const { ticket: ticket2 } = await api.backupExportAll();
+		await api.backupMarkSaved({ ...ticket2, exported_at: nowEpochSec() + 86400 });
 		expect((await api.backupStatus()).last_backup_at).toBeLessThanOrEqual(nowEpochSec());
 	});
 

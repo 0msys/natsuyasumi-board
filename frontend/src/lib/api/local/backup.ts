@@ -2,7 +2,11 @@
 import { nowEpochSec } from '$lib/core/clock';
 import { isStorageUnavailable, mutate, read, replaceAll } from '$lib/store/db';
 import { buildBackup, parseBackup } from '$lib/store/backup';
-import { ApiError } from '../contract';
+import { ApiError, type BackupTicket } from '../contract';
+
+/** 保存の世代につける印。作り直された保存と別物になればよく、当てにくさは要らない。 */
+const newStorageId = (): string =>
+	`${nowEpochSec().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 
 /** 保存の持続をブラウザに頼む。断られても案内は出さない（親に打つ手が無い）。 */
 async function askPersist(): Promise<boolean | null> {
@@ -70,20 +74,31 @@ export const backupApi = {
 				// バックアップ: きょう」になり、催促が1週間消えていた。
 				const now = nowEpochSec();
 				const built = buildBackup(db, now);
-				return { ...built, seq: db.meta.seq, exported_at: now };
+				// 保存の世代は、はじめて書き出すときに刻む（この欄のためだけに全員へ
+				// 書き込みを走らせない）。作り直された保存には無いので、そこで別物になる。
+				db.meta.storage_id ??= newStorageId();
+				return {
+					...built,
+					ticket: { seq: db.meta.seq, exported_at: now, storage_id: db.meta.storage_id }
+				};
 			},
 			{ local: true }
 		),
 
-	backupMarkSaved: (seq: number, exportedAt: number) =>
+	backupMarkSaved: ({ seq, exported_at, storage_id }: BackupTicket) =>
 		// 催促の基準を進めるだけで、記録は変わっていない（local）。local を外すと通番が
 		// 上がり、印を付けただけで他のタブの催促に1件積む。
 		mutate(
 			(db) => {
-				// 手元の記録より先を指すファイルは、この記録の続きではない。数を合わせに
-				// いってはいけない——保存が作り直された端末（IndexedDB が消えて作り直され、
-				// 通番が 0 から振り直された）では、そのファイルに入っていない新しい記録まで
-				// 「済み」に数えることになる。分からないときは進めない（催促は残る）。
+				// 別の世代の保存で書き出したファイルは、通番が届いていても受け取らない。
+				// 保存が作り直されると通番は 0 から振り直されるので、消される前に書き出した
+				// ファイルの通番に、入れ直した記録がそのうち追いつく。そこで数だけを見て
+				// 通すと、そのファイルに入っていない記録まで「済み」になる——催促は黙るのに、
+				// 戻せる先はどこにも無い。大小ではなく、同じ世代かどうかで決める。
+				if (storage_id !== db.meta.storage_id) return { recorded: false };
+				// 同じ世代なら通番は比べられる。手元の記録より先を指すことは無いはずだが、
+				// 念のため受け取らない（先を刻むと changes_since_backup が 0 に潰れたまま
+				// 戻らず、そのあと何を書いても催促が出なくなる）。
 				if (seq > db.meta.seq) return { recorded: false };
 				// 基準は戻さない。待っているあいだに復元した／別のタブがもっと新しいものを
 				// 書き出した、というときに古い「ほぞんできた」が遅れて届くことがある。
@@ -98,7 +113,7 @@ export const backupApi = {
 				// 答えると、1週間前のファイルが「きょう」になって次の催促がさらに遅れる。
 				// 先の時刻は受け取らない（時計を進めた端末で書き出したファイルを、あとから
 				// 別の端末で確かめると未来になる）。
-				db.meta.last_backup_at = Math.min(exportedAt, nowEpochSec());
+				db.meta.last_backup_at = Math.min(exported_at, nowEpochSec());
 				return { recorded: true };
 			},
 			{ local: true }
