@@ -617,6 +617,28 @@ describe('バックアップの催促', () => {
 		).toBeLessThanOrEqual(nowEpochSec());
 	});
 
+	// 未来の値を「いま」まで丸めて比べると、丸めた値がどのファイルの時刻でもないのに
+	// 勝ってしまう。手元にあるのが3日前のファイルなら、日づけも3日前でなければ
+	// ならない（「きょう」にすると、催促がそのぶん遅れる）。
+	it('未来の日づけを、いまのファイルがある証拠にしない', async () => {
+		await wizard();
+		const { payload } = await api.backupExportAll();
+		const ahead = nowEpochSec() + 365 * 86400;
+		((payload as Record<string, Record<string, { last_backup_at: number }>>).db.meta)
+			.last_backup_at = ahead;
+		await api.backupImportAll(payload);
+
+		// 復元したあとに書き出して、そのまま3日置いてから「ほぞんできた」を押した
+		const { ticket } = await api.backupExportAll();
+		const threeDaysAgo = nowEpochSec() - 3 * 86400;
+		await api.backupMarkSaved({ ...ticket, exported_at: threeDaysAgo });
+
+		expect(
+			(await api.backupStatus()).last_backup_at,
+			'3日前のファイルしか無いのに「きょう」になっている'
+		).toBe(threeDaysAgo);
+	});
+
 	// 催促が測っているのは「手元のファイルの古さ」。確かめた時刻で刻むと、問いかけを
 	// 開いたまま何日も置いてから答えたときに、1週間前のファイルが「きょう」になる
 	// ——次の催促がそこからさらに遅れる。
