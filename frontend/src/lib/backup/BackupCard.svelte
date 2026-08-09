@@ -20,7 +20,11 @@
 	let fileEl = $state<HTMLInputElement | undefined>(undefined);
 	// 書き出したけれど、まだ「手元にある」と確かめていないファイル。
 	// これがあるあいだ、催促の基準（さいごのバックアップ）は動かさない。
-	let pending = $state<{ seq: number; handle: DownloadHandle } | null>(null);
+	let pending = $state<{
+		seq: number;
+		exportedAt: number;
+		handle: DownloadHandle;
+	} | null>(null);
 	// 走っている書き出しが「まだ自分の番か」を見るための世代。描画には使わない（$state にしない）。
 	let pendingGen = 0;
 
@@ -65,14 +69,14 @@
 		dropPending();
 		const gen = pendingGen;
 		try {
-			const { filename, payload, seq } = await api.backupExportAll();
+			const { filename, payload, seq, exported_at } = await api.backupExportAll();
 			// 待っているあいだに画面を離れた（＝ティアダウンが走り終わった）なら、渡す先も
 			// 聞く相手ももういない。ここで作ると、release() を呼べる者が誰も居ない blob URL
 			// ——記録まるごとの写し——がタブを閉じるまで残る。
 			if (gen !== pendingGen) return;
 			// ここに await を挟まないこと。押した操作の続きとみなされるうちに渡す
 			// （間が空くと、こちらが仕込んだクリックが黙って落とされることがある）。
-			pending = { seq, handle: downloadJson(filename, payload) };
+			pending = { seq, exportedAt: exported_at, handle: downloadJson(filename, payload) };
 		} catch (e) {
 			error = errorDetail(e);
 		} finally {
@@ -83,18 +87,19 @@
 	// 親が「ほぞんできた」と答えたときだけ、催促の基準を進める。
 	async function confirmSaved() {
 		if (!pending) return;
-		const { seq, handle } = pending;
+		const { seq, exportedAt, handle } = pending;
 		busy = true;
 		error = null;
 		try {
-			const { recorded } = await api.backupMarkSaved(seq);
+			const { recorded } = await api.backupMarkSaved(seq, exportedAt);
 			if (recorded) {
 				notice = `${handle.filename} をほぞんしました。`;
 			} else {
-				// 待っているあいだに復元したか、別のタブがもっと新しいものを書き出した。
-				// 進めると、手元に無いファイルの分まで「済み」になる。
+				// 待っているあいだに復元した／別のタブがもっと新しいものを書き出した、
+				// あるいは保存が作り直された。どちらも「このファイルがいまの記録の
+				// どこまでか」が言えない状態で、進めると手元に無い分まで「済み」になる。
 				error =
-					'このファイルより新しい記録に入れかわっていたので、日づけは変えませんでした。もういちど「バックアップする」をおしてください。';
+					'このファイルは いまの記録と合わなくなっていたので、日づけは変えませんでした。もういちど「バックアップする」をおしてください。';
 			}
 			dropPending();
 			await refresh();

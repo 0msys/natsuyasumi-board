@@ -28,11 +28,13 @@ const STATUS: BackupStatus = {
 };
 
 let status: BackupStatus;
-/** backupMarkSaved に渡された通番（呼ばれた順）. */
-let marked: number[];
+/** backupMarkSaved に渡された引数（呼ばれた順）. */
+let marked: { seq: number; exportedAt: number }[];
 /** backupMarkSaved の答え（既定は「進めた」）. */
 let markRecorded: boolean;
 let exportSeq: number;
+/** 書き出した時刻（催促の日づけはこれで刻まれる）. */
+let exportedAt: number;
 let spies: { mockRestore: () => void }[] = [];
 /** 作った blob URL と、解放した blob URL（数が合わないと記録まるごとの写しが残る）. */
 let created: string[];
@@ -48,6 +50,7 @@ beforeEach(() => {
 	marked = [];
 	markRecorded = true;
 	exportSeq = 7;
+	exportedAt = 1_785_900_000;
 	created = [];
 	revoked = [];
 	holdExport = false;
@@ -60,11 +63,12 @@ beforeEach(() => {
 			return {
 				filename: 'natsuyasumi-board-2026-08-09.json',
 				payload: { db: {} },
-				seq: exportSeq
+				seq: exportSeq,
+				exported_at: exportedAt
 			};
 		},
-		backupMarkSaved: async (seq: number) => {
-			marked.push(seq);
+		backupMarkSaved: async (seq: number, exportedAt2: number) => {
+			marked.push({ seq, exportedAt: exportedAt2 });
 			if (markRecorded) {
 				status = { ...status, last_backup_at: 1_786_000_000, changes_since_backup: 0 };
 			}
@@ -123,7 +127,9 @@ describe('バックアップのカード', () => {
 		await fireEvent.click(screen.getByRole('button', { name: 'ほぞんできた' }));
 		await flush();
 
-		expect(marked, '書き出したときの通番を渡していない').toEqual([7]);
+		expect(marked, '書き出したときの通番と時刻を渡していない').toEqual([
+			{ seq: 7, exportedAt: 1_785_900_000 }
+		]);
 		expect(screen.getByText(/natsuyasumi-board-2026-08-09\.json をほぞんしました。/)).toBeTruthy();
 		expect(screen.queryByText('ファイルは ほぞんできましたか？'), '問いかけが残っている').toBeNull();
 	});
@@ -149,7 +155,7 @@ describe('バックアップのカード', () => {
 		await fireEvent.click(screen.getByRole('button', { name: 'ほぞんできた' }));
 		await flush();
 
-		expect(marked).toEqual([7]);
+		expect(marked).toEqual([{ seq: 7, exportedAt: 1_785_900_000 }]);
 		expect(screen.queryByText(/をほぞんしました。/), '断られたのに成功と言っている').toBeNull();
 		expect(screen.getByText(/日づけは変えませんでした/)).toBeTruthy();
 	});
@@ -169,13 +175,16 @@ describe('バックアップのカード', () => {
 		await mountCard();
 		await pressExport();
 		exportSeq = 9;
+		exportedAt = 1_785_900_500;
 		await pressExport();
 
 		expect(screen.getAllByText('ファイルは ほぞんできましたか？')).toHaveLength(1);
 		expect(revoked, '前のぶんを解放していない').toEqual([created[0]]);
 		await fireEvent.click(screen.getByRole('button', { name: 'ほぞんできた' }));
 		await flush();
-		expect(marked, '古いほうの通番で記録している').toEqual([9]);
+		expect(marked, '古いほうの書き出しで記録している').toEqual([
+			{ seq: 9, exportedAt: 1_785_900_500 }
+		]);
 	});
 
 	// blob URL が抱えているのは記録まるごとの写し。解放できる者が誰も居ない状態で作ると、

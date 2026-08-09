@@ -68,31 +68,37 @@ export const backupApi = {
 				// ファイルが親の手元にあると分かってから backupMarkSaved(seq) が記録する。
 				// ここで記録していたころは、共有シートを閉じただけでも「さいごの
 				// バックアップ: きょう」になり、催促が1週間消えていた。
-				return { ...buildBackup(db, nowEpochSec()), seq: db.meta.seq };
+				const now = nowEpochSec();
+				const built = buildBackup(db, now);
+				return { ...built, seq: db.meta.seq, exported_at: now };
 			},
 			{ local: true }
 		),
 
-	backupMarkSaved: (seq: number) =>
+	backupMarkSaved: (seq: number, exportedAt: number) =>
 		// 催促の基準を進めるだけで、記録は変わっていない（local）。local を外すと通番が
 		// 上がり、印を付けただけで他のタブの催促に1件積む。
 		mutate(
 			(db) => {
-				// min … 手元の記録より先を「済み」にしない。先にすると
-				//        Math.max(0, seq - last_backup_seq) が 0 に潰れたまま戻らず、
-				//        そのあと何を書いても「そのあと0件」＝催促が二度と出ない。
-				//        保存が作り直された端末（IndexedDB が使えず、その場かぎりの
-				//        置き場に落ちた）では、いまの通番のほうが小さい。
-				const upTo = Math.min(seq, db.meta.seq);
+				// 手元の記録より先を指すファイルは、この記録の続きではない。数を合わせに
+				// いってはいけない——保存が作り直された端末（IndexedDB が消えて作り直され、
+				// 通番が 0 から振り直された）では、そのファイルに入っていない新しい記録まで
+				// 「済み」に数えることになる。分からないときは進めない（催促は残る）。
+				if (seq > db.meta.seq) return { recorded: false };
 				// 基準は戻さない。待っているあいだに復元した／別のタブがもっと新しいものを
 				// 書き出した、というときに古い「ほぞんできた」が遅れて届くことがある。
 				// そこで戻すと、手元に無いファイルの分まで「まだ」に戻り、復元した直後に
 				// 「そのあと N件」と出る。
-				if (upTo < db.meta.last_backup_seq) return { recorded: false };
+				if (seq < db.meta.last_backup_seq) return { recorded: false };
 				// 2つの欄は必ずいっしょに動かす。片方だけ動くと「さいごのバックアップ」と
 				// 「そのあと N件」が別々のファイルの話になる。
-				db.meta.last_backup_seq = upTo;
-				db.meta.last_backup_at = nowEpochSec();
+				db.meta.last_backup_seq = seq;
+				// 日づけは「確かめた時刻」ではなく「そのファイルを作った時刻」。催促が測って
+				// いるのは手元のファイルの古さなので、問いかけを開いたまま何日も置いてから
+				// 答えると、1週間前のファイルが「きょう」になって次の催促がさらに遅れる。
+				// 先の時刻は受け取らない（時計を進めた端末で書き出したファイルを、あとから
+				// 別の端末で確かめると未来になる）。
+				db.meta.last_backup_at = Math.min(exportedAt, nowEpochSec());
 				return { recorded: true };
 			},
 			{ local: true }

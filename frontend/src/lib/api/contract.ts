@@ -126,16 +126,24 @@ export type Api = {
 	 *  閉じても、ダウンロードが止められても、こちらには何も返ってこない。届く前に
 	 *  記録すると「さいごのバックアップ: きょう」と出たまま催促が1週間消え、その間に
 	 *  端末側の掃除で記録が消えると取り返しがつかない。
-	 *  seq は「このファイルに入っている記録の通番」。そのまま backupMarkSaved に渡す。 */
-	backupExportAll(): Promise<{ filename: string; payload: unknown; seq: number }>;
+	 *  seq は「このファイルに入っている記録の通番」、exported_at は「作った時刻」。
+	 *  どちらもそのまま backupMarkSaved に渡す。 */
+	backupExportAll(): Promise<{
+		filename: string;
+		payload: unknown;
+		seq: number;
+		exported_at: number;
+	}>;
 	/** 書き出したファイルが手元にあると分かった時点で、催促の基準を進める。
 	 *
-	 *  seq は backupExportAll() が返した値をそのまま渡すこと。呼んだ時点の通番で
-	 *  記録すると、書き出してから確かめるまでに付けたチェック（そのファイルには
-	 *  入っていない）まで「バックアップ済み」に数える＝消えても戻せない分ができる。
-	 *  recorded:false は「そのファイルより新しい基準がもうある」（復元した・別のタブが
-	 *  もっと新しいものを書き出した）＝進めなかった、の意味。 */
-	backupMarkSaved(seq: number): Promise<{ recorded: boolean }>;
+	 *  seq / exportedAt は backupExportAll() が返した値をそのまま渡すこと。呼んだ時点の
+	 *  ものにすると、書き出してから確かめるまでに付けたチェック（そのファイルには
+	 *  入っていない）まで「バックアップ済み」に数え、日づけも実際より新しくなる
+	 *  ＝どちらも「消えても戻せる」の見積もりを甘いほうへずらす。
+	 *  recorded:false は進めなかった、の意味。そのファイルより新しい基準がもうある
+	 *  （復元した・別のタブがもっと新しいものを書き出した）か、逆に手元の記録より
+	 *  先を指している（保存が作り直された＝この記録の続きではない）とき。 */
+	backupMarkSaved(seq: number, exportedAt: number): Promise<{ recorded: boolean }>;
 	/** バックアップで丸ごと置き換える（取り込む前に画面側で確認を取ること）。 */
 	backupImportAll(payload: unknown): Promise<{ ok: boolean }>;
 	/** 「ホーム画面に追加」の案内を閉じた、を覚える。 */

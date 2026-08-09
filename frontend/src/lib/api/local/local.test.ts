@@ -468,8 +468,8 @@ describe('バックアップの催促', () => {
 	// 通番は書き出したときのものを渡す——ここを「確かめた時点」にすると、待っている
 	// あいだに付けたチェックまで済みに数える。
 	const exportAndConfirm = async () => {
-		const { seq } = await api.backupExportAll();
-		return api.backupMarkSaved(seq);
+		const { seq, exported_at } = await api.backupExportAll();
+		return api.backupMarkSaved(seq, exported_at);
 	};
 
 	// ここがこの機能のいちばん大事なところ。押しただけで「バックアップした」ことにすると、
@@ -500,10 +500,10 @@ describe('バックアップの催促', () => {
 	// 済みに数えられる＝消えたときに戻せない分ができる。
 	it('確かめるまでのあいだに付けたチェックは、ファイルに入っていないので数える', async () => {
 		await wizard();
-		const { seq } = await api.backupExportAll();
+		const { seq, exported_at } = await api.backupExportAll();
 		const k = await keysOf();
 		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
-		await api.backupMarkSaved(seq);
+		await api.backupMarkSaved(seq, exported_at);
 		expect(
 			(await api.backupStatus()).changes_since_backup,
 			'書き出したあとのチェックが「バックアップ済み」に数えられている'
@@ -514,29 +514,58 @@ describe('バックアップの催促', () => {
 	// 「ほぞんできた」が遅れて届いても、手元に無いファイルの分まで「まだ」に戻さない。
 	it('復元したあとに古い「ほぞんできた」が届いても、基準を戻さない', async () => {
 		await wizard();
-		const { payload, seq } = await api.backupExportAll();
+		const { payload, seq, exported_at } = await api.backupExportAll();
 		await api.backupImportAll(payload);
 
-		expect(await api.backupMarkSaved(seq), '古い書き出しで基準を書きかえている').toEqual({
-			recorded: false
-		});
+		expect(await api.backupMarkSaved(seq, exported_at), '古い書き出しで基準を書きかえている').toEqual(
+			{ recorded: false }
+		);
 		expect(
 			(await api.backupStatus()).changes_since_backup,
 			'復元した直後なのに「そのあと N件」と出ている'
 		).toBe(0);
 	});
 
-	// 基準が手元の記録より先に行くと、changes_since_backup が 0 に潰れたまま戻らない
-	// ＝そのあと何を書いても催促が二度と出ない（いちばん静かな壊れかた）。
-	it('先の通番で「ほぞんできた」と言われても、催促を止めない', async () => {
+	// 手元にあるファイルの通番のほうが先を指すことがある——保存が消えて作り直され、
+	// 通番が 0 から振り直された端末（IndexedDB が使えずその場かぎりの置き場に落ちた、
+	// サイトデータを消された）。ここで数を合わせにいくと、そのファイルには入っていない
+	// 作り直したあとの記録まで「済み」に数える。催促は黙るのに、戻せる先はどこにも無い。
+	it('手元の記録より先を指すファイルは、済みにしない', async () => {
 		await wizard();
-		await api.backupMarkSaved(999_999);
+		const { seq } = await api.backupExportAll();
 		const k = await keysOf();
 		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		const before = (await api.backupStatus()).changes_since_backup;
+		expect(before, '前提: 数えるものがある').toBeGreaterThan(0);
+
+		expect(
+			await api.backupMarkSaved(seq + 1000, nowEpochSec()),
+			'この記録の続きでないファイルで済みにしている'
+		).toEqual({ recorded: false });
 		expect(
 			(await api.backupStatus()).changes_since_backup,
-			'基準が先に行って、催促が出なくなっている'
-		).toBe(1);
+			'ファイルに入っていない分まで催促から消えている'
+		).toBe(before);
+	});
+
+	// 催促が測っているのは「手元のファイルの古さ」。確かめた時刻で刻むと、問いかけを
+	// 開いたまま何日も置いてから答えたときに、1週間前のファイルが「きょう」になる
+	// ——次の催促がそこからさらに遅れる。
+	it('日づけは、確かめた時刻ではなく書き出した時刻', async () => {
+		await wizard();
+		const { seq } = await api.backupExportAll();
+		const threeDaysAgo = nowEpochSec() - 3 * 86400;
+		await api.backupMarkSaved(seq, threeDaysAgo);
+		expect(
+			(await api.backupStatus()).last_backup_at,
+			'確かめた時刻で刻んでいる（古いファイルが「きょう」になる）'
+		).toBe(threeDaysAgo);
+
+		// 先の時刻は受け取らない（時計を進めた端末で書き出したファイルを、あとから
+		// 別の端末で確かめると未来になる。未来だと日数が0のまま止まる）
+		const { seq: seq2 } = await api.backupExportAll();
+		await api.backupMarkSaved(seq2, nowEpochSec() + 86400);
+		expect((await api.backupStatus()).last_backup_at).toBeLessThanOrEqual(nowEpochSec());
 	});
 
 	it('そのあとチェックすると数が増える', async () => {
