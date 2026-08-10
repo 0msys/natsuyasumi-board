@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { isStorageUnavailable, load, mutate, read, replaceAll, setPersistence } from './db';
 import { IdbTransactionError } from './idb';
 import { emptyDb, type Db } from './model';
-import { memoryPersistence, type Persistence } from './persist';
+import { StaleWriteError, memoryPersistence, type Persistence } from './persist';
 
 /** 保存の中身を外から触れる置き場（別のタブが書いた状況を作るのに使う）。 */
 function sharedPersistence(): Persistence & { peek(): unknown; poke(db: unknown): void } {
@@ -472,6 +472,109 @@ describe('タブをまたぐ書き込みの直列化', () => {
 		} finally {
 			Object.defineProperty(navigator, 'locks', { configurable: true, value: original });
 		}
+	});
+});
+
+describe('鍵が無い端末で、読み直しと保存のあいだに割り込まれたとき', () => {
+	// 鍵が無ければ、読み直したあと・書き戻す前にも別のタブが入れる。そこは保存側が
+	// 「もとにした通番」と突き合わせて弾き、こちらが読み直しからやり直す。
+	// 弾かれたことに気づかず書けば、消えるのは子どもが押した「やった」そのもの。
+
+	/** IndexedDB と同じ突き合わせをする保存。interrupt は、読み終わったあと・書き戻す前に
+	 *  別のタブが割り込む状況を作る差し込み口（1回の save につき1つ消費する）。 */
+	function contendedPersistence(): Persistence & {
+		peek(): unknown;
+		interrupt(fn: (current: Db) => void): void;
+		bases(): number[];
+	} {
+		let current: unknown = null;
+		const interrupts: ((current: Db) => void)[] = [];
+		const bases: number[] = [];
+		return {
+			load: async () => current,
+			save: async (db, base) => {
+				const meddle = interrupts.shift();
+				if (meddle) {
+					const outside = JSON.parse(JSON.stringify(current)) as Db;
+					meddle(outside);
+					current = outside;
+				}
+				bases.push(base);
+				const seq = (current as Db | null)?.meta.seq;
+				if (seq !== undefined && seq !== base) throw new StaleWriteError();
+				current = JSON.parse(JSON.stringify(db));
+			},
+			clear: async () => {
+				current = null;
+			},
+			peek: () => current,
+			interrupt: (fn) => interrupts.push(fn),
+			bases: () => bases
+		};
+	}
+
+	const flag = () => ({ value: 1, decision: null, updated_at: 0 });
+	const flagsIn = (store: { peek(): unknown }) => Object.keys((store.peek() as Db).flags).sort();
+
+	it('読み直してやり直すので、割り込んだ書き込みが残る', async () => {
+		const store = contendedPersistence();
+		setPersistence(store);
+		await mutate((db) => {
+			db.flags['A'] = flag();
+		});
+
+		// このタブが C を書こうとしたその隙に、別のタブが B を書く
+		store.interrupt((outside) => {
+			outside.flags['B'] = flag();
+			outside.meta.seq += 1;
+		});
+		let runs = 0;
+		await mutate((db) => {
+			runs += 1;
+			db.flags['C'] = flag();
+		});
+
+		expect(flagsIn(store), '割り込んだ B が消えた').toEqual(['A', 'B', 'C']);
+		expect(runs, '読み直さずに書き直した（消したものの上に載せている）').toBe(2);
+		expect((store.peek() as Db).meta.seq, 'やり直したぶん通番が飛んでいる').toBe(3);
+	});
+
+	it('突き合わせに渡すのは、上げる前の通番', async () => {
+		// 上げたあとの値を渡すと、誰にも割り込まれていないふつうの回まで食い違いになり、
+		// 1件も書けなくなる（しかも「先を越された」という顔で失敗する）。
+		const store = contendedPersistence();
+		setPersistence(store);
+		await mutate((db) => {
+			db.flags['A'] = flag();
+		});
+		await mutate((db) => {
+			db.flags['B'] = flag();
+		});
+
+		expect(store.bases()).toEqual([0, 1]);
+		expect(flagsIn(store)).toEqual(['A', 'B']);
+	});
+
+	it('取られ続けたら、回り続けずに失敗として返す', async () => {
+		const store = contendedPersistence();
+		setPersistence(store);
+		await mutate((db) => {
+			db.flags['A'] = flag();
+		});
+
+		// やり直すたびに、また先を越される
+		for (let i = 0; i < 10; i += 1) {
+			store.interrupt((outside) => {
+				outside.meta.seq += 1;
+			});
+		}
+
+		await expect(
+			mutate((db) => {
+				db.flags['C'] = flag();
+			})
+		).rejects.toBeInstanceOf(StaleWriteError);
+		expect(flagsIn(store), '弾かれたのに書き込んだ').toEqual(['A']);
 	});
 });
 
