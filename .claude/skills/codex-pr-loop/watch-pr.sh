@@ -118,14 +118,38 @@ if [ -n "${seed_cut:-}" ] && seed_reqs=$(apiall "repos/$REPO/issues/$PR/comments
 fi
 api "repos/$REPO/pulls/$PR/comments" --paginate --jq '.[].id' >"$SEEN_C" || : >"$SEEN_C"
 api "repos/$REPO/pulls/$PR/reviews" --paginate --jq '.[].id' >"$SEEN_R" || : >"$SEEN_R"
-api "repos/$REPO/issues/$PR/reactions" --paginate --jq '.[].id' >"$SEEN_X" || : >"$SEEN_X"
+# リアクションの既読は2つある。SEEN_X は「出力済み」、SEEN_P は「承認として消滅を見張る対象」。
 # 外れたことを報告するのは承認リアクションだけ。全リアクションを対象にすると、
 # レビュー開始時に付いて完了時に外れる 👀 まで「承認が外れた」として鳴る。
-api "repos/$REPO/issues/$PR/reactions" --paginate \
-	--jq ".[] | select(.user.login == \"$BOT\") | select(.content == \"+1\" or .content == \"hooray\" or .content == \"heart\" or .content == \"rocket\") | .id" \
-	>"$SEEN_P" || : >"$SEEN_P"
-api "repos/$REPO/issues/$PR/comments" --paginate \
-	--jq ".[] | select(.user.login == \"$BOT\") | .id" >"$SEEN_S" || : >"$SEEN_S"
+#
+# この2つは **1回の取得から両方作る**。別々に取ると、SEEN_X だけ成功して SEEN_P が
+# 失敗したとき、既存の 👍 が「出力済み」で二度と拾われないのに監視対象にも入らず、
+# 承認の撤回を永久に見逃す。取得に失敗したら両方空にする（＝全部を新着として鳴らし直す）。
+: >"$SEEN_X"
+: >"$SEEN_P"
+if seed_react=$(api "repos/$REPO/issues/$PR/reactions" --paginate \
+	--jq '.[] | "\(.id)\t\(.content)\t\(.user.login)"'); then
+	while IFS=$'\t' read -r xid xcontent xwho; do
+		[ -z "${xid:-}" ] && continue
+		mark "$xid" "$SEEN_X"
+		[ "$xwho" = "$BOT" ] || continue
+		case "$xcontent" in
+		"+1" | "hooray" | "heart" | "rocket") mark "$xid" "$SEEN_P" ;;
+		esac
+	done <<<"$seed_react"
+fi
+# 要約も ACK と同じ切り口で既読にする。
+# 「いま在るものを全部既読」にすると、呼び出し側の事前確認から、この起動処理が終わるまでの
+# 数秒に届いた合格要約を吸い込む。合格は要約でしか分からないので、CLEAN が永久に出ない。
+# しかも以降の周期では「レビュアーの活動あり」と数えるため、QUIET でも露見しない。
+: >"$SEEN_S"
+if [ -n "${seed_cut:-}" ] && seed_sums=$(api "repos/$REPO/issues/$PR/comments" --paginate \
+	--jq ".[] | select(.user.login == \"$BOT\") | \"\(.id)\t\(.created_at)\""); then
+	while IFS=$'\t' read -r sid screated; do
+		[ -z "${sid:-}" ] && continue
+		[[ "$screated" < "$seed_cut" ]] && mark "$sid" "$SEEN_S"
+	done <<<"$seed_sums"
+fi
 
 head_fail=0
 head_warned=0
@@ -286,15 +310,22 @@ while true; do
 	fi
 
 	# 6) CI 失敗（同じ HEAD の同じジョブは1回だけ）。HEAD 不明の周期は見送る。
-	if [ -n "${head_sha:-}" ] &&
-		fails=$(gh pr checks "$PR" --repo "$REPO" --json name,bucket \
-			--jq '.[] | select(.bucket == "fail" or .bucket == "cancel") | .name' 2>/dev/null); then
-		while IFS= read -r job; do
-			[ -z "${job:-}" ] && continue
-			note "$head_short|$job" "$SEEN_F" && continue
-			echo "CI-FAIL: $head_short の「${job}」が失敗しました"
-			mark "$head_short|$job" "$SEEN_F"
-		done <<<"$fails"
+	#
+	# `gh pr checks` は「失敗した check がある」ときにも終了コード 1 を返す。
+	# 終了コードで成否を判断すると、CI-FAIL を出すべきときにちょうど黙る。
+	# 取得できたかどうかは出力の有無で見て、失敗判定は JSON の bucket で行う。
+	if [ -n "${head_sha:-}" ]; then
+		checks_out=$(gh pr checks "$PR" --repo "$REPO" --json name,bucket 2>/dev/null) || true
+		if [ -n "${checks_out:-}" ] &&
+			fails=$(printf '%s' "$checks_out" |
+				jq -r '.[] | select(.bucket == "fail" or .bucket == "cancel") | .name'); then
+			while IFS= read -r job; do
+				[ -z "${job:-}" ] && continue
+				note "$head_short|$job" "$SEEN_F" && continue
+				echo "CI-FAIL: $head_short の「${job}」が失敗しました"
+				mark "$head_short|$job" "$SEEN_F"
+			done <<<"$fails"
+		fi
 	fi
 
 	# 7) 依頼したのに静か。事実だけ並べ、合否は断定しない。

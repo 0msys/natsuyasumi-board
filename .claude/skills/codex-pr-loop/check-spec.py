@@ -28,6 +28,30 @@ def slug(heading: str) -> str:
     return s.replace(" ", "-")
 
 
+def strip_code_fences(text: str) -> str:
+    """``` / ~~~ で囲まれた範囲を空行に潰す（行数は保つ）。
+
+    シェル例の中の `# コメント` を見出しとして拾うと、GitHub には存在しないアンカーを
+    「在る」と記録し、壊れたリンクを通してしまう。コード例の中の `](...)` も
+    リンクではないので、同じ理由でリンク検査からも外す。
+    """
+    out: list[str] = []
+    fence: tuple[str, int] | None = None
+    for line in text.split("\n"):
+        m = re.match(r"^\s{0,3}(`{3,}|~{3,})", line)
+        if fence is None:
+            if m:
+                fence = (m.group(1)[0], len(m.group(1)))
+                out.append("")
+            else:
+                out.append(line)
+        else:
+            if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= fence[1]:
+                fence = None
+            out.append("")
+    return "\n".join(out)
+
+
 def anchors_of(text: str) -> set[str]:
     """1ファイル分の見出しアンカー。github-slugger の採番をそのまま移植する。
 
@@ -45,7 +69,7 @@ def anchors_of(text: str) -> set[str]:
     out: set[str] = set()
     # `\s+` にすると改行も食う。見出しが「## 」だけの行だと次の行まで飲み込んで
     # 1つの見出しとして誤読するので、行内の空白だけに限る。
-    for heading in re.findall(r"^#{1,6}[ \t]+(.*)$", text, re.M):
+    for heading in re.findall(r"^#{1,6}[ \t]+(.*)$", strip_code_fences(text), re.M):
         original = slug(heading)
         result = original
         # 初回に入るのは result == original のときだけなので、参照は必ず存在する。
@@ -85,7 +109,7 @@ def main() -> int:
 
     for f, t in text.items():
         d = os.path.dirname(f)
-        for m in re.finditer(r"\]\(([^)]+)\)", t):
+        for m in re.finditer(r"\]\(([^)]+)\)", strip_code_fences(t)):
             target = m.group(1)
             if target.startswith(("http://", "https://", "mailto:")):
                 continue
