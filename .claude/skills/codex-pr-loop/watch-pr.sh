@@ -116,8 +116,29 @@ if [ -n "${seed_cut:-}" ] && seed_reqs=$(apiall "repos/$REPO/issues/$PR/comments
 		done <<<"$seed_x"
 	done <<<"$seed_reqs"
 fi
-api "repos/$REPO/pulls/$PR/comments" --paginate --jq '.[].id' >"$SEEN_C" || : >"$SEEN_C"
-api "repos/$REPO/pulls/$PR/reviews" --paginate --jq '.[].id' >"$SEEN_R" || : >"$SEEN_R"
+# 起動より前に作られたものだけを既読にする（共通処理）。
+#
+# 「いま在るものを全部既読」にすると、呼び出し側の事前確認からこの起動処理が終わるまでの
+# 数秒に届いた分を吸い込み、以後永久に鳴らせない。しかも次の周期以降は「レビュアーの活動あり」
+# と数えるので QUIET にも出ず、完全に消える。
+#
+# この切り分けを対象ごとに書き写した結果、ACK に入れて要約に入れ忘れ、要約に入れて
+# レビューと指摘に入れ忘れる、を繰り返した。1か所にまとめて、適用漏れが起きないようにする。
+seed_before_start() { # <既読ファイル> <endpoint> <jq: "id\ttimestamp" を出す>
+	local file="$1" endpoint="$2" filter="$3" rows sid sts
+	: >"$file"
+	[ -z "${seed_cut:-}" ] && return 0
+	rows=$(api "$endpoint" --paginate --jq "$filter") || return 0
+	[ -z "${rows:-}" ] && return 0
+	while IFS=$'\t' read -r sid sts; do
+		[ -z "${sid:-}" ] && continue
+		[[ "$sts" < "$seed_cut" ]] && mark "$sid" "$file"
+	done <<<"$rows"
+	return 0
+}
+
+seed_before_start "$SEEN_C" "repos/$REPO/pulls/$PR/comments" '.[] | "\(.id)\t\(.created_at)"'
+seed_before_start "$SEEN_R" "repos/$REPO/pulls/$PR/reviews" '.[] | "\(.id)\t\(.submitted_at)"'
 # リアクションの既読は2つある。SEEN_X は「出力済み」、SEEN_P は「承認として消滅を見張る対象」。
 # 外れたことを報告するのは承認リアクションだけ。全リアクションを対象にすると、
 # レビュー開始時に付いて完了時に外れる 👀 まで「承認が外れた」として鳴る。
@@ -138,18 +159,9 @@ if seed_react=$(api "repos/$REPO/issues/$PR/reactions" --paginate \
 		esac
 	done <<<"$seed_react"
 fi
-# 要約も ACK と同じ切り口で既読にする。
-# 「いま在るものを全部既読」にすると、呼び出し側の事前確認から、この起動処理が終わるまでの
-# 数秒に届いた合格要約を吸い込む。合格は要約でしか分からないので、CLEAN が永久に出ない。
-# しかも以降の周期では「レビュアーの活動あり」と数えるため、QUIET でも露見しない。
-: >"$SEEN_S"
-if [ -n "${seed_cut:-}" ] && seed_sums=$(api "repos/$REPO/issues/$PR/comments" --paginate \
-	--jq ".[] | select(.user.login == \"$BOT\") | \"\(.id)\t\(.created_at)\""); then
-	while IFS=$'\t' read -r sid screated; do
-		[ -z "${sid:-}" ] && continue
-		[[ "$screated" < "$seed_cut" ]] && mark "$sid" "$SEEN_S"
-	done <<<"$seed_sums"
-fi
+# 合格は要約でしか分からないので、起動中に届いた1件を吸い込むと CLEAN が永久に出ない。
+seed_before_start "$SEEN_S" "repos/$REPO/issues/$PR/comments" \
+	".[] | select(.user.login == \"$BOT\") | \"\(.id)\t\(.created_at)\""
 
 head_fail=0
 head_warned=0

@@ -14,7 +14,17 @@ import re
 import sys
 import unicodedata
 
-TARGETS = glob.glob("docs/spec/**/*.md", recursive=True) + ["README.md"]
+SPEC_FILES = glob.glob("docs/spec/**/*.md", recursive=True)
+TARGETS = SPEC_FILES + ["README.md"]
+
+# 相対リンク。`[x](path "title")` のタイトルを path に含めない。
+# `[^)]+` で取ると `other.md "hover text"` を1つのパスとして存在確認し、
+# 正しいリンクをリンク切れとして報告してしまう。
+LINK = re.compile(
+    r"\]\(\s*(<[^>\n]*>|[^\s)]+)"  # 行き先（<> 囲みも許す）
+    r"""(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?"""  # 省略可能なタイトル
+    r"\s*\)"
+)
 
 
 def slug(heading: str) -> str:
@@ -75,6 +85,10 @@ def anchors_of(text: str) -> set[str]:
     # `\s+` にすると改行も食う。見出しが「## 」だけの行だと次の行まで飲み込んで
     # 1つの見出しとして誤読するので、行内の空白だけに限る。
     for heading in re.findall(r"^#{1,6}[ \t]+(.*)$", strip_code_fences(text), re.M):
+        # ATX の閉じ側 `## 見出し ##` は見出し文ではない（CommonMark）。
+        # 残すと `## Setup ##` が `setup-` になり、正しい #setup を弾いて
+        # 実在しない #setup- を通す。空白が先行する # の連なりだけを落とす。
+        heading = re.sub(r"[ \t]+#+[ \t]*$", "", heading)
         original = slug(heading)
         result = original
         # 初回に入るのは result == original のときだけなので、参照は必ず存在する。
@@ -87,10 +101,12 @@ def anchors_of(text: str) -> set[str]:
 
 
 def main() -> int:
-    files = [f for f in TARGETS if os.path.exists(f)]
-    if not files:
-        print("docs/spec/ が見つかりません。リポジトリのルートで実行してください。")
+    # README は常に TARGETS に入るので、これを「対象あり」と数えると
+    # docs/spec が丸ごと無い状態でも成功で通ってしまう。仕様書の有無で判断する。
+    if not [f for f in SPEC_FILES if os.path.exists(f)]:
+        print("docs/spec/ に Markdown がありません。リポジトリのルートで実行してください。")
         return 1
+    files = [f for f in TARGETS if os.path.exists(f)]
 
     text = {f: open(f, encoding="utf-8").read() for f in files}
     anchors: dict[str, set[str] | None] = {f: anchors_of(t) for f, t in text.items()}
@@ -114,8 +130,10 @@ def main() -> int:
 
     for f, t in text.items():
         d = os.path.dirname(f)
-        for m in re.finditer(r"\]\(([^)]+)\)", strip_code_fences(t)):
-            target = m.group(1)
+        for m in LINK.finditer(strip_code_fences(t)):
+            target = m.group(1).strip()
+            if target.startswith("<") and target.endswith(">"):
+                target = target[1:-1]
             if target.startswith(("http://", "https://", "mailto:")):
                 continue
             path, _, frag = target.partition("#")
