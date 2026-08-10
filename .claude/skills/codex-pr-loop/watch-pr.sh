@@ -10,13 +10,14 @@
 #   CLEAN       … 要約が「指摘なし」で、対象コミットが現在の HEAD と一致した（＝完了）
 #   CLEAN-STALE … 要約は「指摘なし」だが、対象が HEAD ではない（追い越し。まだ通っていない）
 #   SUMMARY     … 要約が投稿された（指摘あり。REVIEW/COMMENT が続く）
-#   THUMBSUP  … PR 本体に 👍 が付いた（補助シグナル）
-#   UNLIKED   … 👍 が外れた
-#   ACK       … 依頼コメントに 👀 が付いた（受理。付かないまま処理されることもある）
-#   REVIEW    … 新しいレビューが出た（指摘件数つき）
-#   COMMENT   … 新しいインライン指摘
-#   CI-FAIL   … CI ジョブが失敗・中止
-#   QUIET     … 依頼から QUIET_AFTER_S 応答なし。判断材料を並べるだけで、合否は断定しない
+#   THUMBSUP    … PR 本体に 👍 等が付いた（補助シグナル）
+#   REACTION    … PR 本体に 👍 以外が付いた（👀＝レビュー開始など）
+#   UNLIKED     … 承認リアクション（👍 等）が外れた。👀 の消失では鳴らさない
+#   ACK         … 依頼コメントに 👀 が付いた（受理。付かないまま処理されることもある）
+#   REVIEW      … 新しいレビューが出た（指摘件数つき）
+#   COMMENT     … 新しいインライン指摘
+#   CI-FAIL     … CI ジョブが失敗・中止
+#   QUIET       … 依頼から QUIET_AFTER_S 応答なし。判断材料を並べるだけで、合否は断定しない
 #
 # ■ 合否の読み方（ここを間違えると未着手を合格と誤読する）
 #   合否は要約コメント（issue コメント。本文に「Reviewed commit: <sha>」を含む）で決まる。
@@ -59,6 +60,7 @@ mkdir -p "$DIR"
 SEEN_C="$DIR/seen-comments"
 SEEN_R="$DIR/seen-reviews"
 SEEN_X="$DIR/seen-reactions"
+SEEN_P="$DIR/seen-positive" # レビュアーの承認リアクション（👍 等）のID
 SEEN_S="$DIR/seen-summaries"
 SEEN_G="$DIR/seen-gone"
 SEEN_A="$DIR/seen-acks"
@@ -117,6 +119,11 @@ fi
 api "repos/$REPO/pulls/$PR/comments" --paginate --jq '.[].id' >"$SEEN_C" || : >"$SEEN_C"
 api "repos/$REPO/pulls/$PR/reviews" --paginate --jq '.[].id' >"$SEEN_R" || : >"$SEEN_R"
 api "repos/$REPO/issues/$PR/reactions" --paginate --jq '.[].id' >"$SEEN_X" || : >"$SEEN_X"
+# 外れたことを報告するのは承認リアクションだけ。全リアクションを対象にすると、
+# レビュー開始時に付いて完了時に外れる 👀 まで「承認が外れた」として鳴る。
+api "repos/$REPO/issues/$PR/reactions" --paginate \
+	--jq ".[] | select(.user.login == \"$BOT\") | select(.content == \"+1\" or .content == \"hooray\" or .content == \"heart\" or .content == \"rocket\") | .id" \
+	>"$SEEN_P" || : >"$SEEN_P"
 api "repos/$REPO/issues/$PR/comments" --paginate \
 	--jq ".[] | select(.user.login == \"$BOT\") | .id" >"$SEEN_S" || : >"$SEEN_S"
 
@@ -175,19 +182,22 @@ while true; do
 			case "$content" in
 			"+1" | "hooray" | "heart" | "rocket")
 				echo "THUMBSUP: $BOT が PR に $content を付けました（${at}・補助シグナル。要約コメントで確認すること）"
+				mark "$xid" "$SEEN_P"
 				;;
 			*) echo "REACTION: $BOT が PR に $content を付けました（${at}）" ;;
 			esac
 			mark "$xid" "$SEEN_X" # 出してから印を付ける（間で落ちても取りこぼさない）
 		done <<<"$reactions"
 
+		# 承認リアクションが消えたときだけ鳴らす。👀 の付け外しは対象にしない
+		# （レビュー開始で付き完了で外れるだけなので、承認撤回と紛らわしい）。
 		live=$(printf '%s\n' "$reactions" | cut -f1 | grep -v '^$' | sort -u)
 		while read -r gone; do
 			[ -z "${gone:-}" ] && continue
 			note "$gone" "$SEEN_G" && continue
-			echo "UNLIKED: PR 本体のリアクション $gone が外れました"
+			echo "UNLIKED: $BOT の承認リアクション $gone が外れました"
 			mark "$gone" "$SEEN_G"
-		done < <(comm -23 <(sort -u "$SEEN_X") <(printf '%s\n' "$live"))
+		done < <(comm -23 <(sort -u "$SEEN_P") <(printf '%s\n' "$live"))
 	fi
 
 	# 2) 「指摘なし」の要約。これは issue コメントとして届く（pulls/*/reviews には現れない）。

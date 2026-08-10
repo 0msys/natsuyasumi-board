@@ -64,7 +64,22 @@ def main() -> int:
         return 1
 
     text = {f: open(f, encoding="utf-8").read() for f in files}
-    anchors = {f: anchors_of(t) for f, t in text.items()}
+    anchors: dict[str, set[str] | None] = {f: anchors_of(t) for f, t in text.items()}
+
+    def anchors_for(path: str) -> set[str] | None:
+        """リンク先のアンカー集合。検査対象の外にある Markdown も読みに行く。
+
+        検査対象（docs/spec 配下と README）だけを地図に持つと、`../definition-format.md#x`
+        のような外向きリンクは「地図に無いから検査しない」で素通りする。壊れたアンカーを
+        黙って通すので、Markdown なら読み足す。読めない場合は None＝検査しない。
+        """
+        if path not in anchors:
+            try:
+                with open(path, encoding="utf-8") as fh:
+                    anchors[path] = anchors_of(fh.read())
+            except OSError:
+                anchors[path] = None
+        return anchors[path]
 
     problems = []
 
@@ -79,7 +94,10 @@ def main() -> int:
             if path and not os.path.exists(resolved):
                 problems.append(f"リンク切れ（ファイル）: {f} -> {target}")
                 continue
-            if frag and resolved in anchors and frag not in anchors[resolved]:
+            if not frag or not resolved.endswith(".md"):
+                continue
+            known = anchors_for(resolved)
+            if known is not None and frag not in known:
                 problems.append(f"リンク切れ（アンカー）: {f} -> {target}")
 
     ids = []
@@ -94,7 +112,10 @@ def main() -> int:
         parts = re.split(r"^## 実装参照\s*$", t, flags=re.M)
         if len(parts) < 2:
             continue
-        for line in parts[1].splitlines():
+        # 次の ## までで切る。末尾まで読むと、後続セクションの `コード` 付き箇条書きを
+        # 実装参照のパスと誤認して、無関係な例で検査全体が落ちる。
+        section = re.split(r"^##\s", parts[1], flags=re.M)[0]
+        for line in section.splitlines():
             m = re.match(r"-\s*`([^`]+)`", line.strip())
             if m:
                 refs.add(m.group(1))

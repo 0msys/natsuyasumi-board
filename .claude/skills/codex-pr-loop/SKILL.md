@@ -81,8 +81,11 @@ Monitor(
 )
 ```
 
-出る行: `CLEAN` / `CLEAN-STALE` / `SUMMARY` / `THUMBSUP` / `UNLIKED` / `ACK` / `REVIEW` /
-`COMMENT` / `CI-FAIL` / `QUIET` / `WARN` / `RECOVERED`。
+出る行: `CLEAN` / `CLEAN-STALE` / `SUMMARY` / `THUMBSUP` / `REACTION` / `UNLIKED` / `ACK` /
+`REVIEW` / `COMMENT` / `CI-FAIL` / `QUIET` / `WARN` / `RECOVERED`。
+
+`UNLIKED` は承認リアクションが外れたときだけ出る。Codex はレビュー開始時に 👀 を付け、
+完了時に外す。これを承認の撤回として鳴らすと毎ラウンド誤報になるので、対象外にしてある。
 
 通信に失敗した周期は、判定を出さず印も付けずに次へ回す。`WARN` は「HEAD が取れず判定を
 保留している」という意味で、**沈黙が異常なしを意味しないこと**を知らせるために出る。
