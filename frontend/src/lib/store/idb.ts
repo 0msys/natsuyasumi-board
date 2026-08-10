@@ -4,7 +4,7 @@
 // 共有のオリジン**で配信されるため。localStorage はキー空間も 5MB のクォータも
 // オリジン単位で共有されるので、同じ人の別のページが太るとこちらの書き込みが巻き添えで
 // 失敗しうる。IndexedDB なら DB 名で分かれる。
-import type { Persistence } from './persist';
+import { StaleWriteError, type Persistence } from './persist';
 
 const DB_NAME = 'natsuyasumi-board';
 const DB_VERSION = 1;
@@ -93,6 +93,31 @@ function run<T>(
 	);
 }
 
+/** 保存されている中身から通番を読む（読めなければ null）。 */
+function seqOf(raw: unknown): number | null {
+	if (typeof raw !== 'object' || raw === null) return null;
+	const meta = (raw as { meta?: unknown }).meta;
+	if (typeof meta !== 'object' || meta === null) return null;
+	const seq = (meta as { seq?: unknown }).seq;
+	return typeof seq === 'number' ? seq : null;
+}
+
+/**
+ * 保存されているものが「書き換えのもとにしたもの」のままか。
+ *
+ * 何も入っていなければ、まだ誰も書いていない＝先を越されていない。
+ *
+ * 通番が読めない中身のときも通す。読めない中身は、読む側でも normalizeDb が seq 0 として
+ * 受け取っている——ここで止めると、読み直してもまた同じところで止まる。やり直しは
+ * 読み直しからなので、その端末は二度と書けなくなる（保存が壊れているときに、いちばん
+ * 書き足したいものが1つも入らない）。
+ */
+function unchanged(current: unknown, base: number): boolean {
+	if (current === null || current === undefined) return true;
+	const seq = seqOf(current);
+	return seq === null || seq === base;
+}
+
 export function idbPersistence(): Persistence {
 	return {
 		async load() {
@@ -108,13 +133,31 @@ export function idbPersistence(): Persistence {
 				throw e instanceof IdbTransactionError ? e : new IdbTransactionError('readonly', e);
 			}
 		},
-		async save(db) {
-			const current = await run<unknown>('readonly', (s) => s.get(CURRENT));
+		async save(db, base) {
+			// 先を越されていたか。トランザクションの中では投げられない（投げると中止になり、
+			// 「書けなかった」と区別がつかなくなる）ので、印だけ持ち帰って外で投げる。
+			let stale = false;
 			await run('readwrite', (s) => {
-				if (current !== null && current !== undefined) s.put(current, PREVIOUS);
-				s.put(db, CURRENT);
+				// 読みと書きを1つの readwrite に入れるのが要点。IndexedDB は重なる
+				// トランザクションを直列に流すので、この中で「もとにしたものから変わって
+				// いないか」を見て書けば、Web Locks が無い端末でも、あいだに割り込んだ
+				// 別のタブの1件を消さずに済む。読みを別のトランザクションに分けると、
+				// その2つのあいだが丸ごと隙になる。
+				const req = s.get(CURRENT);
+				req.onsuccess = () => {
+					const current = req.result;
+					if (!unchanged(current, base)) {
+						stale = true;
+						return;
+					}
+					// 直前の世代を1つ残す（A/B スロット）。書き込みの途中で電源が落ちても片方は生きている。
+					if (current !== null && current !== undefined) s.put(current, PREVIOUS);
+					s.put(db, CURRENT);
+				};
+				// onsuccess の中で put を出すので、ここで返して run に見張らせるものは無い。
 				return null;
 			});
+			if (stale) throw new StaleWriteError();
 		},
 		async clear() {
 			await run('readwrite', (s) => {

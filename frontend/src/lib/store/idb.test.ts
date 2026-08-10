@@ -10,11 +10,16 @@
 // 保存も——画面には成功したまま——ひとつも残らなくなる。
 import { afterEach, describe, expect, it } from 'bun:test';
 import { IdbTransactionError, idbAvailable, idbPersistence } from './idb';
+import { StaleWriteError } from './persist';
 
 type EventLike = { target: unknown };
 type Handler = ((event: EventLike) => void) | null;
 type FakeRequest = { onsuccess: Handler; onerror: Handler; result: unknown; error: unknown };
-type FakeStore = { get(key: string): FakeRequest; put(): object; delete(): object };
+type FakeStore = {
+	get(key: string): FakeRequest;
+	put(value: unknown, key: string): object;
+	delete(): object;
+};
 type FakeTx = {
 	error: unknown;
 	oncomplete: Handler;
@@ -41,14 +46,19 @@ const CAUSE = Object.assign(new Error('容量が足りません'), { name: 'Quot
 function fakeIndexedDb(outcome: Outcome, stored: Record<string, unknown> = {}, opensOk = Infinity) {
 	let closes = 0;
 	let opens = 0;
+	/** 開いたトランザクションの種別。読みと書きを分けていないかを見るのに使う。 */
+	const modes: string[] = [];
+	/** 書き込んだもの（キーと中身）。 */
+	const puts: { key: string; value: unknown }[] = [];
 	const database = {
 		objectStoreNames: { contains: () => true },
 		createObjectStore: () => {},
 		close: () => {
 			closes += 1;
 		},
-		transaction: () => {
+		transaction: (_store: string, mode: string) => {
 			if (outcome === 'throw') throw new Error('接続が閉じています');
+			modes.push(mode);
 			let request: FakeRequest | null = null;
 			const tx: FakeTx = {
 				error: null,
@@ -67,7 +77,10 @@ function fakeIndexedDb(outcome: Outcome, stored: Record<string, unknown> = {}, o
 						if (outcome === 'complete') queueMicrotask(() => req.onsuccess?.({ target: req }));
 						return req;
 					},
-					put: () => ({}),
+					put: (value: unknown, key: string) => {
+						puts.push({ key, value });
+						return {};
+					},
 					delete: () => ({})
 				})
 			};
@@ -112,7 +125,9 @@ function fakeIndexedDb(outcome: Outcome, stored: Record<string, unknown> = {}, o
 				return req;
 			}
 		},
-		closes: () => closes
+		closes: () => closes,
+		modes: () => modes,
+		puts: () => puts
 	};
 }
 
@@ -187,6 +202,77 @@ describe('失敗の理由を運ぶ', () => {
 
 	it('トランザクションが中止されたとき', async () => {
 		expect(await reasonOf('abort')).toBe(CAUSE);
+	});
+});
+
+describe('書き戻す前に、もとにしたものと突き合わせる', () => {
+	// タブをまたぐ守りは Web Locks だが、無い端末（Safari 15.4 より前。お下がりの iPad は
+	// まさにこのアプリの想定）では鍵なしで進む。そこで記録が消えないかどうかは、
+	// この突き合わせが「読みと同じトランザクションの中」にあるかどうかで決まる。
+	const doc = (seq: number, mark: string) => ({ meta: { seq }, mark });
+
+	it('もとにしたままなら、直前の世代を送ってから書く', async () => {
+		const fake = fakeIndexedDb('complete', { current: doc(3, 'ふるい') });
+		install(fake.idb);
+
+		await idbPersistence().save(doc(4, 'あたらしい'), 3);
+
+		expect(fake.puts()).toEqual([
+			{ key: 'previous', value: doc(3, 'ふるい') },
+			{ key: 'current', value: doc(4, 'あたらしい') }
+		]);
+	});
+
+	it('読みと書きが1つのトランザクションに入っている', async () => {
+		// 読んでから別のトランザクションで書くと、その2つのあいだが丸ごと隙になる。
+		// 別のタブの書き込みはそこに入るので、分けないことが守りの本体。
+		const fake = fakeIndexedDb('complete', { current: doc(3, 'ふるい') });
+		install(fake.idb);
+
+		await idbPersistence().save(doc(4, 'あたらしい'), 3);
+
+		expect(fake.modes(), '読みと書きが分かれている（あいだに割り込まれる）').toEqual(['readwrite']);
+	});
+
+	it('先を越されていたら書かない', async () => {
+		const fake = fakeIndexedDb('complete', { current: doc(9, 'ほかのタブ') });
+		install(fake.idb);
+
+		await expect(idbPersistence().save(doc(4, 'こちら'), 3)).rejects.toBeInstanceOf(StaleWriteError);
+		expect(fake.puts(), '別のタブが入れた記録を踏み潰した').toEqual([]);
+	});
+
+	it('まだ何も入っていなければ書ける', async () => {
+		const fake = fakeIndexedDb('complete', {});
+		install(fake.idb);
+
+		await idbPersistence().save(doc(1, 'さいしょ'), 0);
+
+		expect(fake.puts(), '直前の世代が無いのに送ろうとした').toEqual([
+			{ key: 'current', value: doc(1, 'さいしょ') }
+		]);
+	});
+
+	it('通番の読めない中身が入っていても止めない', async () => {
+		// 読む側はそれを seq 0 として受け取るので、ここで止めるとやり直しの読み直しでも
+		// 同じところで止まる＝その端末では以後1件も書けない（いちばん書き足したいときに）。
+		const fake = fakeIndexedDb('complete', { current: { こわれている: true } });
+		install(fake.idb);
+
+		await idbPersistence().save(doc(1, 'あたらしい'), 0);
+
+		expect(fake.puts().map((p) => p.key)).toEqual(['previous', 'current']);
+	});
+
+	it('書き込みが転んだときは、やり直しの合図にしない', async () => {
+		// 「先を越された」にしてしまうと、書けない端末で mutate が何度も読み直したうえで、
+		// 容量不足などの本当の理由を落として伝えることになる。
+		const fake = fakeIndexedDb('error', { current: doc(3, 'ふるい') });
+		install(fake.idb);
+
+		await expect(idbPersistence().save(doc(4, 'あたらしい'), 3)).rejects.toBeInstanceOf(
+			IdbTransactionError
+		);
 	});
 });
 

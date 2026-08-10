@@ -1,7 +1,7 @@
 // 保存の入口。読みはメモリ上の1本のドキュメント、書きは直列化して保存へ流す。
 import { emptyDb, normalizeDb, type Db } from './model';
 import { IdbTransactionError, idbAvailable, idbPersistence } from './idb';
-import { memoryPersistence, type Persistence } from './persist';
+import { StaleWriteError, memoryPersistence, type Persistence } from './persist';
 
 /** 多タブへ「書いたよ」を知らせる通路。 */
 const CHANNEL = 'nyb';
@@ -111,9 +111,10 @@ export function watch(fn: (db: Db) => void): () => void {
  * 相手の変更を消す。全体を1本のドキュメントとして書き戻す作りなので、読みと
  * 書きのあいだに誰も割り込まないことを、保存の外側で保証する必要がある。
  *
- * Web Locks が無い端末（Safari 15.4 より前）では鍵なしで進む。そこは
- * 「同時に押さなければ壊れない」ままだが、鍵が無いことを理由に読み直しごと
- * やめてしまうより、できる範囲で狭めるほうがよい。
+ * Web Locks が無い端末（Safari 15.4 より前）では鍵なしで進む。そこを守るのは保存側の
+ * 突き合わせ（Persistence.save の base）で、割り込まれていたら書かずに StaleWriteError が
+ * 返り、下の mutate が読み直しからやり直す。鍵はその再試行を減らすためのもので、
+ * 記録が消えないことのほうは鍵の有無によらない。
  */
 function withWriteLock<T>(run: () => Promise<T>): Promise<T> {
 	const locks = typeof navigator === 'undefined' ? undefined : navigator.locks;
@@ -139,6 +140,15 @@ function serialize<T>(run: () => Promise<T>): Promise<T> {
 
 /** 読み込みは1回の失敗で諦めない（接続を閉じられただけなら、開き直せば通る）。 */
 const READ_ATTEMPTS = 2;
+
+/**
+ * 先を越されたときに、読み直してやり直す回数。
+ *
+ * 割り込めるのは Web Locks が無い端末で他のタブが同時に書いた回だけなので、1回やり直せば
+ * まず通る。それでも上限を置くのは、ここが人の操作（「やった」を押す）の下にあるから——
+ * 回り続けるより、失敗として返して押し直してもらうほうがよい。
+ */
+const WRITE_ATTEMPTS = 3;
 
 /** 開き直すまでの間。詰まりが解けるだけの間を空けないと、2回とも同じ理由で転ぶ。 */
 const RETRY_PAUSE_MS = 150;
@@ -315,38 +325,49 @@ export type MutateOptions = {
  * 書く直前に保存から読み直すのが要点。全体を1本のドキュメントとして書き戻す作りなので、
  * 手元の写しが古いまま保存すると、別のタブが入れた記録ごと消える。読み直しは
  * IndexedDB から数ミリ秒で、書き込みは人が押したときにしか起きないので、毎回やってよい。
+ *
+ * その読み直しと保存のあいだにも、鍵が無い端末では別のタブが割り込める。そこは保存側が
+ * 「もとにした通番」と突き合わせて弾くので（Persistence.save の base）、弾かれたら
+ * **読み直しから** やり直す。つまり fn は同じ書き込みで2回以上呼ばれうる——中で
+ * 数えたり積んだりするなら、渡された db だけを見て決めること（外に溜めた値を足すと二重になる）。
  */
 export function mutate<T>(fn: (db: Db) => T, options: MutateOptions = {}): Promise<T> {
 	// 鍵の中で「読む」からやり直す。鍵を取るまでのあいだに別のタブが書いている
 	// かもしれないので、鍵の外で読んだものを使ってはいけない。
 	return serialize(async () => {
 		ensureChannel();
-		// 書き戻し先は「いま読んだ保存」。読んだところと書き戻すところが別になると、
-		// その1件だけがどこからも読まれない場所に落ちる。
-		const { db, store } = await readPersisted(true);
-		loaded = db;
-		loading = Promise.resolve(db);
-		// 通番は fn を呼ぶ**前**に上げる。あとから上げると、fn の中で
-		// 「この書き込みが終わったときの通番」を知る手段が無くなる。
-		// 実際それでバックアップが自分の書き込みを数えてしまい、書き出した直後に
-		// 「そのあと 1件」と出ていた。
-		// 端末の事情だけを書く回は上げない（バックアップの催促に数えないため。model.ts の
-		// meta.seq を参照）。通番を2本に分けるのではなく、この1本を上げるか上げないかで
-		// 決める——分けると、新しいほうを知らない版が書いた記録が催促から消える。
-		if (!options.local) db.meta.seq += 1;
-		try {
-			const result = fn(db);
-			await store.save(db);
-			// 退避先に書いたら、もう差し戻さない（差し戻すと、いま書いたものが消える）。
-			memoryProvisional = false;
-			channel?.postMessage({ seq: db.meta.seq });
-			return result;
-		} catch (e) {
-			// 保存しなかったのに、手元の写しだけ通番が進んだ状態になっている。
-			// 次に読むときに保存から取り直させる。
-			loaded = null;
-			loading = null;
-			throw e;
+		for (let attempt = 1; ; attempt += 1) {
+			// 書き戻し先は「いま読んだ保存」。読んだところと書き戻すところが別になると、
+			// その1件だけがどこからも読まれない場所に落ちる。
+			const { db, store } = await readPersisted(true);
+			loaded = db;
+			loading = Promise.resolve(db);
+			// 突き合わせの物差しは、いま読んだ時点の通番（上げる前）。上げたあとの値を渡すと、
+			// 誰にも割り込まれていない回まで食い違いになって、1件も書けなくなる。
+			const base = db.meta.seq;
+			// 通番は fn を呼ぶ**前**に上げる。あとから上げると、fn の中で
+			// 「この書き込みが終わったときの通番」を知る手段が無くなる。
+			// 実際それでバックアップが自分の書き込みを数えてしまい、書き出した直後に
+			// 「そのあと 1件」と出ていた。
+			// 端末の事情だけを書く回は上げない（バックアップの催促に数えないため。model.ts の
+			// meta.seq を参照）。通番を2本に分けるのではなく、この1本を上げるか上げないかで
+			// 決める——分けると、新しいほうを知らない版が書いた記録が催促から消える。
+			if (!options.local) db.meta.seq += 1;
+			try {
+				const result = fn(db);
+				await store.save(db, base);
+				// 退避先に書いたら、もう差し戻さない（差し戻すと、いま書いたものが消える）。
+				memoryProvisional = false;
+				channel?.postMessage({ seq: db.meta.seq });
+				return result;
+			} catch (e) {
+				// 保存しなかったのに、手元の写しだけ通番が進んだ状態になっている。
+				// 次に読むときに保存から取り直させる（やり直す回も、まずここを通す）。
+				loaded = null;
+				loading = null;
+				if (e instanceof StaleWriteError && attempt < WRITE_ATTEMPTS) continue;
+				throw e;
+			}
 		}
 	});
 }
