@@ -38,17 +38,22 @@ def strip_code_fences(text: str) -> str:
     out: list[str] = []
     fence: tuple[str, int] | None = None
     for line in text.split("\n"):
-        m = re.match(r"^\s{0,3}(`{3,}|~{3,})", line)
         if fence is None:
+            m = re.match(r"^\s{0,3}(`{3,}|~{3,})", line)
             if m:
                 fence = (m.group(1)[0], len(m.group(1)))
                 out.append("")
             else:
                 out.append(line)
-        else:
-            if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= fence[1]:
-                fence = None
-            out.append("")
+            continue
+        # 終端はフェンス文字だけの行で、情報文字列を持てない（CommonMark）。
+        # ここを緩めて「``` で始まる行」を終端にすると、続けて置かれた ```python を
+        # 終端と誤読し、そのブロックの中身が地の文へ漏れる。コード例の中の
+        # `# コメント` が見出しになり、実在しないアンカーを通してしまう。
+        m = re.match(r"^\s{0,3}(`{3,}|~{3,})[ \t]*$", line)
+        if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= fence[1]:
+            fence = None
+        out.append("")
     return "\n".join(out)
 
 
