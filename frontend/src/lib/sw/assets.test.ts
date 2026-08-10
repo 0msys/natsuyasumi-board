@@ -30,8 +30,11 @@ describe('圏外用の入れ物を選ぶ', () => {
 		expect(pickShell([`${BASE}/admin`, BASE], BASE)).toBe(BASE);
 	});
 
-	it('直下のページが見つからなければ先頭で代用する（何も控えないよりはよい）', () => {
-		expect(pickShell([`${BASE}/admin`], BASE)).toBe(`${BASE}/admin`);
+	it('直下のページが見つからなければ、ほかのページで代用しない', () => {
+		// 先頭で代用していたころの穴。prerendered には prerender した endpoint も
+		// 混ざりうるので、先頭が HTML だとは限らない（JSON を返しても画面は出ない）。
+		expect(pickShell([`${BASE}/admin`], BASE)).toBeUndefined();
+		expect(pickShell([`${BASE}/data.json`, `${BASE}/admin`], BASE)).toBeUndefined();
 	});
 
 	it('prerender したページが1枚も無ければ undefined', () => {
@@ -82,5 +85,37 @@ describe('install で控える先の分けかた', () => {
 		const { shell, essential } = split(SHUFFLED);
 		expect(shell).toBeDefined();
 		expect(essential).toContain(shell as string);
+	});
+});
+
+// 入れ物が無いまま install を通すと、activate が「完全だった前の版のキャッシュ」を消す。
+// JS/CSS だけ残って圏外では何も出せない＝更新前より悪くなるので、その手前で止める。
+describe('入れ物が無いときは install ごと失敗させる', () => {
+	it('ふつうのビルド（入れ物あり）では止めない', () => {
+		expect(split(PRERENDERED).failClosed).toBe(false);
+		expect(split(SHUFFLED).failClosed).toBe(false);
+	});
+
+	it('ルートの prerender を外した版では止める', () => {
+		// ルートを動的ルートへ寄せると、ビルドも CI も通ったままこの形になる。
+		expect(split([`${BASE}/admin`, `${BASE}/admin/new`]).failClosed).toBe(true);
+	});
+
+	it('prerender したページが1枚も無い版でも止める', () => {
+		expect(split([]).failClosed).toBe(true);
+	});
+
+	it('サブパス無しで配信する版でも同じ', () => {
+		const flat = (build: readonly string[], prerendered: readonly string[]) =>
+			splitCacheTargets({ build, files: [], prerendered, base: '', fallback: '/404.html' });
+		expect(flat(['/app.js'], ['/admin']).failClosed).toBe(true);
+		expect(flat(['/app.js'], ['/admin', '/']).failClosed).toBe(false);
+
+		// vite dev（`bun run dev:lite`）の $service-worker は build も prerendered も空を返す。
+		// 圏外で出す中身がそもそも無く、守るべき前の版も無い。ここで止めると
+		// 開発中に毎回 install が落ちるだけなので、そこは通す。
+		const dev = flat([], []);
+		expect(dev.failClosed).toBe(false);
+		expect(dev.essential).toEqual([]);
 	});
 });
