@@ -104,16 +104,32 @@ def strip_code_fences(text: str) -> str:
     return "\n".join(out)
 
 
-def mask_inline_code(text: str) -> str:
-    """`コード` を同じ長さの空白に潰す（リンク抽出の前だけに使う）。
+# コードスパン。開始と終了のバッククォートは「同じ長さの独立した連なり」でなければ
+# ならない（前後に余分なバッククォートが付いていたら、その連なりは別物）。
+# 緩く書くと ``a``b`` のような並びで対を取り違え、囲まれていない範囲まで潰す。
+CODE_SPAN = re.compile(r"(?<!`)(`+)(?!`)([^\n]+?)(?<!`)\1(?!`)")
+
+
+def mask_inline_code(text: str) -> tuple[str, int]:
+    """`コード` を同じ長さの空白に潰す。潰した中に何個のリンクがあったかも返す。
 
     `` `[label](missing.md)` `` のような表記例を本物のリンクとして検査すると、
     存在しない行き先をリンク切れとして報告してしまう。GitHub はここをリンクにしない。
 
+    ただし黙って消してはいけない。単独のバッククォートが後続のコードスパンと
+    対になると、間の本物のリンクごと潰れる。件数を返して呼び出し側に出させる。
+
     見出しには使わない。`## \\`api\\` の使い方` の slug には中身が含まれるため、
     潰すとアンカーの方を誤る。
     """
-    return re.sub(r"(`+)([^\n]+?)\1", lambda m: " " * len(m.group(0)), text)
+    hidden = 0
+
+    def blank(m: re.Match[str]) -> str:
+        nonlocal hidden
+        hidden += m.group(0).count("](")
+        return " " * len(m.group(0))
+
+    return CODE_SPAN.sub(blank, text), hidden
 
 
 def heading_texts(text: str) -> list[str]:
@@ -213,10 +229,16 @@ def main() -> int:
         return anchors[path]
 
     problems = []
+    notes = []  # 失敗ではないが、黙らせてはいけない事実
 
     for f, t in text.items():
         d = os.path.dirname(f)
-        for inner in iter_link_inners(mask_inline_code(strip_code_fences(t))):
+        masked, hidden = mask_inline_code(strip_code_fences(t))
+        if hidden:
+            # 「検査しなかった」ことを見えるところに出す。黙って除外すると、
+            # 表記例のつもりでない本物のリンクが落ちても気づけない。
+            notes.append(f"インラインコード内のため未検査: {f} に {hidden} 件")
+        for inner in iter_link_inners(masked):
             target = link_destination(inner) if inner is not None else None
             if target is None:
                 # 落とさずに出す。黙って除外すると、検査していない事実が見えない。
@@ -260,6 +282,8 @@ def main() -> int:
             problems.append(f"実装参照が存在しない: {r}")
 
     print(f"検査対象 {len(files)} ファイル / 画面機能ID {len(ids)} 件 / 実装参照 {len(refs)} 件")
+    for n in notes:
+        print("  --:", n)
     if problems:
         for p in problems:
             print("  NG:", p)
