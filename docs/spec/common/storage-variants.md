@@ -27,8 +27,9 @@ Python の計算結果を金型にし、TypeScript 版との一致をテスト�
 ## 保存の永続性
 
 lite 版はブラウザの保存領域に依存します。
-永続化されていない場合は管理画面上部へ警告を表示します。
-ホーム画面へ追加していない場合は、設定一覧で追加を案内します。
+IndexedDB を使えずメモリ退避になっている場合だけ、管理画面のどのページでも上部へ「記録が保存されない」警告を表示します。
+保存の持続要求は1セッションに1回だけ裏で行い、結果を保存します。使えない端末や断られた場合でも警告は出しません。親に打つ手がないためです。
+ホーム画面へ追加していない場合は、設定一覧で追加を案内します。案内は閉じると再表示せず、メモリ退避のときは警告を優先して表示しません。
 
 ## 更新の整合性
 
@@ -49,6 +50,8 @@ Docker 版も採点に外部サービスや LLM を使いません。音声だ�
 - Docker 版の複数端末反映
 - lite 版で端末間同期しないこと
 - lite 版の再読込後も IndexedDB の値を保持すること
+- メモリ退避のときだけ保存警告を出し、持続要求が使えない・断られた場合は出さないこと
+- ホーム画面追加の案内が、閉じたあととメモリ退避のときに出ないこと
 - revision 競合と古い応答の破棄
 - Service Worker の必須資産とフォールバック
 - VOICEVOX 不在でも音声以外が動くこと
@@ -58,4 +61,7 @@ Docker 版も採点に外部サービスや LLM を使いません。音声だ�
 - `frontend/src/lib/api/contract.ts`
 - `frontend/src/lib/api/client.ts`
 - `frontend/src/lib/api/local/`
+- `frontend/src/lib/store/db.ts`
+- `frontend/src/lib/backup/StorageWarning.svelte`
+- `frontend/src/lib/backup/BackupCard.svelte`
 - `frontend/src/service-worker.ts`

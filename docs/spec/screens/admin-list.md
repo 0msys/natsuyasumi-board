@@ -25,7 +25,7 @@
 | ADM-08 | 定義エクスポート | 1年度分の設定を JSON で保存する | 定義があるとき | [子どもと年度の管理](../features/admin-child-management.md) |
 | ADM-09 | JSON インポート | 定義JSONを読み込む。lite版では端末全体のバックアップも復元する | JSON ファイル選択時 | [バックアップと復元](../features/backup-restore.md) |
 | ADM-10 | 端末バックアップ | lite 版の全設定と記録を保存・復元する | lite 版 | [バックアップと復元](../features/backup-restore.md) |
-| ADM-11 | 保存領域の警告 | 端末保存が永続化されていないことを知らせる | 該当する lite 版環境 | [保存方式と版の違い](../common/storage-variants.md) |
+| ADM-11 | 保存領域の警告 | 記録が保存されないことを知らせる | lite 版で IndexedDB を使えずメモリ退避のとき | [保存方式と版の違い](../common/storage-variants.md) |
 | ADM-12 | エラー表示 | 一覧取得や各操作の失敗理由を表示する | エラー発生時 | [エラー表示](../common/errors-security.md) |
 
 ## 削除確認
