@@ -174,7 +174,7 @@ gh api repos/OWNER/REPO/pulls/PR/comments/COMMENT_ID/replies -f body='...'
 ```bash
 python3 - <<'EOF'
 import json,subprocess
-R="OWNER/REPO"; PR="17"; ME="your-login"
+R="OWNER/REPO"; PR="<対象の PR 番号>"; ME="<自分のログイン名>"
 # --slurp を付けないと、ページごとに独立した JSON 配列が並んで json.loads が
 # JSONDecodeError: Extra data で落ちる。付けたうえで平坦化する。
 pages=json.loads(subprocess.run(['gh','api',f'repos/{R}/pulls/{PR}/comments',

@@ -17,14 +17,28 @@ import unicodedata
 SPEC_FILES = glob.glob("docs/spec/**/*.md", recursive=True)
 TARGETS = SPEC_FILES + ["README.md"]
 
-# 相対リンク。`[x](path "title")` のタイトルを path に含めない。
-# `[^)]+` で取ると `other.md "hover text"` を1つのパスとして存在確認し、
-# 正しいリンクをリンク切れとして報告してしまう。
-LINK = re.compile(
-    r"\]\(\s*(<[^>\n]*>|[^\s)]+)"  # 行き先（<> 囲みも許す）
-    r"""(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?"""  # 省略可能なタイトル
-    r"\s*\)"
-)
+# リンクは2段で読む。まず `](...)` を丸ごと拾い、その中身から行き先を取り出す。
+#
+# 行き先とタイトルを1本の正規表現で書くと、当てはまらない書き方を **黙って落とす**。
+# 検査対象が減っても出力は「OK」のままなので、抜けたことに気づけない。
+# 拾うのは広く、解釈できないものは捨てずに報告する。
+LINK_INNER = re.compile(r"\]\(((?:[^()]|\([^()]*\))*)\)")
+
+
+def link_destination(inner: str) -> str | None:
+    """`](...)` の中身から行き先を取り出す。解釈できなければ None。
+
+    `[x](path "title")` のタイトルを path に含めない。含めると
+    `other.md "hover text"` を1つのパスとして存在確認してしまう。
+    """
+    s = inner.strip()
+    if not s:
+        return None
+    if s.startswith("<"):
+        end = s.find(">")
+        return s[1:end] if end != -1 else None
+    m = re.fullmatch(r"""(\S+)(?:\s+("[^"]*"|'[^']*'|\([^)]*\)))?""", s)
+    return m.group(1) if m else None
 
 
 def slug(heading: str) -> str:
@@ -67,6 +81,46 @@ def strip_code_fences(text: str) -> str:
     return "\n".join(out)
 
 
+def heading_texts(text: str) -> list[str]:
+    """文書順の見出し文字列。ATX（`## X`）と Setext（`X` の次行に `===` / `---`）の両方。
+
+    Setext を拾わないと、GitHub には在るアンカーを「無い」と判定し、正しいリンクを
+    リンク切れとして報告する。
+    """
+    lines = strip_code_fences(text).split("\n")
+
+    # YAML フロントマターを外す。閉じの `---` は直前行の Setext 下線に見える。
+    start = 0
+    if lines and lines[0].strip() == "---":
+        for i in range(1, len(lines)):
+            if lines[i].strip() == "---":
+                start = i + 1
+                break
+
+    underline = re.compile(r"\s{0,3}(=+|-+)[ \t]*")
+    out: list[str] = []
+    for i in range(start, len(lines)):
+        line = lines[i]
+        m = re.match(r"^#{1,6}[ \t]+(.*)$", line)
+        if m:
+            # ATX の閉じ側 `## 見出し ##` は見出し文ではない（CommonMark）。
+            # 残すと `## Setup ##` が `setup-` になり、正しい #setup を弾いて
+            # 実在しない #setup- を通す。空白が先行する # の連なりだけを落とす。
+            out.append(re.sub(r"[ \t]+#+[ \t]*$", "", m.group(1)))
+            continue
+        if i <= start or not underline.fullmatch(line):
+            continue
+        prev = lines[i - 1]
+        if not prev.strip():
+            continue  # 空行のあとの --- は区切り線であって見出しではない
+        if re.match(r"^#{1,6}[ \t]", prev) or underline.fullmatch(prev):
+            continue
+        if re.match(r"^\s{0,3}([-*+]|\d+[.)])[ \t]", prev):
+            continue  # 箇条書きの直後は Setext にならない
+        out.append(prev.strip())
+    return out
+
+
 def anchors_of(text: str) -> set[str]:
     """1ファイル分の見出しアンカー。github-slugger の採番をそのまま移植する。
 
@@ -82,13 +136,7 @@ def anchors_of(text: str) -> set[str]:
     """
     occurrences: dict[str, int] = {}
     out: set[str] = set()
-    # `\s+` にすると改行も食う。見出しが「## 」だけの行だと次の行まで飲み込んで
-    # 1つの見出しとして誤読するので、行内の空白だけに限る。
-    for heading in re.findall(r"^#{1,6}[ \t]+(.*)$", strip_code_fences(text), re.M):
-        # ATX の閉じ側 `## 見出し ##` は見出し文ではない（CommonMark）。
-        # 残すと `## Setup ##` が `setup-` になり、正しい #setup を弾いて
-        # 実在しない #setup- を通す。空白が先行する # の連なりだけを落とす。
-        heading = re.sub(r"[ \t]+#+[ \t]*$", "", heading)
+    for heading in heading_texts(text):
         original = slug(heading)
         result = original
         # 初回に入るのは result == original のときだけなので、参照は必ず存在する。
@@ -130,10 +178,12 @@ def main() -> int:
 
     for f, t in text.items():
         d = os.path.dirname(f)
-        for m in LINK.finditer(strip_code_fences(t)):
-            target = m.group(1).strip()
-            if target.startswith("<") and target.endswith(">"):
-                target = target[1:-1]
+        for m in LINK_INNER.finditer(strip_code_fences(t)):
+            target = link_destination(m.group(1))
+            if target is None:
+                # 落とさずに出す。黙って除外すると、検査していない事実が見えない。
+                problems.append(f"リンクを解釈できません: {f} -> ]({m.group(1)})")
+                continue
             if target.startswith(("http://", "https://", "mailto:")):
                 continue
             path, _, frag = target.partition("#")
