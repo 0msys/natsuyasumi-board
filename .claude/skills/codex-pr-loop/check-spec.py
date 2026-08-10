@@ -28,6 +28,22 @@ def slug(heading: str) -> str:
     return s.replace(" ", "-")
 
 
+def anchors_of(text: str) -> set[str]:
+    """1ファイル分の見出しアンカー。
+
+    同じ見出しが複数あると GitHub は 2 つ目以降へ -1, -2 と採番する。
+    素の slug だけを集めると、正しい #foo-1 をリンク切れと誤判定する。
+    """
+    seen: dict[str, int] = {}
+    out: set[str] = set()
+    for heading in re.findall(r"^#{1,6}\s+(.*)$", text, re.M):
+        base = slug(heading)
+        n = seen.get(base, 0)
+        seen[base] = n + 1
+        out.add(base if n == 0 else f"{base}-{n}")
+    return out
+
+
 def main() -> int:
     files = [f for f in TARGETS if os.path.exists(f)]
     if not files:
@@ -35,10 +51,7 @@ def main() -> int:
         return 1
 
     text = {f: open(f, encoding="utf-8").read() for f in files}
-    anchors = {
-        f: {slug(m) for m in re.findall(r"^#{1,6}\s+(.*)$", t, re.M)}
-        for f, t in text.items()
-    }
+    anchors = {f: anchors_of(t) for f, t in text.items()}
 
     problems = []
 

@@ -31,6 +31,7 @@
 #   失敗を「無かった」と解釈して確定させない（QUIET の印を付けない）。
 
 set -u
+set -o pipefail # apiall | jq で gh 側の失敗を拾うため
 
 REPO="${1:?owner/repo}"
 PR="${2:?pr number}"
@@ -55,6 +56,15 @@ SEEN_Q="$DIR/seen-quiet"
 # 呼び出し側がその周期の判定を丸ごと見送れるようにする。空の応答と失敗を混同しない。
 api() { gh api "$@" 2>/dev/null; }
 
+# 全ページを1つの JSON 配列（配列の配列）にして返す。
+#
+# `--paginate` に `--jq` を付けると **ページごとに** フィルタが走るので、
+# `[...] | length` や `.[-1]` のような集約はページ単位の答えになる。件数が過少になったり、
+# ID が複数行で返って後続の API 呼び出しが必ず失敗したりする。
+# 集約するときは必ずこちらを使い、jq は外で通すこと（`--slurp` は `--jq` と併用できない）。
+# 逆に、各要素をそのまま流すだけのフィルタは `api --paginate --jq` のままでよい。
+apiall() { gh api "$@" --paginate --slurp 2>/dev/null; }
+
 to_epoch() {
 	date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$1" +%s 2>/dev/null ||
 		date -u -d "$1" +%s 2>/dev/null || echo 0
@@ -77,8 +87,8 @@ for f in "$SEEN_G" "$SEEN_F" "$SEEN_Q"; do : >"$f"; done
 : >"$SEEN_A"
 seed_cut=$(date -u -v-60S +%Y-%m-%dT%H:%M:%SZ 2>/dev/null ||
 	date -u -d '60 seconds ago' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo "")
-if [ -n "${seed_cut:-}" ] && seed_reqs=$(api "repos/$REPO/issues/$PR/comments" --paginate \
-	--jq "[.[] | select(.user.login == \"$SELF\") | select(.body | test(\"^\\\\s*@codex review\\\\s*$\"))] | .[-3:] | .[].id"); then
+if [ -n "${seed_cut:-}" ] && seed_reqs=$(apiall "repos/$REPO/issues/$PR/comments" |
+	jq -r "[.[][] | select(.user.login == \"$SELF\") | select(.body | test(\"^\\\\s*@codex review\\\\s*$\"))] | .[-3:] | .[].id"); then
 	while read -r seed_rid; do
 		[ -z "${seed_rid:-}" ] && continue
 		# 取得に失敗したら既読にしない（あとで重複して鳴る方が、取りこぼすより良い）。
@@ -203,8 +213,8 @@ while true; do
 	#    部分一致で拾うと bot のコメントを自分の依頼と取り違える。
 	last_req_at=""
 	last_req_id=""
-	if req=$(api "repos/$REPO/issues/$PR/comments" --paginate \
-		--jq "[.[] | select(.user.login == \"$SELF\") | select(.body | test(\"^\\\\s*@codex review\\\\s*$\"))] | .[-3:] | .[] | \"\(.id)\t\(.created_at)\""); then
+	if req=$(apiall "repos/$REPO/issues/$PR/comments" |
+		jq -r "[.[][] | select(.user.login == \"$SELF\") | select(.body | test(\"^\\\\s*@codex review\\\\s*$\"))] | .[-3:] | .[] | \"\(.id)\t\(.created_at)\""); then
 		while IFS=$'\t' read -r cid cat; do
 			[ -z "${cid:-}" ] && continue
 			last_req_at=$(newer "$cat" "${last_req_at:-}")
@@ -228,8 +238,8 @@ while true; do
 			[ -z "${rid:-}" ] && continue
 			newest_at=$(newer "$at" "${newest_at:-}") # 上書きでなく最大値を取る
 			note "$rid" "$SEEN_R" && continue
-			n=$(api "repos/$REPO/pulls/$PR/comments" --paginate \
-				--jq "[.[] | select(.pull_request_review_id == $rid)] | length" | head -1)
+			n=$(apiall "repos/$REPO/pulls/$PR/comments" |
+				jq -r "[.[][] | select(.pull_request_review_id == $rid)] | length")
 			echo "REVIEW: $who がコミット $sha をレビュー、指摘 ${n:-?} 件・$(head_note "$sha") (review=$rid)"
 			mark "$rid" "$SEEN_R"
 		done <<<"$reviews"
@@ -271,8 +281,8 @@ while true; do
 			# 失敗を「要約が無い」と読んで確定させると、通信が戻っても二度と言い直せない。
 			if [ -z "${head_sha:-}" ]; then
 				: # HEAD が取れていない周期。次で再試行する
-			elif last_sid=$(api "repos/$REPO/issues/$PR/comments" --paginate \
-				--jq "[.[] | select(.user.login == \"$BOT\")] | .[-1].id // \"\""); then
+			elif last_sid=$(apiall "repos/$REPO/issues/$PR/comments" |
+				jq -r "[.[][] | select(.user.login == \"$BOT\")] | .[-1].id // \"\""); then
 
 				sum_sha=""
 				body_ok=1
