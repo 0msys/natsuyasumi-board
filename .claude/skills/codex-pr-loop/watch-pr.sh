@@ -37,7 +37,20 @@ REPO="${1:?owner/repo}"
 PR="${2:?pr number}"
 DIR="${3:?state dir}"
 BOT="${4:-chatgpt-codex-connector[bot]}"
-SELF="${5:-$(gh api user --jq .login 2>/dev/null || echo '')}"
+
+# 実行ユーザーのログイン名。依頼の判定（`.user.login == SELF`）と自分の返信の除外に使う。
+# ここが空のまま走ると、依頼が1件も一致せず ACK と QUIET が黙って死ぬ。
+# 一時的な通信失敗を空文字として受け入れず、起動を止めて気づけるようにする。
+if [ -n "${5:-}" ]; then
+	SELF="$5"
+else
+	SELF=$(gh api user --jq .login 2>/dev/null) || SELF=""
+	if [ -z "$SELF" ]; then
+		echo "FATAL: 実行ユーザーのログイン名を解決できません（gh api user が失敗）。" >&2
+		echo "       第5引数でログイン名を渡すか、gh auth status を確認してください。" >&2
+		exit 1
+	fi
+fi
 
 POLL_S="${POLL_S:-60}"
 QUIET_AFTER_S="${QUIET_AFTER_S:-720}" # 12分。従来の所要は4〜10分
@@ -238,8 +251,13 @@ while true; do
 			[ -z "${rid:-}" ] && continue
 			newest_at=$(newer "$at" "${newest_at:-}") # 上書きでなく最大値を取る
 			note "$rid" "$SEEN_R" && continue
-			n=$(apiall "repos/$REPO/pulls/$PR/comments" |
-				jq -r "[.[][] | select(.pull_request_review_id == $rid)] | length")
+			# 件数取得に失敗したら印を付けずに次の周期へ回す。ここで「?」を出して
+			# 既読にすると、そのレビューは以後永久に飛ばされる（set -e ではないので
+			# 代入の失敗は自動では止まらない。明示的に見る）。
+			if ! n=$(apiall "repos/$REPO/pulls/$PR/comments" |
+				jq -r "[.[][] | select(.pull_request_review_id == $rid)] | length"); then
+				continue
+			fi
 			echo "REVIEW: $who がコミット $sha をレビュー、指摘 ${n:-?} 件・$(head_note "$sha") (review=$rid)"
 			mark "$rid" "$SEEN_R"
 		done <<<"$reviews"

@@ -29,18 +29,31 @@ def slug(heading: str) -> str:
 
 
 def anchors_of(text: str) -> set[str]:
-    """1ファイル分の見出しアンカー。
+    """1ファイル分の見出しアンカー。github-slugger の採番をそのまま移植する。
 
-    同じ見出しが複数あると GitHub は 2 つ目以降へ -1, -2 と採番する。
-    素の slug だけを集めると、正しい #foo-1 をリンク切れと誤判定する。
+    同じ見出しが複数あると GitHub は 2 つ目以降へ -1, -2 と採番する。ただし単純な
+    連番ではない。採番した結果が既存のアンカーとぶつかる場合は、空くまで番号を進める。
+
+        # せつめい      → せつめい
+        # せつめい-1    → せつめい-1     （明示的に書かれた見出し）
+        # せつめい      → せつめい-2     （-1 は埋まっているので飛ばす）
+
+    連番で済ませると 3 つ目が せつめい-1 になり、2 つ目と衝突して せつめい-2 が
+    アンカー一覧から消える。正しいリンクをリンク切れと報告してしまう。
     """
-    seen: dict[str, int] = {}
+    occurrences: dict[str, int] = {}
     out: set[str] = set()
-    for heading in re.findall(r"^#{1,6}\s+(.*)$", text, re.M):
-        base = slug(heading)
-        n = seen.get(base, 0)
-        seen[base] = n + 1
-        out.add(base if n == 0 else f"{base}-{n}")
+    # `\s+` にすると改行も食う。見出しが「## 」だけの行だと次の行まで飲み込んで
+    # 1つの見出しとして誤読するので、行内の空白だけに限る。
+    for heading in re.findall(r"^#{1,6}[ \t]+(.*)$", text, re.M):
+        original = slug(heading)
+        result = original
+        # 初回に入るのは result == original のときだけなので、参照は必ず存在する。
+        while result in occurrences:
+            occurrences[original] += 1
+            result = f"{original}-{occurrences[original]}"
+        occurrences[result] = 0
+        out.add(result)
     return out
 
 

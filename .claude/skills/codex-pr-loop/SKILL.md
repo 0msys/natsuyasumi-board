@@ -28,11 +28,21 @@ review レコードは `.commit_id`。**その sha が現在の HEAD と一致�
 ```bash
 BOT='chatgpt-codex-connector[bot]'
 head_sha=$(gh api repos/OWNER/REPO/pulls/PR --jq '.head.sha')
-sid=$(gh api repos/OWNER/REPO/issues/PR/comments --paginate \
-        --jq "[.[] | select(.user.login == \"$BOT\")] | .[-1].id")
-gh api repos/OWNER/REPO/issues/comments/$sid --jq '.body' | head -3
+sid=$(gh api repos/OWNER/REPO/issues/PR/comments --paginate --slurp \
+        | jq -r "[.[][] | select(.user.login == \"$BOT\")] | .[-1].id // \"\"")
+if [ -n "$sid" ]; then
+  gh api repos/OWNER/REPO/issues/comments/$sid --jq '.body' | head -3
+else
+  echo "要約なし（まだレビューされていない）"
+fi
 echo "HEAD=$head_sha"
 ```
+
+> **ページングの罠。** `--paginate` に `--jq` を付けるとフィルタが**ページごと**に走る。
+> `[...] | length` は各ページの件数を並べ、`.[-1]` はページごとの末尾を並べる。件数が過少になり、
+> ID は複数行になって後続の API 呼び出しが必ず失敗する。集約するときは `--paginate --slurp` で
+> 生 JSON を取り、`jq` を外で通して `.[][]` で平坦化する（`--slurp` は `--jq` と併用できない）。
+> 各要素をそのまま流すだけなら `--jq` のままでよい。
 
 補助シグナル（決め手にしない）:
 
@@ -162,8 +172,12 @@ gh api repos/OWNER/REPO/pulls/PR/comments/COMMENT_ID/replies -f body='...'
 python3 - <<'EOF'
 import json,subprocess
 R="OWNER/REPO"; PR="17"; ME="your-login"
-d=json.loads(subprocess.run(['gh','api',f'repos/{R}/pulls/{PR}/comments','--paginate'],
-                            capture_output=True,text=True).stdout)
+# --slurp を付けないと、ページごとに独立した JSON 配列が並んで json.loads が
+# JSONDecodeError: Extra data で落ちる。付けたうえで平坦化する。
+pages=json.loads(subprocess.run(['gh','api',f'repos/{R}/pulls/{PR}/comments',
+                                 '--paginate','--slurp'],
+                                capture_output=True,text=True).stdout)
+d=[c for page in pages for c in page]
 tops=[c for c in d if c['user']['login']!=ME and not c.get('in_reply_to_id')]
 replied={c.get('in_reply_to_id') for c in d if c['user']['login']==ME}
 un=[c for c in tops if c['id'] not in replied]
