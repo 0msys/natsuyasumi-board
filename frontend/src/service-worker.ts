@@ -32,7 +32,13 @@ const FALLBACK = `${base}/404.html`;
 //   OPTIONAL  … 無くても「開けなくなる」ことはないもの。アイコン・manifest・ほかのページ、
 //               それに 404.html（動的ルートの入れ物。GitHub Pages には在るが、ローカルの
 //               preview では配られない＝必須にすると開発中だけ Service Worker が入らない）。
-const { shell: SHELL, essential: ESSENTIAL, optional: OPTIONAL } = splitCacheTargets({
+//   FAIL_CLOSED … その入れ物が名指しで見つからなかった（＝控えても圏外では何も出せない）。
+const {
+	shell: SHELL,
+	essential: ESSENTIAL,
+	optional: OPTIONAL,
+	failClosed: FAIL_CLOSED
+} = splitCacheTargets({
 	build,
 	files,
 	prerendered,
@@ -56,10 +62,20 @@ sw.addEventListener('install', (event) => {
 	// 全部が巻き戻り、Service Worker が登録されないまま消える（それで実際に
 	// 「ホーム画面に追加すれば圏外でも開ける」が黙って成り立たなくなっていた）。
 	event.waitUntil(
-		caches.open(CACHE).then(async (cache) => {
+		(async () => {
+			// 圏外に出す入れ物がそもそも決まらないときは、控える前にここで失敗させる。
+			// JS と CSS だけ揃えても圏外では何も出せないのに、addAll は成功してしまい、
+			// activate が完全だった前の版のキャッシュを消す（＝更新前より悪くなる）。
+			// いまのビルドはルートを prerender するのでここには来ない。来るとしたら、
+			// ルートの prerender を外したときや動的ルートへ寄せたとき——ビルドも CI も
+			// 通ってしまう変更なので、気づける場所をここに置いておく。
+			if (FAIL_CLOSED) {
+				throw new Error(`圏外用の入れ物（${base}/）が prerender されていません`);
+			}
+			const cache = await caches.open(CACHE);
 			await cache.addAll(ESSENTIAL);
 			await Promise.allSettled(OPTIONAL.map((url) => cache.add(url)));
-		})
+		})()
 	);
 });
 
