@@ -17,12 +17,35 @@ import unicodedata
 SPEC_FILES = glob.glob("docs/spec/**/*.md", recursive=True)
 TARGETS = SPEC_FILES + ["README.md"]
 
-# リンクは2段で読む。まず `](...)` を丸ごと拾い、その中身から行き先を取り出す。
-#
-# 行き先とタイトルを1本の正規表現で書くと、当てはまらない書き方を **黙って落とす**。
-# 検査対象が減っても出力は「OK」のままなので、抜けたことに気づけない。
-# 拾うのは広く、解釈できないものは捨てずに報告する。
-LINK_INNER = re.compile(r"\]\(((?:[^()]|\([^()]*\))*)\)")
+def iter_link_inners(text: str):
+    """`](` の出現を全部返す。中身、または閉じ括弧が無ければ None。
+
+    正規表現でリンク全体を書くと、当てはまらない書き方を **黙って落とす**。
+    検査対象が減っても出力は「OK」のままなので、抜けたことに気づけない。
+    括弧の対応は数えて追う（ネストの深さに上限を作らない）。
+    見つけたものは必ず呼び出し側へ渡し、解釈できないかどうかは呼び出し側が決める。
+    """
+    i = 0
+    while True:
+        j = text.find("](", i)
+        if j == -1:
+            return
+        k = j + 2
+        depth = 1
+        while k < len(text):
+            if text[k] == "(":
+                depth += 1
+            elif text[k] == ")":
+                depth -= 1
+                if depth == 0:
+                    break
+            k += 1
+        if depth != 0:
+            yield None  # 閉じ括弧が無い
+            i = j + 2
+        else:
+            yield text[j + 2 : k]
+            i = k + 1
 
 
 def link_destination(inner: str) -> str | None:
@@ -81,6 +104,18 @@ def strip_code_fences(text: str) -> str:
     return "\n".join(out)
 
 
+def mask_inline_code(text: str) -> str:
+    """`コード` を同じ長さの空白に潰す（リンク抽出の前だけに使う）。
+
+    `` `[label](missing.md)` `` のような表記例を本物のリンクとして検査すると、
+    存在しない行き先をリンク切れとして報告してしまう。GitHub はここをリンクにしない。
+
+    見出しには使わない。`## \\`api\\` の使い方` の slug には中身が含まれるため、
+    潰すとアンカーの方を誤る。
+    """
+    return re.sub(r"(`+)([^\n]+?)\1", lambda m: " " * len(m.group(0)), text)
+
+
 def heading_texts(text: str) -> list[str]:
     """文書順の見出し文字列。ATX（`## X`）と Setext（`X` の次行に `===` / `---`）の両方。
 
@@ -101,7 +136,10 @@ def heading_texts(text: str) -> list[str]:
     out: list[str] = []
     for i in range(start, len(lines)):
         line = lines[i]
-        m = re.match(r"^#{1,6}[ \t]+(.*)$", line)
+        # 3字までのインデントは見出しとして有効（CommonMark）。列0固定にすると
+        # `  ## Setup` のアンカーを見落とし、正しいリンクを切れと報告する。
+        # 引用の中の見出しにも GitHub はアンカーを作るので、`>` を剥がしてから見る。
+        m = re.match(r"^(?:[ \t]{0,3}>)*[ \t]{0,3}#{1,6}[ \t]+(.*)$", line)
         if m:
             # ATX の閉じ側 `## 見出し ##` は見出し文ではない（CommonMark）。
             # 残すと `## Setup ##` が `setup-` になり、正しい #setup を弾いて
@@ -178,11 +216,12 @@ def main() -> int:
 
     for f, t in text.items():
         d = os.path.dirname(f)
-        for m in LINK_INNER.finditer(strip_code_fences(t)):
-            target = link_destination(m.group(1))
+        for inner in iter_link_inners(mask_inline_code(strip_code_fences(t))):
+            target = link_destination(inner) if inner is not None else None
             if target is None:
                 # 落とさずに出す。黙って除外すると、検査していない事実が見えない。
-                problems.append(f"リンクを解釈できません: {f} -> ]({m.group(1)})")
+                shown = "閉じ括弧なし" if inner is None else f"]({inner})"
+                problems.append(f"リンクを解釈できません: {f} -> {shown}")
                 continue
             if target.startswith(("http://", "https://", "mailto:")):
                 continue
