@@ -180,6 +180,22 @@ describe('メモ', () => {
 		expect(r.meta[item.meta![0].key]).toBe('ぐりとぐら');
 	});
 
+	it('長すぎるメモは絵文字を割らずに切り詰める', async () => {
+		const k = await keysOf();
+		const doc = k.doc as Record<string, { key: string; meta?: { key: string }[] }[]>;
+		const item = doc.daily_homework.find((i) => i.meta?.length)!;
+		const fieldKey = item.meta![0].key;
+		await api.summerSetCheck(CHILD, today, item.key, 'done');
+
+		// 100文字目がサロゲートペア（絵文字）になるだいめい。UTF-16 のまま切ると割れる。
+		const title = 'あ'.repeat(99) + '🍉' + 'ものがたり';
+		const r = await api.summerSetMeta(CHILD, today, item.key, { [fieldKey]: title });
+
+		const saved = String(r.meta[fieldKey]);
+		expect([...saved]).toHaveLength(100); // 数え方はバックエンド（コードポイント）に合わせる
+		expect(saved.endsWith('🍉')).toBe(true); // 絵文字は丸ごと残るか、丸ごと落ちる
+	});
+
 	it('「やらなかった」に変えるとメモは消える', async () => {
 		const k = await keysOf();
 		const doc = k.doc as Record<string, { key: string; meta?: { key: string }[] }[]>;

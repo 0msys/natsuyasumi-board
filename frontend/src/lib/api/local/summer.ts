@@ -146,12 +146,24 @@ function findMetaItem(definition: SummerDefinition, itemKey: string) {
 	return null;
 }
 
+/**
+ * 文字数の上限で切り詰める。数え方はコードポイント単位＝バックエンドの
+ * `text[:META_TEXT_MAX]`（Python の str はコードポイント列）と同じにする。
+ * `String.slice` は UTF-16 コードユニット単位なので、絵文字を半分に切って
+ * 孤立サロゲートを保存してしまう（画面にもバックアップにも壊れたまま持ち込まれる）。
+ */
+function truncateCodePoints(text: string, max: number): string {
+	// UTF-16 の長さは必ずコードポイント数以上。ここが上限以下なら切るものは無い。
+	if (text.length <= max) return text;
+	return [...text].slice(0, max).join('');
+}
+
 /** メモ1フィールドの値を検証・正規化する。空・null は「消す」を表す null を返す。 */
 function normalizeMetaValue(field: MetaField, value: unknown): unknown | null {
 	if (value === null || value === undefined) return null;
 	if (field.type === META_TYPE_TEXT) {
 		const text = String(value).trim();
-		return text ? text.slice(0, META_TEXT_MAX) : null;
+		return text ? truncateCodePoints(text, META_TEXT_MAX) : null;
 	}
 	if (field.type === META_TYPE_CHOICE) {
 		const choice = String(value);
