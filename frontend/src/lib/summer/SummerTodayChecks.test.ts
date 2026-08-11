@@ -8,7 +8,7 @@
 //
 // これは props を眺めても分からない「マウント境界」の挙動で、実際に何度も取りこぼした。
 // {#key} を外すとここが落ちる（＝この検査は空虚でない）ことを確認済み。
-import { beforeEach, describe, expect, it, mock } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test';
 import { render } from '@testing-library/svelte';
 import { setApi } from '../../test-support/apiMock';
 import type { SummerDailyHomework, SummerUiText } from '$lib/api';
@@ -43,19 +43,31 @@ function ondoku(book: string): SummerDailyHomework {
 	};
 }
 
-/** ストップウォッチが出る計算カード（duration メモ持ち）. */
-function keisan(): SummerDailyHomework {
+/** ストップウォッチが出る計算カード（duration メモ持ち）.
+ *
+ *  時間欄のキーは、管理画面の「メモ欄をふやす」で足したときに振られる形にしてある
+ *  （keys.ts の `m_` 接頭辞＋採番）。手書きのサンプル定義や金型がたまたま `seconds` を
+ *  使っているので、そこから写したキーで固めると「決め打ちで書いても通る」テストになる
+ *  ——実際それで、親が自分で足した時間欄では一度も保存できない状態を素通ししていた。 */
+function keisan(fieldKey = 'm_ab12cd'): SummerDailyHomework {
 	return {
 		key: 'keisan',
 		label: 'けいさん',
 		status: 'not_done',
 		done_days: 0,
-		meta_fields: [{ key: 'seconds', type: 'duration', label: 'タイム', placeholder: null, options: [] }],
+		// 実物と同じく時間欄は先頭ではない（サンプル定義の計算カードは「しゅるい」が先）。
+		// 先頭決め打ちで拾っていないことも、これで一緒に固まる。
+		meta_fields: [
+			{ key: 'calc_type', type: 'choice', label: 'しゅるい', placeholder: null, options: [] },
+			{ key: fieldKey, type: 'duration', label: 'タイム', placeholder: null, options: [] }
+		],
 		meta: null
 	};
 }
 
 const errors: unknown[] = [];
+/** onStopwatchStop に渡された引数（呼ばれた順）. */
+const stopwatchCalls: unknown[][] = [];
 
 function mountFor(child: string, daily: SummerDailyHomework[], ttsAvailable = false) {
 	return render(SummerTodayChecks, {
@@ -67,7 +79,7 @@ function mountFor(child: string, daily: SummerDailyHomework[], ttsAvailable = fa
 			ttsAvailable,
 			onSet: () => {},
 			onSetMeta: () => {},
-			onStopwatchStop: () => {},
+			onStopwatchStop: (...args: unknown[]) => stopwatchCalls.push(args),
 			onError: (e: unknown) => errors.push(e)
 		}
 	});
@@ -79,12 +91,28 @@ const askButton = (r: { container: HTMLElement }) =>
 		b.textContent?.includes('todo_speech_ask')
 	)!;
 
+const realNow = Date.now;
+/** ストップウォッチは実時間で計るので、経過を作るには時計そのものを持つしかない
+ *  （1秒未満のストップは押し間違いとして捨てられる＝クリックだけでは何も起きない）. */
+function stubClock(): (ms: number) => void {
+	let now = 1_800_000_000_000;
+	Date.now = () => now;
+	return (ms: number) => {
+		now += ms;
+	};
+}
+
 beforeEach(() => {
 	todoCalls.length = 0;
 	errors.length = 0;
+	stopwatchCalls.length = 0;
 	todoFails = false;
 	releaseTodo = null;
 	setApi({ summerTodoSpeech });
+});
+
+afterEach(() => {
+	Date.now = realNow;
 });
 
 describe('子どもの切替', () => {
@@ -158,5 +186,47 @@ describe('子どもの切替', () => {
 		releaseTodo!();
 		await flush();
 		expect(errors).toHaveLength(1);
+	});
+});
+
+// ストップウォッチを出すかどうかの判定は「時間欄があるか」だが、はかったタイムを
+// 書き込む先はその欄そのもの。出す・出さないだけ見て書き先を捨てると、親はキーを
+// 決め打ちするしかなくなる＝管理画面から足した時間欄（採番されたキー）では毎回
+// サーバに弾かれ、はかったタイムが消える。ここは書き先が親まで届くことを固定する。
+describe('ストップウォッチの書き先', () => {
+	const stopwatchButton = (r: { container: HTMLElement }, label: string) =>
+		[...r.container.querySelectorAll('button')].find((b) => b.textContent?.includes(label));
+
+	it('はかったタイムは、その宿題の時間欄のキーで渡す', async () => {
+		const r = mountFor('はな', [keisan()]);
+		const tick = stubClock();
+
+		stopwatchButton(r, 'stopwatch_start')!.click();
+		await r.rerender({});
+		tick(42_000);
+		stopwatchButton(r, 'stopwatch_stop')!.click();
+		await r.rerender({});
+
+		// 'seconds' を決め打ちしていたころは、この欄では保存が
+		// 「しらない メモの こうもくだよ」で弾かれ、タイムはどこにも残らなかった
+		expect(stopwatchCalls).toEqual([['keisan', 'm_ab12cd', 42]]);
+	});
+
+	it('手書き定義そのままの `seconds` 欄でも、同じ道を通る', async () => {
+		const r = mountFor('はな', [keisan('seconds')]);
+		const tick = stubClock();
+
+		stopwatchButton(r, 'stopwatch_start')!.click();
+		await r.rerender({});
+		tick(7_000);
+		stopwatchButton(r, 'stopwatch_stop')!.click();
+		await r.rerender({});
+
+		expect(stopwatchCalls).toEqual([['keisan', 'seconds', 7]]);
+	});
+
+	it('時間欄が無い宿題にはストップウォッチを出さない', () => {
+		const r = mountFor('はな', [ondoku('かいけつゾロリ')]);
+		expect(stopwatchButton(r, 'stopwatch_start')).toBeUndefined();
 	});
 });
