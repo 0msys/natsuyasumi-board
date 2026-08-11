@@ -5,7 +5,11 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	// lite ビルドかどうかを、コードから見えるようにする（svelte.config.js の NYB_TARGET と同じ旗）。
-	// いまの用途は +layout.ts の prerender の出し分けだけ。
+	// 用途は2つ: +layout.ts の prerender の出し分けと、マニュアルの既定タブ（src/lib/manual/edition.ts）。
+	//
+	// これは define であってグローバル変数ではないので、bun test には存在しない。裸で参照すると
+	// ReferenceError でテストが落ちるため、読む側は typeof でくるむこと（vite 側では識別子が
+	// 字句置換されて `typeof true` になり、そのまま畳まれる）。
 	define: {
 		__NYB_LITE__: JSON.stringify(process.env.NYB_TARGET === 'lite')
 	},

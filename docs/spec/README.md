@@ -21,6 +21,7 @@ API や JSON の全項目は扱いません。JSON の形式は [定義データ
 | 設定一覧 | `/admin` | 保護者 | [機能一覧](screens/admin-list.md) |
 | 新規作成 | `/admin/new` | 保護者 | [機能一覧](screens/admin-new.md) |
 | 子ども設定編集 | `/admin/{child}` | 保護者 | [機能一覧](screens/admin-editor.md) |
+| マニュアル | `/manual` | 保護者 | [機能一覧](screens/manual.md) |
 
 モーダルとオーバーレイは独立画面にせず、開いた元の画面に含めます。
 

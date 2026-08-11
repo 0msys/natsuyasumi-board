@@ -6,6 +6,7 @@
 	import {
 		ArrowLeft,
 		CalendarPlus,
+		CircleQuestionMark,
 		Download,
 		Pencil,
 		Plus,
@@ -218,12 +219,22 @@
 <div class="mx-auto max-w-3xl p-3 lg:p-6">
 	<header class="mb-4 flex items-center justify-between">
 		<h1 class="text-lg font-bold text-text-base lg:text-xl">せってい</h1>
-		<a
-			href={resolve('/')}
-			class="flex items-center gap-1 text-sm text-text-dim hover:text-text-base"
-		>
-			<ArrowLeft size={16} />子どもページへ
-		</a>
+		<div class="flex items-center gap-3">
+			<a
+				href={resolve('/manual')}
+				aria-label="つかいかた"
+				title="つかいかた"
+				class="flex items-center gap-1 text-sm text-text-dim hover:text-text-base"
+			>
+				<CircleQuestionMark size={16} />つかいかた
+			</a>
+			<a
+				href={resolve('/')}
+				class="flex items-center gap-1 text-sm text-text-dim hover:text-text-base"
+			>
+				<ArrowLeft size={16} />子どもページへ
+			</a>
+		</div>
 	</header>
 
 	{#if !data.session}

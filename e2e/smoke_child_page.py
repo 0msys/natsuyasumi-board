@@ -8,6 +8,8 @@
 #  1. 主要カード（きょうのチェック・きょうのがんばり）が描画され、コンソールエラーが無い
 #  2. 「やった」ボタン → サーバ往復 → スコアが変わる（confirm-before-update の実往復）
 #  3. 履歴グリッドの過去日タップ → 修正モーダルが開く
+#  4. マニュアルが開き、版の切り替えが docker を選んだ状態で始まる
+#     （lite 側は smoke_lite.py の⑪。__NYB_LITE__ は vite の define なので bun test では見えない）
 #
 # 注意: vite dev 相手では HMR WebSocket があるため networkidle を使わない。
 #       クリックはハイドレーション前だと無効 → スコア変化を待って必要なら再クリック。
@@ -70,10 +72,20 @@ async def main() -> int:
                 await page.keyboard.press("Escape")
                 break
         await page.screenshot(path=f"{OUT}/smoke_child_page.png", full_page=True)
+
+        # マニュアル。既定タブが docker であること＝ define が畳まれていること。
+        manual_ok = False
+        await page.goto(BASE + "/manual", wait_until="domcontentloaded")
+        await page.wait_for_selector("text=つかいかた", timeout=15000)
+        checked = await page.locator("input[name='manual-edition'][value='docker']").is_checked()
+        body = await page.inner_text("body")
+        manual_ok = checked and "VOICEVOX" in body and "ほぞんできた" not in body
+        print("manual default edition = docker:", manual_ok)
+
         await browser.close()
 
     print("console/page errors:", errors if errors else "none")
-    ok = (before != after) and opened and not errors
+    ok = (before != after) and opened and manual_ok and not errors
     print("RESULT:", "PASS" if ok else "FAIL")
     return 0 if ok else 1
 

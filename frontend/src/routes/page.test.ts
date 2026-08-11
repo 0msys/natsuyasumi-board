@@ -11,7 +11,7 @@
 // 状態になるため。API の形を変えたら作り直すこと:
 //   cd backend && uv run python tools/dump_frontend_fixture.py
 import { afterEach, beforeEach, describe, expect, it, jest } from 'bun:test';
-import { render } from '@testing-library/svelte';
+import { render, screen } from '@testing-library/svelte';
 import type { SummerState } from '$lib/api';
 // ApiError は $lib/api/contract から取る（$lib/api はモックが丸ごと差し替えるので、
 // そちら経由だと undefined になる）。api の実装は両方ともこれを投げる。
@@ -145,6 +145,20 @@ function stubClock(): (ms: number) => void {
 		now += ms;
 	};
 }
+
+describe('子どもページ・ヘッダーの入口', () => {
+	// マニュアルへの入口はアイコンだけで、文字を持たない。つまり aria-label が
+	// 唯一の名前で、それが落ちると読み上げでも「リンク」としか読まれず、
+	// ソースを見るだけの entrypoints.test.ts では拾えない。ここだけ描いて見る。
+	it('つかいかたへのリンクが、名前を持って出ている', async () => {
+		const r = mountPage(hana());
+		await drain();
+
+		const link = screen.getByRole('link', { name: 'つかいかた' });
+		expect(link.getAttribute('href')).toBe('/manual');
+		expect(r.container.contains(link)).toBe(true);
+	});
+});
 
 describe('子どもページ・切替の後始末', () => {
 	it('切替をまたいで届いた書き込み失敗は、新しい子の画面に出さない', async () => {
