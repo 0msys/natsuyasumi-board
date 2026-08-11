@@ -35,6 +35,8 @@ function hanaRankUp(): SummerState {
 let nextState: SummerState = hana();
 let writeFails = false;
 let releaseWrite: (() => void) | null = null;
+/** summerSetMeta に渡された引数（呼ばれた順）. */
+const metaCalls: { child: string; day: string; itemKey: string; updates: Record<string, unknown> }[] = [];
 /** 書き込みが失敗したときに api が投げるもの（既定は docker 版＝JSON 本文つき）. */
 let writeError: unknown = null;
 
@@ -88,6 +90,7 @@ beforeEach(() => {
 	nextState = hana();
 	writeFails = false;
 	releaseWrite = null;
+	metaCalls.length = 0;
 	// 書き込みが弾かれたときの形（docker 版＝JSON 本文つきの 400）。
 	// 子どもあての文言を持つのは 400 だけなので、status も実物に合わせる。
 	writeError = new ApiError(400, '{"detail": "かきこめなかった"}', '/api/summer/check/set');
@@ -99,6 +102,15 @@ beforeEach(() => {
 			});
 			if (writeFails) throw writeError;
 			return { status: 'done' };
+		},
+		summerSetMeta: async (
+			child: string,
+			day: string,
+			itemKey: string,
+			updates: Record<string, unknown>
+		) => {
+			metaCalls.push({ child, day, itemKey, updates });
+			return updates;
 		},
 		summerMediaTimerState: async () => ({
 			child: 'はな', day: '2026-08-01', running: false, resumed_at: null,
@@ -120,7 +132,19 @@ beforeEach(() => {
 
 afterEach(() => {
 	jest.useRealTimers();
+	Date.now = realNow;
 });
+
+const realNow = Date.now;
+/** ストップウォッチは実時間で計るので、経過を作るには時計そのものを持つしかない
+ *  （1秒未満のストップは押し間違いとして捨てられる＝クリックだけでは何も起きない）. */
+function stubClock(): (ms: number) => void {
+	let now = 1_800_000_000_000;
+	Date.now = () => now;
+	return (ms: number) => {
+		now += ms;
+	};
+}
 
 describe('子どもページ・切替の後始末', () => {
 	it('切替をまたいで届いた書き込み失敗は、新しい子の画面に出さない', async () => {
@@ -246,5 +270,47 @@ describe('子どもページ・失敗の文言', () => {
 		const text = await failedWriteText(new ApiError(503, '「はな」の定義がありません'));
 		expect(text).not.toContain('定義');
 		expect(text).toContain('もういちど');
+	});
+});
+
+// ストップウォッチのストップは、done 化とタイムの保存の2回に分かれている。
+// 2回目の書き先を決め打ちにすると、管理画面から足した時間欄では毎回サーバに弾かれ、
+// 「◯は内部で立ったのに画面に出ず、はかったタイムだけ消える」という壊れかたをする
+// （write() は失敗すると refresh() へ進まない）。ここは押してから保存までを通しで固定する。
+describe('計算カードのストップウォッチ', () => {
+	/** 時間欄のキーを差し替えた state.
+	 *
+	 *  フィクスチャは手書きのサンプル定義から来ていて、時間欄がたまたま `seconds`。
+	 *  管理画面の「メモ欄をふやす」で足した欄のキーは採番される（keys.ts の `m_` 接頭辞）ので、
+	 *  フィクスチャのままだと「決め打ちで書いても通る」状態を素通りする。 */
+	function withDurationKey(key: string): SummerState {
+		const s = hana();
+		for (const hw of s.daily_homework) {
+			const field = hw.meta_fields.find((f) => f.type === 'duration');
+			if (field) field.key = key;
+		}
+		return s;
+	}
+
+	const stopwatchButton = (r: { container: HTMLElement }, label: string) =>
+		[...r.container.querySelectorAll('button')].find((b) => b.textContent?.includes(label));
+
+	it('はかったタイムは、その宿題の時間欄へ保存する', async () => {
+		const r = mountPage(withDurationKey('m_ab12cd'));
+		await drain();
+
+		const tick = stubClock();
+		stopwatchButton(r, UI.stopwatch_start)!.click();
+		await drain();
+		tick(42_000);
+		stopwatchButton(r, UI.stopwatch_stop)!.click();
+		await drain();
+		releaseWrite!(); // 先行する done 化を通す（メモは「やった」の行にしか書けない）
+		await drain();
+
+		expect(metaCalls).toEqual([
+			{ child: 'はな', day: '2026-08-01', itemKey: 'keisan', updates: { m_ab12cd: 42 } }
+		]);
+		expect(r.container.textContent).not.toContain('もういちど'); // 弾かれていない
 	});
 });

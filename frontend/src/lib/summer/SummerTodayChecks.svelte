@@ -31,7 +31,7 @@
 		ttsAvailable: boolean;
 		onSet: (itemKey: string, status: SummerCheckStatus) => void;
 		onSetMeta: (itemKey: string, fieldKey: string, value: string | number | null) => void;
-		onStopwatchStop: (itemKey: string, seconds: number) => void;
+		onStopwatchStop: (itemKey: string, fieldKey: string, seconds: number) => void;
 		onError: (e: unknown) => void;
 	} = $props();
 
@@ -76,6 +76,12 @@
 {/snippet}
 
 {#snippet metaRow(item: SummerDailyHomework)}
+	<!-- ストップウォッチの書き先は「種類が時間の欄」そのもの。ここで見つけた欄のキーを
+	     そのまま親まで通す。出す・出さないの判定だけして書き先を捨てると、親は決め打ちの
+	     キーへ書くしかなくなる——管理画面から足した時間欄のキーは採番される（keys.ts の
+	     `m_` 接頭辞）ので、決め打ちでは保存が「しらない メモの こうもくだよ」で必ず弾かれる。
+	     手入力（SummerMetaInputs）は最初から欄のキーを渡していて、これはそれに揃えたもの。 -->
+	{@const duration = item.meta_fields.find((f) => f.type === 'duration')}
 	<div class="rounded-lg bg-surface2/60 px-3 py-2 lg:px-4">
 		<div class="flex items-center justify-between gap-2">
 			<span class="text-sm text-text-base lg:text-lg"><Ruby text={item.label} /></span>
@@ -94,8 +100,11 @@
 		{#key child + ':' + item.key}
 			<!-- 計算カード（duration メモ持ち）は done 前でもストップウォッチを出す。
 			     ストップで自動 done 化＋タイムを保存するので流れが自然（親が処理）。 -->
-			{#if item.meta_fields.some((f) => f.type === 'duration')}
-				<SummerStopwatch {ui} onStop={(seconds) => onStopwatchStop(item.key, seconds)} />
+			{#if duration}
+				<SummerStopwatch
+					{ui}
+					onStop={(seconds) => onStopwatchStop(item.key, duration.key, seconds)}
+				/>
 			{/if}
 			{#if item.status === 'done' && item.meta_fields.length}
 				<SummerMetaInputs
