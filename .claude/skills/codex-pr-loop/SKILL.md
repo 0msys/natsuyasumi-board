@@ -115,9 +115,13 @@ Codex の説明文には `If Codex has suggestions, it will comment; otherwise i
 先に届いていたレビューを黙って飲み込む。
 
 ```bash
-# 直近のレビュー（指摘ありの経路）
-gh api repos/OWNER/REPO/pulls/PR/reviews --paginate \
-  --jq '[.[] | select(.user.login=="chatgpt-codex-connector[bot]")] | .[-3:] | .[] | "\(.id) \(.commit_id[0:7]) \(.submitted_at)"'
+# 直近のレビュー（指摘ありの経路）。本文の1行目まで見る
+gh api repos/OWNER/REPO/pulls/PR/reviews --paginate --slurp \
+  | jq -r '[.[][]] | map(select(.user.login=="chatgpt-codex-connector[bot]")) | .[-3:] | .[]
+           | "\(.id) \(.commit_id[0:7]) \(.submitted_at)\n  body: \((.body | split("\n") | map(select(length > 0)) | .[0]) // "(空)")"'
+# インライン指摘も中身を見る（P バッジ付きが本物）
+gh api repos/OWNER/REPO/pulls/PR/comments --paginate --slurp \
+  | jq -r '[.[][]] | .[] | "\(.id) review=\(.pull_request_review_id) \(.path):\(.line // .original_line)\n  \((.body | split("\n") | map(select(length > 0)) | .[0]) // "(空)")"'
 # 合格の要約（指摘なしの経路。ここを見落とすと合格に気づけない）。本文まで見て分類する
 gh api repos/OWNER/REPO/issues/PR/comments --paginate --slurp \
   | jq -r '[.[][]] | map(select(.user.login=="chatgpt-codex-connector[bot]")) | .[]
@@ -133,9 +137,14 @@ gh api repos/OWNER/REPO/issues/PR/comments --paginate --slurp \
 | `To use Codex here, create an environment for this repo` | 設定エラー（[取り直しの打ち切り](#取り直しの打ち切り)） |
 | 上記以外 | 指摘ありの要約は review レコード側に入るので、ここには来ない |
 
-ここで分類しないと、起動後は取り返せない。監視は起動より前の bot コメントを既読にするので
-（`seed_before_start`）`SUMMARY` としては二度と出ない。加えて、既読のコメントも
-「レビュアー側の最新活動」に数える——本文を見て既読判定するより前に `newest_at` を更新するため
+**レビューとインライン指摘も同じ。** 本文が空のレビュー＋インライン1件は設定エラーの形で
+（[取り直しの打ち切り](#取り直しの打ち切り)）、本物の指摘は本文が `### 💡 Codex Review` で
+各コメントに P バッジが付く。ID と sha と時刻だけ見ていると、この2つを取り違える。
+
+ここで分類しないと、起動後は取り返せない。監視は起動より前のものを既読にするので
+（`seed_before_start` は issue コメント・レビュー・インライン指摘の3つにかかる）、
+`SUMMARY` も `REVIEW` も `COMMENT` も二度と出ない。加えて、既読のものも
+「レビュアー側の最新活動」に数える——中身を見て既読判定するより前に `newest_at` を更新するため
 ——ので、それが直近の依頼より新しいと `QUIET` も出ない。既存 PR を引き継ぐときにこの形になりやすく、
 どちらの合図も来ないまま待ち続けることになる。
 
