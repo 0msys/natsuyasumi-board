@@ -105,8 +105,13 @@ sw.addEventListener('fetch', (event) => {
 			}
 			try {
 				const response = await fetch(request);
-				// 成功したものだけ控えておく（エラー応答を焼き付けない）
-				if (response.status === 200) cache.put(request, response.clone());
+				// 成功したものだけ控えておく（エラー応答を焼き付けない）。
+				//
+				// 投げっぱなしにせず waitUntil に預ける。ブラウザは答えを返した Service Worker を
+				// すぐ止めてよいことになっていて（古いタブレットほど早く止まる）、預けていない
+				// 書き込みはそこで打ち切られる＝画面には出たのに控えは残らない、が起きる。
+				// 置き場がいっぱいで書けなかったときも、預けてあれば誰も拾わない失敗にならない。
+				if (response.status === 200) event.waitUntil(cache.put(request, response.clone()));
 				return response;
 			} catch {
 				// 圏外。まったく同じ URL の控えがあればそれを出す。
