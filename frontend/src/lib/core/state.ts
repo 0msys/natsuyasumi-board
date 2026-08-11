@@ -210,8 +210,8 @@ export function buildState(args: {
 		grade: definition.grade,
 		grade_level: definition.grade_level,
 		// 画面の固定文言。学年ごとに漢字の開き具合だけが変わる（読みは全学年で同じ）。
-		// テレビタイマーの {limit} だけはここで実値へ差し替える。
-		ui: buildUiText(definition.grade_level, definition.media_timer.limit_minutes),
+		// テレビタイマーの {limit} とチャレンジの {score_max} はここで実値へ差し替える。
+		ui: buildUiText(definition.grade_level, definition.media_timer.limit_minutes, scoreMax),
 		today,
 		in_period: inPeriodNow,
 		period: {

@@ -253,10 +253,13 @@ def build_state(child: str, today=None, db_path: Path | None = None) -> dict:
         "grade": definition.grade,
         "grade_level": definition.grade_level,
         # 画面の固定文言。学年ごとに漢字の開き具合だけが変わる（読みは全学年で同じ）。
-        # テレビタイマーの {limit} だけはここで実値へ差し替える（更新前に開いたままの
-        # 端末に生の「{limit}」を出さないため。ui_text_for の但し書き参照）。
+        # テレビタイマーの {limit} とチャレンジの {score_max} は、子どもごとに変わる値なので
+        # ここで実値へ差し替える（更新前に開いたままの端末に生の記法を出さないため。
+        # ui_text_for の但し書き参照）。
         "ui": ui_text.ui_text_for(
-            definition.grade_level, media_limit_minutes=definition.media_timer.limit_minutes
+            definition.grade_level,
+            media_limit_minutes=definition.media_timer.limit_minutes,
+            score_max=score_max,
         ),
         "today": today.isoformat(),
         "in_period": in_period,

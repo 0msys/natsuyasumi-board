@@ -158,6 +158,35 @@ describe('日次3値の記録', () => {
 		expect(withBonus.today_score!.total).toBe(125);
 		expect(withBonus.comment!.band).toBe('perfect_plus');
 	});
+
+	it('「ぜんぶできたら○点」は項目数から出す（標準テンプレは2つで150点）', async () => {
+		// 数字を文言に直書きしていたころは、どの子にも「200点」（4項目ぶん）と出ていた
+		const state = await api.summerState(CHILD);
+		expect(state.score_max).toBe(150);
+		expect(state.ui.challenge_all).toContain('150');
+		expect(state.ui.challenge_all).not.toContain('{score_max}');
+	});
+
+	it('過去の日のチャレンジもあとから付け外しできる', async () => {
+		const k = await keysOf();
+		const yesterday = addDays(today, -1);
+		// その日に記録欄がない習慣（edges の窓の外）へ書いても採点の分母には入らないので、
+		// 過去日は全部まとめて埋めてよい＝きのうの due を別途組み立てなくて済む
+		for (const key of [...k.habits, ...k.daily]) {
+			await api.summerSetCheck(CHILD, yesterday, key, 'done');
+		}
+		const dayOf = async () =>
+			(await api.summerState(CHILD)).history.find((h) => h.day === yesterday)!;
+		expect((await dayOf()).score).toBe(100);
+
+		await api.summerSetCheck(CHILD, yesterday, k.challenges[0], 'done');
+		expect((await dayOf()).total).toBe(125); // 履歴の合計が再計算される
+		// きょうの枠には出ない（過去日の◯は history[].statuses からしか読めない）
+		expect((await api.summerState(CHILD)).special_challenges[0].status).toBe(null);
+
+		await api.summerSetCheck(CHILD, yesterday, k.challenges[0], null);
+		expect((await dayOf()).total).toBe(100);
+	});
 });
 
 describe('メモ', () => {

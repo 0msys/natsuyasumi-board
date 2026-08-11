@@ -10,11 +10,13 @@ import { UI_SHOW_FROM, UI_TEXT_SOURCE } from './generated/uiTextSource';
  * その学年で表示する固定文言一式。
  *
  * mediaLimitMinutes を渡すと、テレビタイマーの文言に残る {limit} をここで実値へ差し替える。
+ * scoreMax（1日の最大点）も同様に {score_max} を差し替える。
  * 省略すると記法のまま返す（スナップショットの照合はこちら）。
  */
 export function buildUiText(
 	gradeLevel: number,
-	mediaLimitMinutes?: number | null
+	mediaLimitMinutes?: number | null,
+	scoreMax?: number | null
 ): Record<string, string> {
 	const texts: Record<string, string> = {};
 	for (const [key, text] of Object.entries(UI_TEXT_SOURCE)) {
@@ -23,6 +25,11 @@ export function buildUiText(
 	if (mediaLimitMinutes !== undefined && mediaLimitMinutes !== null) {
 		const limit = mediaLimitLabel(mediaLimitMinutes, gradeLevel);
 		for (const key of Object.keys(texts)) texts[key] = texts[key].replaceAll('{limit}', limit);
+	}
+	if (scoreMax !== undefined && scoreMax !== null) {
+		for (const key of Object.keys(texts)) {
+			texts[key] = texts[key].replaceAll('{score_max}', String(scoreMax));
+		}
 	}
 	return texts;
 }

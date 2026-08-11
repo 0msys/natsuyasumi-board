@@ -1,5 +1,7 @@
 <script lang="ts">
 	// 過去日の記録を見る・なおすモーダル（履歴グリッドの日タップで開く。共有 Modal を利用）。
+	// 3値チェックとメモに加えて、その日の基本点が100点ならスペシャルチャレンジも直せる
+	// （あとからボーナス点を付け外しできるのはここだけ）。
 	import Modal from '$lib/Modal.svelte';
 	import type {
 		SummerCheckStatus,
@@ -7,11 +9,15 @@
 		SummerHabit,
 		SummerHistoryDay,
 		SummerMetaField,
+		SummerSpecialChallenge,
 		SummerUiText
 	} from '$lib/api';
 	import { Pencil } from '@lucide/svelte';
 	import SummerCheckButtons from './SummerCheckButtons.svelte';
 	import SummerMetaInputs from './SummerMetaInputs.svelte';
+	// きょうの画面と同じチャレンジ枠をそのまま使う（別名にするのは型 SummerSpecialChallenge と
+	// 名前がぶつかるため）。
+	import SpecialChallengeSection from './SummerSpecialChallenge.svelte';
 	import Ruby from './Ruby.svelte';
 	import { stripRuby } from './ruby';
 	import { fmt } from './uiText';
@@ -22,6 +28,8 @@
 		day,
 		habits,
 		daily,
+		challenges,
+		scoreMax,
 		anchorY = null,
 		onSet,
 		onSetMeta,
@@ -31,6 +39,9 @@
 		day: SummerHistoryDay;
 		habits: SummerHabit[];
 		daily: SummerDailyHomework[];
+		// スペシャルチャレンジの定義（ラベルと key）。status は「きょうの」値が入っているので使わない。
+		challenges: SummerSpecialChallenge[];
+		scoreMax: number; // 1日の最大点（チャレンジ枠の文言に入れる）
 		anchorY?: number | null;
 		onSet: (day: string, itemKey: string, status: SummerCheckStatus) => void;
 		onSetMeta: (day: string, itemKey: string, fieldKey: string, value: string | number | null) => void;
@@ -62,6 +73,18 @@
 			.map((h) => ({ key: h.key, label: h.label, meta_fields: [], cancelable: h.cancelable })),
 		...daily.map((d) => ({ key: d.key, label: d.label, meta_fields: d.meta_fields, cancelable: false }))
 	]);
+
+	// チャレンジは「その日の」記録で描く。props の challenges[].status はサーバが today の
+	// 値で埋めている（service.build_state）ので、そのまま渡すとどの過去日を開いても
+	// きょうの◯が付いて見える。habits/daily と同じく day.statuses から取り直す。
+	const dayChallenges = $derived(
+		challenges.map((c) => ({ ...c, status: day.statuses[c.key] ?? null }))
+	);
+	// 解放条件はきょうの画面と同じ「その日の基本点が100点」。未記録日は score が null
+	// （＝厳密等価でロック側に落ちる）。宿題をこのモーダルで100点にすると、書き込みごとの
+	// 再取得で day が差し替わるため、閉じ直さずにその場で解放される。
+	const unlocked = $derived(day.score === 100);
+	const bonus = $derived((day.total ?? 0) - (day.score ?? 0));
 
 	function dateLabel(iso: string): string {
 		return `${mdOf(iso)}（${day.weekday}）`;
@@ -129,6 +152,19 @@
 				</div>
 			{/each}
 		</div>
+		{#if challenges.length}
+			<div class="mt-3">
+				<SpecialChallengeSection
+					{ui}
+					challenges={dayChallenges}
+					{unlocked}
+					{bonus}
+					{scoreMax}
+					disabled={!editing}
+					onSet={(key, status) => onSet(day.day, key, status)}
+				/>
+			</div>
+		{/if}
 		<div class="mt-4 text-right">
 			<button
 				type="button"

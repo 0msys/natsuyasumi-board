@@ -156,6 +156,10 @@ def test_state_チャレンジ枠とscore_max(client):
     assert s["score_max"] == 200
     assert [c["key"] for c in s["special_challenges"]] == ["gakki", "otetsudai", "eigo", "tairyoku_ch"]
     assert all(c["status"] is None for c in s["special_challenges"])
+    # 「ぜんぶできたら○点まんてん」の数字は score_max（項目数で変わる）を差し込んだもの。
+    # 生の {score_max} が画面へ出ないことも一緒に見る（更新前に開いたままの端末の担保）。
+    assert "{score_max}" not in s["ui"]["challenge_all"]
+    assert str(s["score_max"]) in s["ui"]["challenge_all"]
     # base 0 → ロック（unlocked False）・total 0・ボーナス上限100
     ts = s["today_score"]
     assert ts["unlocked"] is False and ts["total"] == 0 and ts["bonus"] == 0 and ts["challenge_max"] == 100
@@ -217,6 +221,44 @@ def test_challenge_100点で解放しボーナス加算_満点は100基準(clien
     assert s2["today_score"]["total"] == 200 and s2["today_score"]["bonus"] == 100
     # 満点スタンプ・連続満点は base==100 基準のまま（total 200 でも満点は1日）
     assert s2["streaks"]["perfect_total"] == 1 and s2["streaks"]["perfect_current"] == 1
+
+
+def test_challenge_過去日にも付け外しできて履歴が再計算される(client):
+    """あとからボーナスを直せる（過去日修正モーダルが叩く経路）."""
+    _set_all_done(client, "2026-07-31", FULL_100_KEYS)  # きのうを base 100 に
+    r = client.post(
+        "/api/summer/check/set",
+        json={"child": CHILD, "day": "2026-07-31", "item_key": "gakki", "status": "done"},
+    )
+    assert r.status_code == 200 and r.json() == {"status": "done"}
+
+    s = client.get("/api/summer/state", params={"child": CHILD}).json()
+    h = next(h for h in s["history"] if h["day"] == "2026-07-31")
+    assert h["score"] == 100 and h["total"] == 125  # 履歴の合計は再計算される
+    assert s["rewards"]["total"] == 125  # ごほうび累計にも乗る
+    # state の special_challenges[].status は「きょう」の値（7/31 の◯はここには出ない）。
+    # 過去日の表示はこれではなく history[].statuses から組む。
+    assert next(c for c in s["special_challenges"] if c["key"] == "gakki")["status"] is None
+
+    # 外せば戻る（あとから解除できる）
+    client.post(
+        "/api/summer/check/set",
+        json={"child": CHILD, "day": "2026-07-31", "item_key": "gakki", "status": None},
+    )
+    s2 = client.get("/api/summer/state", params={"child": CHILD}).json()
+    assert next(h for h in s2["history"] if h["day"] == "2026-07-31")["total"] == 100
+    assert s2["rewards"]["total"] == 100
+
+
+def test_challenge_過去日も100点未満なら加点されない(client):
+    for key in ("ondoku", "gakki"):
+        client.post(
+            "/api/summer/check/set",
+            json={"child": CHILD, "day": "2026-07-31", "item_key": key, "status": "done"},
+        )
+    s = client.get("/api/summer/state", params={"child": CHILD}).json()
+    h = next(h for h in s["history"] if h["day"] == "2026-07-31")
+    assert h["score"] < 100 and h["total"] == h["score"]  # bonus 効かない（当日と同じ扱い）
 
 
 # ---- POST /api/summer/check/set ----

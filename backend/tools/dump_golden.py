@@ -160,6 +160,15 @@ def dump_ui_text() -> None:
                 "output": ui_text.ui_text_for(grade, 90),
             }
         )
+    # {score_max} の差し替え経路（1日の最大点＝100＋項目数×25。標準テンプレの2項目は150）
+    for grade, score_max in ((1, 150), (6, 200)):
+        cases.append(
+            {
+                "name": f"buildUiText(grade={grade}, scoreMax={score_max})",
+                "input": {"kind": "uiText", "grade": grade, "scoreMax": score_max},
+                "output": ui_text.ui_text_for(grade, score_max=score_max),
+            }
+        )
     write("uiText.json", cases, "固定文言の学年別展開と、視聴上限の表記")
 
 
