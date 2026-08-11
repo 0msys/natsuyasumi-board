@@ -46,10 +46,67 @@ echo "HEAD=$head_sha"
 
 補助シグナル（決め手にしない）:
 
-- **👍**（PR 本体へのリアクション）。(user, content) で一意なので、2ラウンド続けて指摘なしでも
-  増えない。「👍 が在る」だけでは今回のラウンドの合格を意味しない。
+- **👍**（PR 本体へのリアクション）。(user, content) で一意なので、同じ内容の 👍 が2つ並ぶことはない。
+  PR #31 では、再依頼でレビューが始まった時点で前回の 👍 が外れ、完了時に付き直した
+  （＝付いたまま残るとは限らない）。いずれにせよ 👍 は対象コミットを持たないので、
+  「👍 が在る」だけでは今回のラウンドの合格を意味しない。
 - **👀**（依頼コメントへのリアクション）＝受理。付かないまま処理されることもあるので、
   無いことを未着手の証拠にしない。
+
+### 要約が落ちることがある
+
+指摘なしのラウンドでも、要約コメントが投稿されないことがある。PR #31（2026-08-11）の
+自動レビューは 2分半で 👍 が付いたのに、30分待っても要約が来なかった。過去の3件（#22 / #29 / #30）
+では 👍 と要約が同じ秒に届いていたので、届きかたとしては異例。
+
+このとき `Reviewed commit` が無く、どのコミットを見た結果か確かめられない。
+**👍 で代用しないで、`@codex review` で取り直す。** PR #31 では再依頼したラウンドで要約が届き、
+対象コミットが HEAD と一致することまで確かめられた。
+
+Codex の説明文には `If Codex has suggestions, it will comment; otherwise it will react with 👍.`
+とあり、👍 だけで終える経路自体は仕様に見える。それでも判定は要約の `Reviewed commit` に
+置いたままにする——👍 からは対象コミットが分からないため。
+
+### 取り直しの打ち切り
+
+**同じ HEAD への再依頼は1回まで。** それでも `Reviewed commit` が取れなければ、そこで止めて
+「判定材料が取れていない」という事実のまま報告する。何回押せば取れるのかは分からないので、
+線を引かないと止めどころが無くなり、待つあいだに 👍 のような合格でないものを合格と
+読み替えたくなる。コミットを積んで HEAD が変われば、その HEAD について改めて1回依頼してよい。
+
+依頼後に `QUIET`（既定12分・`QUIET_AFTER_S`）が出たときも、この1回に数える。
+
+設定エラーの応答（`To use Codex here, create an environment for this repo`）も、
+レビュー未実行の確定として扱わない。PR #32 では2つの形で届き、どちらも**そのあと同じ
+コミットに指摘なしの要約が届いた**。
+
+- issue コメントとして、自動レビューの代わりに（10:21:55）。1回依頼し直したあと、
+  指摘なしの要約（235a89e）が届いた（10:24:52）
+- 依頼の3秒後に、本文が空・`commit_id` が HEAD のレビューへインライン1件として（10:36:27）。
+  このときは何もせず待ち、指摘なしの要約（c40a6e4）が届いた（10:38:55）
+
+**この応答が出ても、そのラウンドはまだ動いていることがある。すぐ依頼し直さない。**
+なぜこうなるのかは分からない（設定の問題なのか、単に揺れているのか、こちらからは見えない）。
+
+待つ合図に `QUIET` は使えない。この応答自体がレビュアー側の活動として数えられるため——要約・
+レビュー・指摘のどの節も、既読かどうかを見る前に `newest_at` を更新する——依頼より新しい
+活動があることになり、`QUIET` の条件（`act_e <= req_e`）を満たさない。**設定エラーのあとに
+`QUIET` は出ない。** 時計で計る。この応答から15分ほど（`QUIET_AFTER_S` と同じ桁）待って、
+**判定材料**——`Reviewed commit` 付きの指摘なし要約か、中身のある指摘（本文に
+`### 💡 Codex Review`）——が来なければ、そこで1回だけ依頼し直す。数えるのは判定材料であって、
+レビューが立ったかどうかではない。レビュー形式のときは設定エラー自体がレビューなので、
+「レビューが来ない」を条件にすると永久に満たされない。
+
+レビュー形式で届いた1件は、[未返信の洗い出し](#未返信の洗い出し)にも数えられる。指摘ではないが
+**返信して0件に戻す**——「これは指摘ではなく設定エラーの応答」と1行残せば、あとからスレッドを
+見た人にも分かる。数えない側にすると本文の文字列一致に頼ることになり、表現が変わった日に
+本物の指摘まで落とす。
+
+見分けの注意。監視は後者を `REVIEW: … 指摘 1 件・HEAD と一致` と出すので、見た目が普通の指摘と
+変わらない。**`REVIEW` が出ても、本文とコメントを読むまで指摘として扱わない。** 実際の指摘には
+本文に `### 💡 Codex Review` があり、各コメントに P バッジと `Useful? React with 👍 / 👎.` が
+付いていた（#31 / #32 で観測）。どちらの形もそれ自体は `Reviewed commit` を持たないので合格の
+材料にはならず、issue コメント側は `HEAD 照合=unknown` の `SUMMARY` として出る（`CLEAN` にはならない）。
 
 ## 手順
 
@@ -63,14 +120,48 @@ echo "HEAD=$head_sha"
 先に届いていたレビューを黙って飲み込む。
 
 ```bash
-# 直近のレビュー（指摘ありの経路）
-gh api repos/OWNER/REPO/pulls/PR/reviews --paginate \
-  --jq '[.[] | select(.user.login=="chatgpt-codex-connector[bot]")] | .[-3:] | .[] | "\(.id) \(.commit_id[0:7]) \(.submitted_at)"'
-# 合格の要約（指摘なしの経路。ここを見落とすと合格に気づけない）
-gh api repos/OWNER/REPO/issues/PR/comments --paginate \
-  --jq '.[] | select(.user.login=="chatgpt-codex-connector[bot]") | "\(.id) \(.created_at)"'
+# 直近のレビュー（指摘ありの経路）。本文の1行目まで見る
+gh api repos/OWNER/REPO/pulls/PR/reviews --paginate --slurp \
+  | jq -r '[.[][]] | map(select(.user.login=="chatgpt-codex-connector[bot]")) | .[-3:] | .[]
+           | "\(.id) \(.commit_id[0:7]) \(.submitted_at)\n  body: \((.body | split("\n") | map(select(length > 0)) | .[0]) // "(空)")"'
+# インライン指摘も中身を見る（P バッジ付きが本物）。自分の返信が混ざらないよう bot で絞る
+gh api repos/OWNER/REPO/pulls/PR/comments --paginate --slurp \
+  | jq -r '[.[][]] | map(select(.user.login=="chatgpt-codex-connector[bot]")) | .[]
+           | "\(.id) review=\(.pull_request_review_id) \(.path):\(.line // .original_line)\n  \((.body | split("\n") | map(select(length > 0)) | .[0]) // "(空)")"'
+# 合格の要約（指摘なしの経路。ここを見落とすと合格に気づけない）。本文まで見て分類する
+gh api repos/OWNER/REPO/issues/PR/comments --paginate --slurp \
+  | jq -r '[.[][]] | map(select(.user.login=="chatgpt-codex-connector[bot]")) | .[]
+           | "\(.id) \(.created_at)\n  \(.body | split("\n") | map(select(length > 0)) | .[0:2] | join(" / "))"'
+# PR 本体のリアクション（👍 の時刻。要約が落ちた形の手がかり）
+gh api repos/OWNER/REPO/issues/PR/reactions --paginate \
+  --jq '.[] | select(.user.login=="chatgpt-codex-connector[bot]") | "\(.content) \(.created_at)"'
 # 未返信の指摘が無いかを in_reply_to_id で突き合わせる（下の「未返信の洗い出し」）
 ```
+
+**bot の issue コメントは本文まで見る。** ID と時刻だけ並べても分類できない。届く形は3つ:
+
+| 本文の1行目 | 意味 |
+|---|---|
+| `Codex Review: Didn't find any major issues.` ＋ `Reviewed commit` | 合格。sha を HEAD と突き合わせる |
+| `To use Codex here, create an environment for this repo` | 設定エラー（[取り直しの打ち切り](#取り直しの打ち切り)） |
+| 上記以外 | 指摘ありの要約は review レコード側に入るので、ここには来ない |
+
+**レビューとインライン指摘も同じ。** 本文が空のレビュー＋インライン1件は設定エラーの形で
+（[取り直しの打ち切り](#取り直しの打ち切り)）、本物の指摘は本文が `### 💡 Codex Review` で
+各コメントに P バッジが付く。ID と sha と時刻だけ見ていると、この2つを取り違える。
+
+**PR 本体のリアクションも見る。** 👍 が在るのに、その時刻以降の要約が無ければ
+[要約が落ちることがある](#要約が落ちることがある)の形。ここで気づかないと、引き継いだあとは
+どの合図も出ない——監視は既存のリアクションを全部既読にする（リアクションのシードには
+起動前という切り口が無く、在るものを全部入れる）ので `THUMBSUP` は出ず、自動レビューだけで
+終わっている PR には `@codex review` の依頼コメントが無いため `QUIET` も節ごと動かない。
+
+ここで分類しないと、起動後は取り返せない。監視は起動より前のものを既読にするので
+（`seed_before_start` は issue コメント・レビュー・インライン指摘の3つにかかる）、
+`SUMMARY` も `REVIEW` も `COMMENT` も二度と出ない。加えて、既読のものも
+「レビュアー側の最新活動」に数える——中身を見て既読判定するより前に `newest_at` を更新するため
+——ので、それが直近の依頼より新しいと `QUIET` も出ない。既存 PR を引き継ぐときにこの形になりやすく、
+どちらの合図も来ないまま待ち続けることになる。
 
 未対応の指摘があれば先に片づけてから、監視を起動する。
 
@@ -86,6 +177,9 @@ Monitor(
 
 `UNLIKED` は承認リアクションが外れたときだけ出る。Codex はレビュー開始時に 👀 を付け、
 完了時に外す。これを承認の撤回として鳴らすと毎ラウンド誤報になるので、対象外にしてある。
+
+PR #31 では、再依頼でレビューが始まった時点で 👍 が外れて `UNLIKED` が出た。
+承認の取り消しではなく、次のラウンドが始まった合図として読む（完了時に付き直した）。
 
 通信に失敗した周期は、判定を出さず印も付けずに次へ回す。`WARN` は「HEAD が取れず判定を
 保留している」という意味で、**沈黙が異常なしを意味しないこと**を知らせるために出る。
@@ -106,6 +200,9 @@ git push origin <branch> && gh pr comment PR --repo OWNER/REPO --body "@codex re
 ```
 
 1 回の push につき 1 回だけ。連投しない。
+例外は[要約が落ちることがある](#要約が落ちることがある)の取り直しで、push していなくても
+依頼してよい（判定材料そのものが無いため）。ただし[取り直しの打ち切り](#取り直しの打ち切り)の
+とおり、同じ HEAD につき1回まで。
 
 ### 4. 指摘が来たら
 
@@ -185,7 +282,11 @@ tops=[c for c in d if c['user']['login']!=ME and not c.get('in_reply_to_id')]
 replied={c.get('in_reply_to_id') for c in d if c['user']['login']==ME}
 un=[c for c in tops if c['id'] not in replied]
 print(f"指摘 {len(tops)} 件 / 未返信 {len(un)} 件")
-for c in un: print(" ", c['id'], c['path'], c['created_at'])
+# 本文の先頭行まで出す。ID だけだと、本物の指摘（P バッジ付き）と、設定エラーが
+# インライン1件として届いた形（取り直しの打ち切りを参照）を取り違える。
+for c in un:
+    head=(c['body'] or '').splitlines()
+    print(" ", c['id'], c['path'], c['created_at'], "|", head[0][:80] if head else "(空)")
 EOF
 ```
 
