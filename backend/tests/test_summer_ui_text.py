@@ -109,6 +109,17 @@ def test_画面が参照するキーが文言表に全部ある():
     assert not unused, f"ui_text.py にあるのに画面が使っていないキー: {unused}"
 
 
+@pytest.mark.parametrize("grade", GRADES)
+def test_1日の最大点はサーバ側で差し替える(grade):
+    """{score_max} は子どもごと（100＋項目数×25）。数字を直に書くと項目数を変えた子で嘘になる.
+
+    差し替えるのは {limit} と同じ理由＝更新前に開いたままの端末に生の記法を出さないため。
+    """
+    assert "{score_max}" in ui_text_for(grade)["challenge_all"]  # 引数なしは記法のまま
+    filled = ui_text_for(grade, score_max=150)["challenge_all"]
+    assert "150" in filled and "{score_max}" not in filled
+
+
 # ---- テレビタイマーの上限ラベル（子どもごとに変わるので UI_TEXT に書けない） ----
 
 # 1分刻みで全部は回さない。境界（最小・最大）と繰り上がり・ちょうどの時間を代表に取る

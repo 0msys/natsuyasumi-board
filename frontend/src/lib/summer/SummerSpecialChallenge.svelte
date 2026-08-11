@@ -2,6 +2,8 @@
 	// スペシャルチャレンジ: 宿題で100点をとると解放されるごほうび枠（1つ +25てん・最大200てん）。
 	// base<100（unlocked=false）のあいだは鍵オーバーレイ＋ボタン disabled で操作できない。
 	// 100点になると解放され、◯にした瞬間だけ星はじけ＋「ポンッ」（SummerCheckButtons と同じ演出）。
+	// きょうの画面と過去日修正モーダル（SummerDayEditModal）で共用する。呼ぶ側は「その日の」
+	// status・base100・bonus を渡す（モーダルは day.statuses から組む）。
 	import { Circle, Dumbbell, HandHeart, Headphones, Lock, Music, Sparkles, Star } from '@lucide/svelte';
 	import type { Component } from 'svelte';
 	import type { SummerCheckStatus, SummerSpecialChallenge, SummerUiText } from '$lib/api';
@@ -15,12 +17,21 @@
 		challenges,
 		unlocked,
 		bonus,
+		scoreMax,
+		disabled = false,
 		onSet
 	}: {
 		ui: SummerUiText;
 		challenges: SummerSpecialChallenge[];
 		unlocked: boolean;
 		bonus: number;
+		// 1日の最大点（100 + 項目数 × 25）。「ぜんぶできたら○点まんてん」に入れる。
+		// サーバ側でも差し替え済みなので、ここの fmt は基本 no-op（ui_text_for の但し書き参照）。
+		scoreMax: number;
+		// 解放されていても押させない（過去日モーダルの閲覧専用のあいだ）。unlocked を
+		// false に潰して代用しないこと——鍵オーバーレイが出て「宿題を100点にしたら
+		// あけられるよ」という嘘の理由が表示される。
+		disabled?: boolean;
 		onSet: (key: string, status: SummerCheckStatus) => void;
 	} = $props();
 
@@ -87,7 +98,7 @@
 	</div>
 	<p class="mb-3 text-xs text-text-dim lg:text-sm">
 		{#if unlocked}
-			<Ruby text={ui.challenge_all} />{#if bonus > 0}<span class="font-bold text-violet-500"> <Ruby text={fmt(ui.challenge_now, { bonus })} /></span>{/if}
+			<Ruby text={fmt(ui.challenge_all, { score_max: scoreMax })} />{#if bonus > 0}<span class="font-bold text-violet-500"> <Ruby text={fmt(ui.challenge_now, { bonus })} /></span>{/if}
 		{:else}
 			<Ruby text={ui.challenge_locked_hint} />
 		{/if}
@@ -108,7 +119,7 @@
 				<span class="relative inline-flex shrink-0">
 					<button
 						type="button"
-						disabled={!unlocked}
+						disabled={!unlocked || disabled}
 						onclick={() => toggle(c)}
 						aria-pressed={done}
 						aria-label={stripRuby(c.label)}

@@ -4,11 +4,11 @@ import { runGolden, loadGolden, type GoldenFile } from './golden';
 const golden = loadGolden('uiText.json');
 
 type Input =
-	| { kind: 'uiText'; grade: number; mediaLimitMinutes?: number }
+	| { kind: 'uiText'; grade: number; mediaLimitMinutes?: number; scoreMax?: number }
 	| { kind: 'mediaLimit'; minutes: number; grade: number };
 
 runGolden(golden as unknown as GoldenFile<Input, unknown>, '固定文言', (input) =>
 	input.kind === 'uiText'
-		? buildUiText(input.grade, input.mediaLimitMinutes)
+		? buildUiText(input.grade, input.mediaLimitMinutes, input.scoreMax)
 		: mediaLimitLabel(input.minutes, input.grade)
 );

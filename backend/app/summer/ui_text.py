@@ -59,7 +59,9 @@ UI_TEXT: dict[str, str] = {
     # ---- スペシャルチャレンジ（SummerSpecialChallenge.svelte） ----
     "challenge_title": "スペシャルチャレンジ",
     "challenge_bonus": "1つできると +25点《てん》",
-    "challenge_all": "全部《ぜんぶ》できたら 200点《てん》 満点《まんてん》！",
+    # {score_max} はその子の1日の最大点（100 + チャレンジ項目数 × 25）。項目数は
+    # 子どもごとに変えられるので、数字を直に書くと標準テンプレ（2項目＝150点）で嘘になる。
+    "challenge_all": "全部《ぜんぶ》できたら {score_max}点《てん》 満点《まんてん》！",
     "challenge_now": "いま +{bonus}点《てん》",
     "challenge_locked_hint": "宿題《しゅくだい》を 100点《てん》 にしたら チャレンジできるよ！",
     "challenge_locked_overlay": "宿題《しゅくだい》を 100点《てん》 にしたら あけられるよ",
@@ -131,7 +133,9 @@ UI_TEXT: dict[str, str] = {
 }
 
 
-def ui_text_for(grade_level: int, media_limit_minutes: int | None = None) -> dict[str, str]:
+def ui_text_for(
+    grade_level: int, media_limit_minutes: int | None = None, score_max: int | None = None
+) -> dict[str, str]:
     """その学年で表示する固定文言一式（/api/summer/state の ui 欄）.
 
     media_limit_minutes を渡すと、テレビタイマーの文言に残る {limit} をサーバ側で
@@ -140,6 +144,7 @@ def ui_text_for(grade_level: int, media_limit_minutes: int | None = None) -> dic
     受け取る——古い JS は {limit} を知らないので、置換しないと画面に生の「{limit}」が出る
     （card_guide の互換スタブと同じ事情。あちらだけ手当てしても意味がない）。
     新しい JS は fmt() でもう一度 {limit} を差し込もうとするが、既に消えているので no-op。
+    score_max（1日の最大点）も同じ理由でここで差し替える。
     引数を省いたときは記法のまま返す（ui_text_snapshot.json の生成はこちら）。
     """
     texts = {
@@ -149,6 +154,8 @@ def ui_text_for(grade_level: int, media_limit_minutes: int | None = None) -> dic
     if media_limit_minutes is not None:
         limit = media_limit_label(media_limit_minutes, grade_level)
         texts = {key: text.replace("{limit}", limit) for key, text in texts.items()}
+    if score_max is not None:
+        texts = {key: text.replace("{score_max}", str(score_max)) for key, text in texts.items()}
     return texts
 
 

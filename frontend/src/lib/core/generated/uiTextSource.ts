@@ -29,7 +29,7 @@ export const UI_TEXT_SOURCE: Record<string, string> = {
   "listen_aria": "読《よ》みあげる",
   "challenge_title": "スペシャルチャレンジ",
   "challenge_bonus": "1つできると +25点《てん》",
-  "challenge_all": "全部《ぜんぶ》できたら 200点《てん》 満点《まんてん》！",
+  "challenge_all": "全部《ぜんぶ》できたら {score_max}点《てん》 満点《まんてん》！",
   "challenge_now": "いま +{bonus}点《てん》",
   "challenge_locked_hint": "宿題《しゅくだい》を 100点《てん》 にしたら チャレンジできるよ！",
   "challenge_locked_overlay": "宿題《しゅくだい》を 100点《てん》 にしたら あけられるよ",

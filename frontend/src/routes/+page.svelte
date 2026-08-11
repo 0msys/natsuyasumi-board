@@ -393,6 +393,7 @@
 						challenges={summer.special_challenges}
 						unlocked={summer.today_score?.unlocked ?? false}
 						bonus={summer.today_score?.bonus ?? 0}
+						scoreMax={summer.score_max}
 						onSet={(key, status) => setCheck(summer!.today, key, status)}
 					/>
 				{/if}
@@ -450,6 +451,8 @@
 				day={editDay}
 				habits={summer.habits}
 				daily={summer.daily_homework}
+				challenges={summer.special_challenges}
+				scoreMax={summer.score_max}
 				{anchorY}
 				onSet={setCheck}
 				onSetMeta={setMeta}
