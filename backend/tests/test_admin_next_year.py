@@ -14,6 +14,7 @@ from datetime import date
 import pytest
 from fastapi.testclient import TestClient
 
+from app import db as app_db
 from app.main import create_app
 from app.summer.definition import select_definition_year
 
@@ -260,6 +261,34 @@ def test_同じ子の別の年はインポートできキーは振り直され�
     r = client.post("/api/admin/definitions/import", json={"doc": other_year})
     assert r.status_code == 200 and r.json()["year"] == 2028
     assert _keys(exported) & _keys(r.json()["doc"]) == set()
+
+
+def test_壊れた定義が居ても別の年の取り込みは通る(client, tmp_db):
+    """doc 列ごと壊れている年が居ても、別の年の取り込みを 500 で落とさない.
+
+    一覧はこの状態を valid=False として出す（list_children は JSONDecodeError も拾う）。
+    取り込みだけが素の例外で落ちると、その子はほかの年も入れられなくなる。
+    どのキーを使っているか確かめられないので、キーは振り直す（fail closed）。
+    """
+    with app_db.connect(tmp_db) as conn:
+        conn.execute("UPDATE summer_definitions SET doc = ? WHERE child = 'はな'", ("{壊れた",))
+        conn.commit()
+
+    doc = {
+        "child": "はな",
+        "child_kana": "はな",
+        "grade": "小3",
+        "year": 2027,
+        "period": {
+            "start": "2027-07-21",
+            "end": "2027-08-31",
+            "first_day_of_school": "2027-09-01",
+        },
+        "habits": [{"key": "h_2027", "label": "はみがき"}],
+    }
+    r = client.post("/api/admin/definitions/import", json={"doc": doc})
+    assert r.status_code == 200, r.text
+    assert r.json()["doc"]["habits"][0]["key"] != "h_2027"
 
 
 def test_選択肢と同じ形のkeyもぶつかりとして扱う(client):

@@ -253,8 +253,12 @@ def create_definition(doc: dict, db_path: Path | None = None) -> dict:
             ):
                 try:
                     other = parse_definition(json.loads(raw), source=definition.child)
-                except SummerDefinitionError:
-                    # 読めない年は、どのキーを使っているか分からない＝分けておく
+                except (SummerDefinitionError, json.JSONDecodeError):
+                    # 読めない年は、どのキーを使っているか分からない＝分けておく。
+                    # JSON ごと壊れている doc 列も居うる——一覧はその年を valid=False と
+                    # して出す作りで（definition.list_children）、直すには編集画面へ
+                    # 入らせるしかない。ここで素の例外を漏らすと、その子はほかの年も
+                    # 取り込めなくなる（原因の分からない 500 になる）。
                     collides = True
                     break
                 if definition.daily_item_keys() & other.daily_item_keys():
