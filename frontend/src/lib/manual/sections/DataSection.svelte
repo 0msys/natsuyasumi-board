@@ -25,29 +25,24 @@
 			<li>iPhone・iPad … 共有ボタン → 「ホーム画面に追加」</li>
 			<li>Android・パソコン … ブラウザのメニュー → 「アプリをインストール」「ホーム画面に追加」</li>
 		</ul>
-		<p>一度ひらいた端末なら、<strong>電波がなくても（機内モードでも）使えます。</strong></p>
+		<p>一度ひらいた端末なら、電波がなくても（機内モードでも）使えます。</p>
 
 		<h3><Download size={16} class="inline align-middle" /> バックアップのとりかた</h3>
 		<p>
 			設定画面（<Settings size={13} class="inline align-middle" />
-			歯車）のいちばん上にあるカードから行います。ここでとれるのは<strong
-				>設定も記録もぜんぶ入った1つのファイル</strong
-			>です。
+			歯車）のいちばん上にあるカードから行います。ここでとれるのは、設定も記録もぜんぶ入った1つのファイルです。
 		</p>
 		<ol class="mb-2 list-decimal pl-5">
 			<li class="mb-1">
 				<UiLabel><Download size={13} />バックアップする</UiLabel> を押します。ファイルが1つできます
 			</li>
-			<li class="mb-1">
-				ダウンロードのフォルダに<strong>ファイルがあるか自分で確かめます</strong>
-			</li>
+			<li class="mb-1">ダウンロードのフォルダに、ファイルがあるか自分で確かめます</li>
 			<li class="mb-1">
 				確かめられたら <UiLabel>ほぞんできた</UiLabel> を押します
 			</li>
 		</ol>
 		<p>
-			<strong
-				>3つめを押すまで、「さいごのバックアップ」の日づけは変わりません。</strong
+			<strong>3つめを押すまで、「さいごのバックアップ」の日づけは変わりません。</strong
 			>ブラウザにファイルを渡せたかどうかは、アプリからは分からないためです。ファイルが見あたらなければ
 			<UiLabel>できていない</UiLabel> を押してください。日づけは進まないので、あとでやり直せます。
 		</p>
@@ -62,6 +57,7 @@
 		</p>
 		<p class="flex items-start gap-1">
 			<TriangleAlert size={16} class="mt-0.5 shrink-0 text-danger" />
+			<span class="sr-only">注意: </span>
 			<span
 				><strong>いまこの端末に入っている内容は、まるごと入れかわります。</strong
 				>確認が出るので、よく読んでから進めてください。</span
@@ -77,17 +73,17 @@
 		</ol>
 	{:else}
 		<p>
-			<strong>記録はおうちのサーバーの中にあります。</strong>置き場所は、アプリを動かしている
-			フォルダの中の <code class="rounded bg-surface2 px-1">data</code> フォルダです。
+			記録はおうちのサーバーの中にあります。置き場所は、アプリを動かしているフォルダの中にある
+			<code class="rounded bg-surface2 px-1">data</code> という名前のフォルダです。
 		</p>
 
 		<h3>複数の端末で使う</h3>
 		<p>
-			<strong>同じWi-Fiにつながっていれば、何台からでも同じ記録が見られます。</strong
-			>リビングのタブレットでお子さんがチェックし、親のスマホで進みぐあいを見る、といった使い方ができます。端末ごとに設定をそろえる必要はありません。
+			同じWi-Fiにつながっていれば、何台からでも同じ記録が見られます。リビングのタブレットでお子さんがチェックし、親のスマホで進みぐあいを見る、といった使い方ができます。端末ごとに設定をそろえる必要はありません。
 		</p>
 		<p class="flex items-start gap-1">
 			<TriangleAlert size={16} class="mt-0.5 shrink-0 text-attn" />
+			<span class="sr-only">注意: </span>
 			<span
 				>おうちの中だけで使うつくりです。<strong
 					>インターネットからつながるようにしないでください。</strong
@@ -97,20 +93,18 @@
 
 		<h3><Download size={16} class="inline align-middle" /> バックアップのとりかた</h3>
 		<p>
-			<strong
-				>画面の中にバックアップのボタンはありません。</strong
-			>サーバーの
+			<strong>画面の中にバックアップのボタンはありません。</strong>サーバーの
 			<code class="rounded bg-surface2 px-1">data</code>
 			フォルダを、まるごとどこかにコピーしておいてください。それがバックアップです。もどすときは、コピーしたフォルダを元の場所へ書きもどします。
 		</p>
 		<p class="text-text-dim">
-			操作のしかたが分からない場合は、このアプリを入れてくれた方に「data フォルダのコピー」を頼んでください。
+			操作のしかたが分からない場合は、このアプリを入れてくれた方に「data
+			フォルダのコピー」を頼んでください。
 		</p>
 
 		<h3>端末を替えるとき</h3>
 		<p>
-			記録はサーバーにあるので、<strong>端末を替えても何もしなくて大丈夫です。</strong
-			>新しい端末で同じアドレスをひらけば、そのまま続きが見られます。
+			記録はサーバーにあるので、端末を替えても何もしなくて大丈夫です。新しい端末で同じアドレスをひらけば、そのまま続きが見られます。
 		</p>
 	{/if}
 
@@ -118,11 +112,10 @@
 	<p>
 		設定の一覧にある <UiLabel><Download size={13} />エクスポート（JSON）</UiLabel> と
 		<UiLabel><Upload size={13} />JSON をインポート</UiLabel>
-		は、<strong>1年ぶんの設定だけ</strong>を持ち運ぶ機能です。チェック記録は入りません。
+		は、1年ぶんの設定だけを持ち運ぶ機能です。チェック記録は入りません。
 	</p>
 	<p>
-		この形式は lite 版と docker 版で共通なので、<strong
-			>「lite 版で作った設定を docker 版へ移す」といった使い方ができます</strong
-		>（記録は移りません）。
+		この形式は lite 版と docker 版で共通なので、「lite 版で作った設定を docker
+		版へ移す」といった使い方ができます（記録は移りません）。
 	</p>
 </ManualSection>
