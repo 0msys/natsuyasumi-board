@@ -100,11 +100,26 @@ Codex の説明文には `If Codex has suggestions, it will comment; otherwise i
 # 直近のレビュー（指摘ありの経路）
 gh api repos/OWNER/REPO/pulls/PR/reviews --paginate \
   --jq '[.[] | select(.user.login=="chatgpt-codex-connector[bot]")] | .[-3:] | .[] | "\(.id) \(.commit_id[0:7]) \(.submitted_at)"'
-# 合格の要約（指摘なしの経路。ここを見落とすと合格に気づけない）
-gh api repos/OWNER/REPO/issues/PR/comments --paginate \
-  --jq '.[] | select(.user.login=="chatgpt-codex-connector[bot]") | "\(.id) \(.created_at)"'
+# 合格の要約（指摘なしの経路。ここを見落とすと合格に気づけない）。本文まで見て分類する
+gh api repos/OWNER/REPO/issues/PR/comments --paginate --slurp \
+  | jq -r '[.[][]] | map(select(.user.login=="chatgpt-codex-connector[bot]")) | .[]
+           | "\(.id) \(.created_at)\n  \(.body | split("\n") | map(select(length > 0)) | .[0:2] | join(" / "))"'
 # 未返信の指摘が無いかを in_reply_to_id で突き合わせる（下の「未返信の洗い出し」）
 ```
+
+**bot の issue コメントは本文まで見る。** ID と時刻だけ並べても分類できない。届く形は3つ:
+
+| 本文の1行目 | 意味 |
+|---|---|
+| `Codex Review: Didn't find any major issues.` ＋ `Reviewed commit` | 合格。sha を HEAD と突き合わせる |
+| `To use Codex here, create an environment for this repo` | 設定エラー（[取り直しの打ち切り](#取り直しの打ち切り)） |
+| 上記以外 | 指摘ありの要約は review レコード側に入るので、ここには来ない |
+
+ここで分類しないと、起動後は取り返せない。監視は起動より前の bot コメントを既読にするので
+（`seed_before_start`）`SUMMARY` としては二度と出ない。加えて、既読のコメントも
+「レビュアー側の最新活動」に数える——本文を見て既読判定するより前に `newest_at` を更新するため
+——ので、それが直近の依頼より新しいと `QUIET` も出ない。既存 PR を引き継ぐときにこの形になりやすく、
+どちらの合図も来ないまま待ち続けることになる。
 
 未対応の指摘があれば先に片づけてから、監視を起動する。
 
