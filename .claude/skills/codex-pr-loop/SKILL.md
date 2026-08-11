@@ -119,9 +119,10 @@ Codex の説明文には `If Codex has suggestions, it will comment; otherwise i
 gh api repos/OWNER/REPO/pulls/PR/reviews --paginate --slurp \
   | jq -r '[.[][]] | map(select(.user.login=="chatgpt-codex-connector[bot]")) | .[-3:] | .[]
            | "\(.id) \(.commit_id[0:7]) \(.submitted_at)\n  body: \((.body | split("\n") | map(select(length > 0)) | .[0]) // "(空)")"'
-# インライン指摘も中身を見る（P バッジ付きが本物）
+# インライン指摘も中身を見る（P バッジ付きが本物）。自分の返信が混ざらないよう bot で絞る
 gh api repos/OWNER/REPO/pulls/PR/comments --paginate --slurp \
-  | jq -r '[.[][]] | .[] | "\(.id) review=\(.pull_request_review_id) \(.path):\(.line // .original_line)\n  \((.body | split("\n") | map(select(length > 0)) | .[0]) // "(空)")"'
+  | jq -r '[.[][]] | map(select(.user.login=="chatgpt-codex-connector[bot]")) | .[]
+           | "\(.id) review=\(.pull_request_review_id) \(.path):\(.line // .original_line)\n  \((.body | split("\n") | map(select(length > 0)) | .[0]) // "(空)")"'
 # 合格の要約（指摘なしの経路。ここを見落とすと合格に気づけない）。本文まで見て分類する
 gh api repos/OWNER/REPO/issues/PR/comments --paginate --slurp \
   | jq -r '[.[][]] | map(select(.user.login=="chatgpt-codex-connector[bot]")) | .[]
