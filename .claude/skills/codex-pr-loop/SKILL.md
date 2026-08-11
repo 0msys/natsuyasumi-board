@@ -276,7 +276,11 @@ tops=[c for c in d if c['user']['login']!=ME and not c.get('in_reply_to_id')]
 replied={c.get('in_reply_to_id') for c in d if c['user']['login']==ME}
 un=[c for c in tops if c['id'] not in replied]
 print(f"指摘 {len(tops)} 件 / 未返信 {len(un)} 件")
-for c in un: print(" ", c['id'], c['path'], c['created_at'])
+# 本文の先頭行まで出す。ID だけだと、本物の指摘（P バッジ付き）と、設定エラーが
+# インライン1件として届いた形（取り直しの打ち切りを参照）を取り違える。
+for c in un:
+    head=(c['body'] or '').splitlines()
+    print(" ", c['id'], c['path'], c['created_at'], "|", head[0][:80] if head else "(空)")
 EOF
 ```
 
