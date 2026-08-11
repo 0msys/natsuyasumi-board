@@ -8,6 +8,9 @@
 //
 // これは props を眺めても分からない「マウント境界」の挙動で、実際に何度も取りこぼした。
 // {#key} を外すとここが落ちる（＝この検査は空虚でない）ことを確認済み。
+//
+// 末尾の describe はストップウォッチの保存先（どのメモ欄へ書くか）。同じく描画しないと
+// 分からない配線で、項目ごとに違うキーを通していることをここで固定する。
 import { beforeEach, describe, expect, it, mock } from 'bun:test';
 import { render } from '@testing-library/svelte';
 import { setApi } from '../../test-support/apiMock';
@@ -43,19 +46,24 @@ function ondoku(book: string): SummerDailyHomework {
 	};
 }
 
-/** ストップウォッチが出る計算カード（duration メモ持ち）. */
-function keisan(): SummerDailyHomework {
+/** ストップウォッチが出る計算カード（duration メモ持ち）.
+ *
+ *  既定のキーは `m_ab12cd`＝管理画面から「タイム」欄を足したときに実際に振られる形
+ *  （`$lib/core/keys.ts` の `KEY_PREFIXES.meta`）。手書きの `seconds` を既定にすると、
+ *  「タイムをどの欄へ書くか」を取り違えていても差が出ない（実際それで見逃した）. */
+function keisan(fieldKey = 'm_ab12cd'): SummerDailyHomework {
 	return {
 		key: 'keisan',
 		label: 'けいさん',
 		status: 'not_done',
 		done_days: 0,
-		meta_fields: [{ key: 'seconds', type: 'duration', label: 'タイム', placeholder: null, options: [] }],
+		meta_fields: [{ key: fieldKey, type: 'duration', label: 'タイム', placeholder: null, options: [] }],
 		meta: null
 	};
 }
 
 const errors: unknown[] = [];
+const stopwatchStops: { itemKey: string; fieldKey: string; seconds: number }[] = [];
 
 function mountFor(child: string, daily: SummerDailyHomework[], ttsAvailable = false) {
 	return render(SummerTodayChecks, {
@@ -67,10 +75,31 @@ function mountFor(child: string, daily: SummerDailyHomework[], ttsAvailable = fa
 			ttsAvailable,
 			onSet: () => {},
 			onSetMeta: () => {},
-			onStopwatchStop: () => {},
+			onStopwatchStop: (itemKey: string, fieldKey: string, seconds: number) =>
+				stopwatchStops.push({ itemKey, fieldKey, seconds }),
 			onError: (e: unknown) => errors.push(e)
 		}
 	});
+}
+
+/** ストップウォッチを指定秒だけ走らせて止める（時計はテスト側で進める）. */
+async function runStopwatch(
+	r: { container: HTMLElement; rerender: (p: object) => Promise<void> },
+	seconds: number
+) {
+	const button = (label: string) =>
+		[...r.container.querySelectorAll('button')].find((b) => b.textContent?.includes(label));
+	const realNow = Date.now;
+	let now = realNow();
+	Date.now = () => now;
+	try {
+		button('stopwatch_start')!.click();
+		await r.rerender({}); // スタート→ストップの差し替えを反映させる
+		now += seconds * 1000;
+		button('stopwatch_stop')!.click();
+	} finally {
+		Date.now = realNow;
+	}
 }
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -82,6 +111,7 @@ const askButton = (r: { container: HTMLElement }) =>
 beforeEach(() => {
 	todoCalls.length = 0;
 	errors.length = 0;
+	stopwatchStops.length = 0;
 	todoFails = false;
 	releaseTodo = null;
 	setApi({ summerTodoSpeech });
@@ -158,5 +188,27 @@ describe('子どもの切替', () => {
 		releaseTodo!();
 		await flush();
 		expect(errors).toHaveLength(1);
+	});
+});
+
+describe('ストップウォッチの保存先', () => {
+	it('はかったタイムは、その項目のタイム欄のキーで報告する', async () => {
+		// タイム欄のキーは保存時の自動採番（m_xxxxxx）で決まり、項目ごとに違う。
+		// ここを見ずに決まった名前で書いていたころは、標準テンプレ以外＝管理画面から
+		// 足したタイム欄では毎回「しらない メモの こうもくだよ」で弾かれ、
+		// はかったタイムがどこにも残らずに消えていた。
+		const r = mountFor('はな', [keisan('m_9f3e21')]);
+		await runStopwatch(r, 12);
+
+		expect(stopwatchStops).toEqual([{ itemKey: 'keisan', fieldKey: 'm_9f3e21', seconds: 12 }]);
+	});
+
+	it('タイム欄が無い項目にはストップウォッチを出さない', async () => {
+		// 出す判定を .some() から find() に替えても、出る条件は変わっていないこと
+		const r = mountFor('はな', [ondoku('かいけつゾロリ')]);
+		const start = [...r.container.querySelectorAll('button')].find((b) =>
+			b.textContent?.includes('stopwatch_start')
+		);
+		expect(start).toBeUndefined();
 	});
 });

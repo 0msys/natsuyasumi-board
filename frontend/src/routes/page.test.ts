@@ -35,6 +35,8 @@ function hanaRankUp(): SummerState {
 let nextState: SummerState = hana();
 let writeFails = false;
 let releaseWrite: (() => void) | null = null;
+/** summerSetMeta に渡された更新（どの項目のどの欄へ何を書いたか）. */
+const metaWrites: { itemKey: string; updates: Record<string, unknown> }[] = [];
 /** 書き込みが失敗したときに api が投げるもの（既定は docker 版＝JSON 本文つき）. */
 let writeError: unknown = null;
 
@@ -88,6 +90,7 @@ beforeEach(() => {
 	nextState = hana();
 	writeFails = false;
 	releaseWrite = null;
+	metaWrites.length = 0;
 	// 書き込みが弾かれたときの形（docker 版＝JSON 本文つきの 400）。
 	// 子どもあての文言を持つのは 400 だけなので、status も実物に合わせる。
 	writeError = new ApiError(400, '{"detail": "かきこめなかった"}', '/api/summer/check/set');
@@ -99,6 +102,12 @@ beforeEach(() => {
 			});
 			if (writeFails) throw writeError;
 			return { status: 'done' };
+		},
+		// 本物は定義に無い項目名を弾く（service.py / api/local/summer.ts の
+		// 「しらない メモの こうもくだよ」）。ここでは何が渡ったかだけを控える。
+		summerSetMeta: async (_child: string, _day: string, itemKey: string, updates: Record<string, unknown>) => {
+			metaWrites.push({ itemKey, updates });
+			return updates;
 		},
 		summerMediaTimerState: async () => ({
 			child: 'はな', day: '2026-08-01', running: false, resumed_at: null,
@@ -203,6 +212,46 @@ describe('子どもページ・切替の後始末', () => {
 		expect(rankBannerShown()).toBe(false); // まだ遅延中（満点花火が先）
 
 		expect(await advance(20_000, rankBannerShown)).toBe(true);
+	});
+});
+
+describe('子どもページ・ストップウォッチ', () => {
+	/** 計算カードのタイム欄のキーを差し替えた state（管理画面から足した欄はこの形）. */
+	function hanaWithDurationKey(fieldKey: string): SummerState {
+		const s = hana();
+		const item = s.daily_homework.find((i) => i.key === 'keisan')!;
+		item.meta_fields.find((f) => f.type === 'duration')!.key = fieldKey;
+		return s;
+	}
+
+	const swButton = (r: { container: HTMLElement }, label: string) =>
+		[...r.container.querySelectorAll('button')].find((b) =>
+			b.textContent?.includes(stripRuby(label))
+		)!;
+
+	it('はかったタイムは、その項目のタイム欄のキーで書く', async () => {
+		// フィクスチャの計算カードは手書きの `seconds` を持っているが、管理画面から
+		// 「タイム」欄を足すと保存時に m_xxxxxx が振られる（$lib/core/keys.ts）。
+		// 名前を決め打っていたころは、その欄が必ずサーバに弾かれて
+		//「しらない メモの こうもくだよ」になり、はかったタイムが消えていた。
+		const r = mountPage(hanaWithDurationKey('m_9f3e21'));
+
+		const realNow = Date.now;
+		let now = realNow();
+		Date.now = () => now;
+		try {
+			swButton(r, UI.stopwatch_start).click();
+			await drain();
+			now += 42_000;
+			swButton(r, UI.stopwatch_stop).click();
+		} finally {
+			Date.now = realNow;
+		}
+		await drain();
+		releaseWrite!(); // done 化が先（meta は「やった」の行にしか書けない）
+		await drain();
+
+		expect(metaWrites).toEqual([{ itemKey: 'keisan', updates: { m_9f3e21: 42 } }]);
 	});
 });
 

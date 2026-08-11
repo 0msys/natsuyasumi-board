@@ -31,7 +31,7 @@
 		ttsAvailable: boolean;
 		onSet: (itemKey: string, status: SummerCheckStatus) => void;
 		onSetMeta: (itemKey: string, fieldKey: string, value: string | number | null) => void;
-		onStopwatchStop: (itemKey: string, seconds: number) => void;
+		onStopwatchStop: (itemKey: string, fieldKey: string, seconds: number) => void;
 		onError: (e: unknown) => void;
 	} = $props();
 
@@ -93,9 +93,15 @@
 		     item.key は同じ子のあいだ不変なので、60秒ポーリングで入力や計測が飛ぶことはない。 -->
 		{#key child + ':' + item.key}
 			<!-- 計算カード（duration メモ持ち）は done 前でもストップウォッチを出す。
-			     ストップで自動 done 化＋タイムを保存するので流れが自然（親が処理）。 -->
-			{#if item.meta_fields.some((f) => f.type === 'duration')}
-				<SummerStopwatch {ui} onStop={(seconds) => onStopwatchStop(item.key, seconds)} />
+			     ストップで自動 done 化＋タイムを保存するので流れが自然（親が処理）。
+			     書き込み先はその欄そのもののキー（管理画面で足した欄は m_xxxxxx が振られる）。
+			     種類だけ見て名前を決め打つと、標準テンプレ以外では必ず弾かれる。 -->
+			{@const durField = item.meta_fields.find((f) => f.type === 'duration')}
+			{#if durField}
+				<SummerStopwatch
+					{ui}
+					onStop={(seconds) => onStopwatchStop(item.key, durField.key, seconds)}
+				/>
 			{/if}
 			{#if item.status === 'done' && item.meta_fields.length}
 				<SummerMetaInputs

@@ -246,16 +246,18 @@
 	const setMeta = (day: string, itemKey: string, fieldKey: string, value: string | number | null) =>
 		write((child) => api.summerSetMeta(child, day, itemKey, { [fieldKey]: value }));
 
-	// 計算カードのストップウォッチ停止: done 化してから、はかったタイムを seconds メモへ保存。
+	// 計算カードのストップウォッチ停止: done 化してから、はかったタイムをその duration メモへ保存。
 	// meta は「やった」の行にしか書けない（サーバ検証）ので、必ず done を先行させる。
-	async function onStopwatchStop(itemKey: string, seconds: number) {
+	// 書き込み先の fieldKey は必ず呼び元（欄を描いている側）から渡す。ここで名前を決め打つと、
+	// 管理画面から足した欄（m_xxxxxx が振られる）では毎回「しらない メモの こうもくだよ」になる。
+	async function onStopwatchStop(itemKey: string, fieldKey: string, seconds: number) {
 		// 書き込みが2回あり、あいだに await が挟まる。日付も1回だけ捕まえる（日またぎで
 		// 「done は昨日・タイムは今日」になるのを防ぐ）。子は write が捕まえて渡してくれる。
 		const day = summer?.today;
 		if (!day) return;
 		await write(async (child) => {
 			await api.summerSetCheck(child, day, itemKey, 'done');
-			await api.summerSetMeta(child, day, itemKey, { seconds });
+			await api.summerSetMeta(child, day, itemKey, { [fieldKey]: seconds });
 		});
 	}
 	// 褒めメッセージを VOICEVOX で読み上げる
