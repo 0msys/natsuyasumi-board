@@ -530,6 +530,40 @@ def dump_judge() -> None:
                 }
             )
 
+    # えらぶ宿題の必要数（min_required）の境目。サンプル定義は min_required=1 なので、
+    # そのままでは「1つ終えた＝必要数を満たした」と区別がつかず、件数で見ているかを
+    # 検査できない。定義を差し替えた1件として金型に入れる（doc 全体ではなく操作だけ）。
+    for min_required in (2, 3):
+        mutated_doc = load_sample_doc()
+        mutated_doc["choice_homework"][0]["min_required"] = min_required
+        mutated = parse_definition(mutated_doc)
+        mutation = {
+            "path": ["choice_homework", 0, "min_required"],
+            "op": "set",
+            "value": min_required,
+        }
+        group = mutated.choice_homework[0]
+        day = mutated.end
+        for done in range(min_required + 2):
+            flag_values = {o.key: 1 for o in group.options[:done]}
+            cases.append(
+                {
+                    "name": f"remainingToday えらぶ宿題 必要{min_required}個 済み{done}個",
+                    "input": {
+                        "kind": "remainingToday",
+                        "day": day.isoformat(),
+                        "statuses": {},
+                        "flagValues": flag_values,
+                        "decisions": {},
+                        "mutation": mutation,
+                    },
+                    "output": [
+                        {"kind": i.kind, "key": i.key, "label": i.label, "note": i.note}
+                        for i in judge.remaining_today(day, {}, flag_values, {}, mutated)
+                    ],
+                }
+            )
+
     # 「全部やらない」を作らせない判定
     for group in definition.choice_homework:
         opts = [o.key for o in group.options]

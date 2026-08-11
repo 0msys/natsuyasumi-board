@@ -10,7 +10,14 @@ import {
 	remainingToday,
 	rewardProgress
 } from './judge';
-import { runGolden, loadGolden, loadSampleDoc, type GoldenFile } from './golden';
+import {
+	runGolden,
+	applyMutation,
+	loadGolden,
+	loadSampleDoc,
+	type GoldenFile,
+	type Mutation
+} from './golden';
 const golden = loadGolden('judge.json');
 const sampleDoc = loadSampleDoc();
 
@@ -33,6 +40,9 @@ type Input =
 			statuses: Record<string, string>;
 			flagValues: Record<string, number>;
 			decisions: Record<string, string | null>;
+			// 定義を差し替えたケースだけ入る（サンプル定義のどこをどう変えたか）。
+			// えらぶ宿題の min_required はサンプルが1なので、この操作でしか境目を作れない。
+			mutation?: Mutation | null;
 	  }
 	| {
 			kind: 'canSkip';
@@ -57,14 +67,18 @@ runGolden(golden as unknown as GoldenFile<Input, unknown>, '採点', (input) => 
 				input.daysTotal,
 				definition.rewards
 			);
-		case 'remainingToday':
+		case 'remainingToday': {
+			const target = input.mutation
+				? parseDefinition(applyMutation(sampleDoc, input.mutation))
+				: definition;
 			return remainingToday(
 				input.day,
 				input.statuses,
 				input.flagValues,
 				input.decisions,
-				definition
+				target
 			).map((i) => ({ kind: i.kind, key: i.key, label: i.label, note: i.note ?? null }));
+		}
 		case 'canSkip': {
 			const group = definition.choice_homework.find((g) => g.key === input.groupKey)!;
 			return canSkip(group, input.decisions, input.optionKey);

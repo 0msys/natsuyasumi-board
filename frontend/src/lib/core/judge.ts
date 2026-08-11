@@ -332,9 +332,18 @@ export function remainingToday(
 					items.push({ kind: 'one_shot', key: item.key, label: item.label });
 				}
 			}
+			// えらぶ宿題は「どれか min_required 個以上」なので、件数で見る。
+			// 1つでも done なら消す書きかたにすると、2つ必要な設定で1つ終えた時点で
+			// 残りから消え、宿題カード（satisfied）と言うことが食い違う。
 			for (const group of definition.choice_homework) {
-				if (!group.options.some((o) => (flagValues[o.key] ?? 0) >= 1)) {
-					items.push({ kind: 'one_shot', key: group.key, label: group.label });
+				const done = group.options.filter((o) => (flagValues[o.key] ?? 0) >= 1).length;
+				if (done < group.min_required) {
+					items.push({
+						kind: 'one_shot',
+						key: group.key,
+						label: group.label,
+						note: `あと${group.min_required - done}`
+					});
 				}
 			}
 		}

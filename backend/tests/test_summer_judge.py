@@ -11,7 +11,7 @@ from datetime import date
 
 import pytest
 
-from app.summer.definition import RewardRank
+from app.summer.definition import RewardRank, parse_definition
 from app.summer.judge import (
     RemainingItem,
     can_skip,
@@ -22,6 +22,7 @@ from app.summer.judge import (
     remaining_today,
     reward_progress,
 )
+from tests.conftest import load_sample_doc
 
 START = date(2026, 7, 18)
 END = date(2026, 8, 31)
@@ -240,9 +241,33 @@ def test_remaining_終盤は一回もの宿題が出る(definition):
 
 
 def test_remaining_選択宿題は1つ完了で消える(definition):
+    # サンプル定義の min_required は1なので、1つで必要数を満たす
     group = definition.choice_homework[0]
     flags = {group.options[0].key: 1}
     assert "sakuhin" not in _keys(remaining_today(date(2026, 8, 25), {}, flags, {}, definition))
+
+
+def test_remaining_選択宿題は必要数に足りないうちは残る():
+    # 「2つ以上」の設定で1つ終えた時点で残りから消すと、宿題カード（satisfied）と
+    # 食い違い、よみあげが「ぜんぶできているよ」と言ってしまう
+    doc = load_sample_doc()
+    doc["choice_homework"][0]["min_required"] = 2  # 選択肢は6個
+    two_required = parse_definition(doc)
+    group = two_required.choice_homework[0]
+
+    def _sakuhin(done: int) -> RemainingItem | None:
+        flags = {o.key: 1 for o in group.options[:done]}
+        items = remaining_today(date(2026, 8, 25), {}, flags, {}, two_required)
+        found = [i for i in items if i.key == group.key]
+        return found[0] if found else None
+
+    for done, note in [(0, "あと2"), (1, "あと1")]:
+        item = _sakuhin(done)
+        assert item is not None, f"{done}個では必要数2に足りないので残るべき"
+        assert item.note == note
+    # 必要数に届いたら消える（余分にやっても消えたまま）
+    assert _sakuhin(2) is None
+    assert _sakuhin(3) is None
 
 
 # ---- 連続満点ストリーク（スタンプラリー） ----

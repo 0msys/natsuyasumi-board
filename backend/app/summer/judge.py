@@ -346,9 +346,20 @@ def remaining_today(
                         )
                 elif value < 1:
                     items.append(RemainingItem(kind="one_shot", key=item.key, label=item.label))
+            # えらぶ宿題は「どれか min_required 個以上」なので、件数で見る。
+            # 1つでも done なら消す書きかたにすると、2つ必要な設定で1つ終えた時点で
+            # 残りから消え、宿題カード（satisfied）と言うことが食い違う。
             for group in definition.choice_homework:
-                if not any(flag_values.get(o.key, 0) >= 1 for o in group.options):
-                    items.append(RemainingItem(kind="one_shot", key=group.key, label=group.label))
+                done = sum(1 for o in group.options if flag_values.get(o.key, 0) >= 1)
+                if done < group.min_required:
+                    items.append(
+                        RemainingItem(
+                            kind="one_shot",
+                            key=group.key,
+                            label=group.label,
+                            note=f"あと{group.min_required - done}",
+                        )
+                    )
 
     for prep in definition.school_start_items:
         if flag_values.get(prep.key, 0) >= 1:
