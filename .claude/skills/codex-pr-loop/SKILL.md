@@ -76,11 +76,12 @@ Codex の説明文には `If Codex has suggestions, it will comment; otherwise i
 
 依頼後に `QUIET`（既定12分・`QUIET_AFTER_S`）が出たときも、この1回に数える。
 
-レビューがそもそも走っていないと分かる応答は、再依頼しても変わらない。PR #32 では
-自動レビューの代わりに `To use Codex here, create an environment for this repo` が届いた。
-原因がアカウント側の設定にあるので、1回で見切って利用者へ渡す。この応答は要約の体裁を
-していないため `Reviewed commit` を持たず、監視は `HEAD 照合=unknown` の `SUMMARY` として出す
-（`CLEAN` にはならない）。
+設定エラーの応答も、レビュー未実行の確定として扱わない。PR #32 では自動レビューの代わりに
+`To use Codex here, create an environment for this repo` が届いたが、1回依頼し直したら
+レビューは走り、指摘なしの要約が届いた（＝一時的なものだった）。この応答は `Reviewed commit` を
+持たないので合格にはならず、監視は `HEAD 照合=unknown` の `SUMMARY` として出す（`CLEAN` にはならない）。
+扱いは要約が落ちたときと同じで、依頼し直すのは1回まで。2回目も同じ応答なら、そこで止めて
+利用者へ渡す（本当に設定側に用があるかもしれないが、こちらからは区別できない）。
 
 ## 手順
 
