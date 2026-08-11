@@ -12,15 +12,13 @@
 <ManualSection id="history">
 	<h3><CalendarRange size={16} class="inline align-middle" /> {SCREEN.historyTitle}</h3>
 	<p>
-		夏休みの初日から最終日までが、日ごと・項目ごとの表になっています。<strong
-			>横にスクロールします。</strong
-		>「つけ忘れた日」がひと目で分かります。
+		夏休みの初日から最終日までが、日ごと・項目ごとの表になっています。横にスクロールします。「つけ忘れた日」がひと目で分かります。
 	</p>
 	<ul>
 		<li>その日の基本点と、チャレンジを含めた合計点が出ます</li>
 		<li>
-			<Flame size={13} class="inline align-middle" />
-			<strong>連続満点</strong> — いま何日つづいているか、いちばん長かったのは何日か、満点は通算何回かが出ます
+			<Flame size={13} class="inline align-middle" /> 連続満点 …
+			いま何日つづいているか、いちばん長かったのは何日か、満点は通算何回かが出ます
 		</li>
 		<li>
 			おでかけの日は日づけの色が変わり、押すと予定の名前が出ます。おでかけの日につけ忘れがあっても、連続はとぎれません
@@ -29,10 +27,10 @@
 	</ul>
 
 	<h3><Pencil size={16} class="inline align-middle" /> 前の日を直す</h3>
-	<p>表の<strong>日づけを押す</strong>と、その日の記録が開きます。</p>
+	<p>表の日づけを押すと、その日の記録が開きます。</p>
 	<ul>
 		<li>
-			<strong>過去の日は、まず「見るだけ」で開きます</strong>（「{SCREEN.dayEditViewOnly}」と出ます）。うっかり書き換えないためです
+			過去の日は、まず「見るだけ」で開きます（「{SCREEN.dayEditViewOnly}」と出ます）。うっかり書き換えないためです
 		</li>
 		<li>
 			<UiLabel><Pencil size={13} />{SCREEN.dayEditButton}</UiLabel> を押すと直せるようになります
@@ -44,12 +42,9 @@
 		<UiLabel><Star size={13} />{SCREEN.challengeTitle}</UiLabel> も直せます。
 	</p>
 	<p>
-		チャレンジが開く条件も同じで、<strong>その日の基本点が100点になったとき</strong
-		>です。この画面の中でチェックを足して100点にすると、その場でチャレンジが開きます。
+		チャレンジが開く条件も同じで、その日の基本点が100点になったときです。この画面の中でチェックを足して100点にすると、その場でチャレンジが開きます。
 	</p>
 	<p>
-		直すと、合計点・ごほうびランク・連続満点もその場で計算し直されます。<strong
-			>夏休みが終わったあとでも直せます。</strong
-		>
+		直すと、合計点・ごほうびランク・連続満点もその場で計算し直されます。夏休みが終わったあとでも直せます。
 	</p>
 </ManualSection>
