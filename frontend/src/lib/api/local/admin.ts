@@ -86,6 +86,36 @@ function assertKeyable(definition: SummerDefinition): void {
 	}
 }
 
+const sharesKey = (a: Set<string>, b: Set<string>): boolean => [...a].some((key) => b.has(key));
+
+/** 同じ子の、**いま登録されている**別の年と、記録のキーがぶつかるか。
+ *
+ *  突き合わせるのは doc に書かれた key ではなく、**記録に載る実効キー**（parse 後）。
+ *  えらぶ宿題の選択肢だけは形が変わり、`グループ.選択肢` に連結して保存されるので、
+ *  doc の生の key（`グループ` と `選択肢` が別々）を並べて比べると、別の年の
+ *  `g.o` と同じ文字列を持つ一回もの・じゅんびが素通りする。
+ *
+ *  日次とフラグは**別々に**見る。保存先が別なので、日次の key と別の年のフラグの key が
+ *  同じでも記録は混ざらない——ここで一緒くたにすると、ぶつかっていないのに振り直す。
+ *
+ *  読めない年が居たら、どのキーを使っているか分からないので分けておく（fail closed）。 */
+function collidesWithOtherYear(db: Db, definition: SummerDefinition): boolean {
+	for (const row of Object.values(db.definitions)) {
+		if (row.child !== definition.child || row.year === definition.year) continue;
+		let other: SummerDefinition;
+		try {
+			// parse は doc を書き換える（旧形式を畳む）ので、保存の実体ではなく写しを渡す
+			other = parseDefinition(clone(row.doc), `${definition.child}（${row.year}年）`);
+		} catch (e) {
+			if (e instanceof SummerDefinitionError) return true;
+			throw e;
+		}
+		if (sharesKey(dailyItemKeys(definition), dailyItemKeys(other))) return true;
+		if (sharesKey(flagItemKeys(definition), flagItemKeys(other))) return true;
+	}
+	return false;
+}
+
 /**
  * 新しい定義を作る（ウィザード・インポート共用）。同じ子の同じ年が居れば 409。
  *
@@ -93,7 +123,7 @@ function assertKeyable(definition: SummerDefinition): void {
  * **別の年の定義は必ず別のキー空間**でなければならない（去年の「絵日記できた」が
  * 今年も済み扱いになる）。ウィザードと来年コピーはキーを持たない doc を渡すので
  * 採番で新しくなる。エクスポート JSON の取り込みだけはキーを持ったまま来るので、
- * ここで年が既存と違えば振り直す。
+ * ここで**生きている別の年とキーがぶつかるなら**振り直す。
  */
 export function createDefinition(db: Db, incoming: Doc) {
 	const doc = clone(incoming);
@@ -106,10 +136,12 @@ export function createDefinition(db: Db, incoming: Doc) {
 			`「${definition.child}」の${definition.year}年ぶんはもう登録されています`
 		);
 	}
-	const hasOtherYear = Object.values(db.definitions).some(
-		(r) => r.child === definition.child && r.year !== definition.year
-	);
-	if (hasOtherYear) {
+	// 「別の年が居る」だけで振り直してはいけない。年ごとの削除は記録を残す
+	// （画面も「記録は消えません」と約束している）ので、消した年を書き出しておいた
+	// JSON から登録しなおす道も、ここを通る。ぶつかってもいないのに振り直すと、
+	// のこしておいた記録は古いキーのまま孤児になり、二度と結びつかない。
+	// ぶつかるとき——まだ登録されている年からコピーした doc——だけ分ければ足りる。
+	if (collidesWithOtherYear(db, definition)) {
 		stripKeys(doc);
 		assignKeys(doc);
 		definition = parseOr422(doc, definition.child);

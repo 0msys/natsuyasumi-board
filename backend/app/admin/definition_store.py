@@ -214,7 +214,8 @@ def create_definition(doc: dict, db_path: Path | None = None) -> dict:
     年を持たないため、**別の年の定義は必ず別のキー空間**でなければならない
     （去年の「絵日記できた」が今年も済み扱いになる）。ウィザードと create_next_year は
     キーを持たない doc を渡すので assign_keys が新しいキーを振る。エクスポート JSON の
-    インポートだけはキーを持ったまま来るので、ここで年が既存と違えばキーを振り直す。
+    インポートだけはキーを持ったまま来るので、ここで**まだ登録されている別の年と
+    キーがぶつかるなら**振り直す。
     """
     assign_keys(doc)
     try:
@@ -233,12 +234,41 @@ def create_definition(doc: dict, db_path: Path | None = None) -> dict:
                 raise DefinitionStoreError(
                     409, f"「{definition.child}」の{definition.year}年ぶんはもう登録されています"
                 )
-            other_year = conn.execute(
-                "SELECT 1 FROM summer_definitions WHERE child = ? AND year != ?",
+            # 「別の年が居る」だけで振り直してはいけない。年ごとの削除は記録を残す
+            # （画面も「記録は消えません」と約束している）ので、消した年を書き出して
+            # おいた JSON から登録しなおす道も、ここを通る。ぶつかってもいないのに
+            # 振り直すと、のこしておいた記録は古いキーのまま孤児になり、二度と
+            # 結びつかない。ぶつかるとき——まだ登録されている年からコピーした doc
+            # ——だけ分ければ足りる。
+            #
+            # 突き合わせるのは doc に書かれた key ではなく、**記録に載る実効キー**
+            # （parse 後）。えらぶ宿題の選択肢だけは形が変わり、"グループ.選択肢" に
+            # 連結して summer_flags へ入るので、doc の生の key を並べて比べると、
+            # 別の年の "g.o" と同じ文字列を持つ一回もの・じゅんびが素通りする。
+            # 日次とフラグは別々に見る（保存先が別なので、またいで同じでも混ざらない）。
+            collides = False
+            for (raw,) in conn.execute(
+                "SELECT doc FROM summer_definitions WHERE child = ? AND year != ?",
                 (definition.child, definition.year),
-            ).fetchone()
-            if other_year:
-                # 同じ子の別の年が既に居る＝キー空間を分ける（上の docstring 参照）
+            ):
+                try:
+                    other = parse_definition(json.loads(raw), source=definition.child)
+                except (SummerDefinitionError, json.JSONDecodeError):
+                    # 読めない年は、どのキーを使っているか分からない＝分けておく。
+                    # JSON ごと壊れている doc 列も居うる——一覧はその年を valid=False と
+                    # して出す作りで（definition.list_children）、直すには編集画面へ
+                    # 入らせるしかない。ここで素の例外を漏らすと、その子はほかの年も
+                    # 取り込めなくなる（原因の分からない 500 になる）。
+                    collides = True
+                    break
+                if definition.daily_item_keys() & other.daily_item_keys():
+                    collides = True
+                    break
+                if definition.flag_item_keys() & other.flag_item_keys():
+                    collides = True
+                    break
+            if collides:
+                # まだ登録されている年とキー空間を分ける（上の docstring 参照）
                 strip_keys(doc)
                 assign_keys(doc)
                 definition = parse_definition(doc, source=definition.child)

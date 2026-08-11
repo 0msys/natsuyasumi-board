@@ -33,8 +33,8 @@ async function wizard(child = CHILD, year = Number(today.slice(0, 4))) {
 }
 
 /** 標準テンプレートの、採番済みの項目キーを引く。 */
-async function keysOf(child = CHILD) {
-	const entry = await api.adminGetDefinition(child);
+async function keysOf(child = CHILD, year?: number) {
+	const entry = await api.adminGetDefinition(child, year);
 	const doc = entry.doc as Record<string, { key: string }[]>;
 	return {
 		doc: entry.doc,
@@ -352,6 +352,96 @@ describe('来年ぶん', () => {
 			template: 'empty'
 		});
 		expect(api.adminCreateNextYear('ろく')).rejects.toThrow('小6の次の学年はありません');
+	});
+});
+
+describe('消した年の登録しなおし', () => {
+	// 年ごとの削除は「記録は消えません」と約束していて、実際チェックの行は残る。
+	// キーを振り直す条件が「同じ子の別の年が居る」だったころは、その約束が取り込みの
+	// 側で破れていた——残した記録は古いキーのまま孤児になり、書き出しておいた JSON から
+	// 登録しなおしても二度と結びつかない（画面は真っさらのまま）。
+	it('書き出しておいた JSON から戻すと、その年の記録も戻る', async () => {
+		await wizard();
+		const before = await keysOf();
+		await api.adminCreateNextYear(CHILD); // 同じ子の別の年が居る状態にする
+		await api.summerSetCheck(CHILD, today, before.habits[0], 'done');
+		const score = (await api.summerState(CHILD)).today_score!.score;
+		expect(score, '前提: 記録が点数に出ている').toBeGreaterThan(0);
+
+		const { doc } = await api.adminExportDoc(CHILD, before.year);
+		await api.adminDeleteDefinition(CHILD, before.year);
+		await api.adminImportDefinition(doc as Record<string, unknown>);
+
+		const after = await keysOf(CHILD, before.year);
+		expect(after.habits, '登録しなおしでキーが振り直されている').toEqual(before.habits);
+		expect(
+			(await api.summerState(CHILD)).today_score!.score,
+			'のこしておいた記録が戻ってこない'
+		).toBe(score);
+	});
+
+	// 振り直しそのものは要る。フラグ（じゅんび・一回もの）は年を持たないので、
+	// 生きている年とキーを共有したまま入れると、去年の「できた」が今年も済みになる。
+	it('まだ登録されている年とキーがぶつかる doc は、いままでどおり振り直す', async () => {
+		const year = Number(today.slice(0, 4));
+		const docFor = (y: number) => ({
+			child: CHILD,
+			child_kana: CHILD,
+			year: y,
+			grade: '小2',
+			period: {
+				start: `${y}-07-21`,
+				end: `${y}-08-31`,
+				first_day_of_school: `${y}-09-01`
+			},
+			habits: [{ key: 'h_same', label: 'はみがき' }],
+			school_start_items: [{ key: 'ss_same', label: 'なまえペン', due: `${y}-08-31` }]
+		});
+		await api.adminImportDefinition(docFor(year));
+		const next = await api.adminImportDefinition(docFor(year + 1));
+
+		const doc = next.doc as Record<string, { key: string }[]>;
+		expect(doc.habits[0].key, '生きている年とキーを共有したまま入った').not.toBe('h_same');
+		expect(doc.school_start_items[0].key, '「できた」が年をまたいで持ち越される').not.toBe(
+			'ss_same'
+		);
+	});
+
+	// えらぶ宿題の選択肢だけは、記録に載るキーの形が変わる（`グループ.選択肢`）。
+	// doc に書かれた生の key（グループと選択肢が別々）を並べて比べると、この連結が
+	// 見えないので、同じ文字列を key に持つ一回ものが素通りしてしまう。
+	it('えらぶ宿題の選択肢と同じ形の key も、ぶつかりとして見る', async () => {
+		const year = Number(today.slice(0, 4));
+		// 生の key はどこも重ねない（重なると、実効キーを見なくても振り直しが走る）
+		const base = (y: number) => ({
+			child: CHILD,
+			child_kana: CHILD,
+			year: y,
+			grade: '小2',
+			period: {
+				start: `${y}-07-21`,
+				end: `${y}-08-31`,
+				first_day_of_school: `${y}-09-01`
+			},
+			habits: [{ key: `h_${y}`, label: 'はみがき' }]
+		});
+		await api.adminImportDefinition({
+			...base(year),
+			choice_homework: [
+				{ key: 'cg_x', label: 'どれかひとつ', options: [{ key: 'o_1', label: 'こうさく' }] }
+			]
+		});
+		// 上の選択肢が flags に書くキーは 'cg_x.o_1'。同じ文字列を次の年が持っている
+		const next = await api.adminImportDefinition({
+			...base(year + 1),
+			one_shot_homework: [{ key: 'cg_x.o_1', label: 'じゆうけんきゅう', required: false }]
+		});
+
+		const doc = next.doc as Record<string, { key: string }[]>;
+		expect(
+			doc.one_shot_homework[0].key,
+			'去年の選択肢を押しただけで、今年の一回ものが済みになる'
+		).not.toBe('cg_x.o_1');
 	});
 });
 

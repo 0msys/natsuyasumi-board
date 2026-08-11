@@ -14,6 +14,7 @@ from datetime import date
 import pytest
 from fastapi.testclient import TestClient
 
+from app import db as app_db
 from app.main import create_app
 from app.summer.definition import select_definition_year
 
@@ -260,6 +261,97 @@ def test_同じ子の別の年はインポートできキーは振り直され�
     r = client.post("/api/admin/definitions/import", json={"doc": other_year})
     assert r.status_code == 200 and r.json()["year"] == 2028
     assert _keys(exported) & _keys(r.json()["doc"]) == set()
+
+
+def test_壊れた定義が居ても別の年の取り込みは通る(client, tmp_db):
+    """doc 列ごと壊れている年が居ても、別の年の取り込みを 500 で落とさない.
+
+    一覧はこの状態を valid=False として出す（list_children は JSONDecodeError も拾う）。
+    取り込みだけが素の例外で落ちると、その子はほかの年も入れられなくなる。
+    どのキーを使っているか確かめられないので、キーは振り直す（fail closed）。
+    """
+    with app_db.connect(tmp_db) as conn:
+        conn.execute("UPDATE summer_definitions SET doc = ? WHERE child = 'はな'", ("{壊れた",))
+        conn.commit()
+
+    doc = {
+        "child": "はな",
+        "child_kana": "はな",
+        "grade": "小3",
+        "year": 2027,
+        "period": {
+            "start": "2027-07-21",
+            "end": "2027-08-31",
+            "first_day_of_school": "2027-09-01",
+        },
+        "habits": [{"key": "h_2027", "label": "はみがき"}],
+    }
+    r = client.post("/api/admin/definitions/import", json={"doc": doc})
+    assert r.status_code == 200, r.text
+    assert r.json()["doc"]["habits"][0]["key"] != "h_2027"
+
+
+def test_選択肢と同じ形のkeyもぶつかりとして扱う(client):
+    """えらぶ宿題の選択肢は "グループ.選択肢" に連結して summer_flags へ入る.
+
+    doc に書かれた生の key（グループと選択肢が別々）を並べて比べると、この連結が
+    見えない。同じ文字列を key に持つ一回もの・じゅんびが素通りすると、summer_flags は
+    (child, item_key) で年を持たないので、去年の「できた」が次の年にも出てしまう。
+    """
+
+    def base(year: int) -> dict:
+        # 生の key はどこも重ねない（重なると、実効キーを見なくても振り直しが走る）
+        return {
+            "child": "そら",
+            "child_kana": "そら",
+            "grade": "小2",
+            "year": year,
+            "period": {
+                "start": f"{year}-07-21",
+                "end": f"{year}-08-31",
+                "first_day_of_school": f"{year}-09-01",
+            },
+            "habits": [{"key": f"h_{year}", "label": "はみがき"}],
+        }
+
+    first = dict(base(2027), choice_homework=[
+        {"key": "cg_x", "label": "どれかひとつ", "options": [{"key": "o_1", "label": "こうさく"}]}
+    ])
+    assert client.post("/api/admin/definitions/import", json={"doc": first}).status_code == 200
+    # 上の選択肢が flags に書くキーは "cg_x.o_1"。同じ文字列を次の年が持っている
+    second = dict(base(2028), one_shot_homework=[
+        {"key": "cg_x.o_1", "label": "じゆうけんきゅう", "required": False}
+    ])
+    r = client.post("/api/admin/definitions/import", json={"doc": second})
+    assert r.status_code == 200
+    assert r.json()["doc"]["one_shot_homework"][0]["key"] != "cg_x.o_1", (
+        "去年の選択肢を押しただけで、今年の一回ものが済みになる"
+    )
+
+
+def test_消した年を書き出したJSONから登録しなおすと記録も戻る(client):
+    """年ごとの削除は記録を残す（画面も「記録は消えません」と約束している）.
+
+    「同じ子の別の年が居る」だけでキーを振り直していたころは、その約束が取り込みの
+    側で破れていた——のこした記録は古いキーのまま孤児になり、書き出しておいた JSON から
+    登録しなおしても二度と結びつかない（復元した画面は真っさらのまま）。
+    """
+    exported = client.get("/api/admin/definitions/はな/export").json()
+    client.post("/api/admin/definitions/はな/next-year")  # 同じ子の別の年が居る状態にする
+    key = exported["habits"][0]["key"]
+    client.post(
+        "/api/summer/check/set",
+        json={"child": "はな", "day": "2026-08-01", "item_key": key, "status": "done"},
+    )
+    score = client.get("/api/summer/state?child=はな").json()["today_score"]["score"]
+    assert score > 0  # 前提: 記録が点数に出ている
+
+    assert client.request("DELETE", "/api/admin/definitions/はな?year=2026").status_code == 200
+    r = client.post("/api/admin/definitions/import", json={"doc": exported})
+    assert r.status_code == 200 and r.json()["year"] == 2026
+    assert _keys(r.json()["doc"]) == _keys(exported), "登録しなおしでキーが振り直されている"
+    state = client.get("/api/summer/state?child=はな").json()
+    assert state["today_score"]["score"] == score, "のこしておいた記録が戻ってこない"
 
 
 def test_きかんの外の記録の警告は他の年で誤爆しない(client, monkeypatch):
