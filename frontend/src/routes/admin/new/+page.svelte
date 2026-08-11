@@ -4,7 +4,7 @@
 	// year は period.start の西暦から自動導出する（入力させない）。
 	import { goto, invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { ArrowLeft, ArrowRight, Check, TriangleAlert } from '@lucide/svelte';
+	import { ArrowLeft, ArrowRight, Check, CircleQuestionMark, TriangleAlert } from '@lucide/svelte';
 	import { api } from '$lib/api';
 	import { errorDetail } from '$lib/api/apiError';
 	import { GRADES } from '$lib/admin/docTypes';
@@ -62,12 +62,29 @@
 <div class="mx-auto max-w-xl p-3 lg:p-6">
 	<header class="mb-4 flex items-center justify-between">
 		<h1 class="text-lg font-bold text-text-base lg:text-xl">あたらしくつくる</h1>
-		<a
-			href={resolve('/admin')}
-			class="flex items-center gap-1 text-sm text-text-dim hover:text-text-base"
-		>
-			<ArrowLeft size={16} />一覧へ
-		</a>
+		<!-- 定義がゼロの初回はここへ直行するので、この画面のマニュアル入口は
+		     アイコンだけにせず文字も出す（はじめて触る親が最初に見る画面）。
+		     ただし別タブで開く: このウィザードの入力は $state に持つだけで離脱ガードも
+		     無いため、同じタブで出ていくと入力が消えてステップ1へ戻る。手が止まって
+		     マニュアルを開く親ほど、そこまでの入力を持っている。 -->
+		<div class="flex items-center gap-3">
+			<a
+				href={resolve('/manual')}
+				target="_blank"
+				rel="noopener"
+				aria-label="つかいかた（別のタブでひらきます）"
+				title="つかいかた（別のタブでひらきます）"
+				class="flex items-center gap-1 text-sm text-text-dim hover:text-text-base"
+			>
+				<CircleQuestionMark size={16} />つかいかた
+			</a>
+			<a
+				href={resolve('/admin')}
+				class="flex items-center gap-1 text-sm text-text-dim hover:text-text-base"
+			>
+				<ArrowLeft size={16} />一覧へ
+			</a>
+		</div>
 	</header>
 
 	{#if !data.session}

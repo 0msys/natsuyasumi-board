@@ -10,7 +10,7 @@
 //
 // prerender: lite のときだけ。静的な入れ物（シェル）をビルド時に書き出す。
 //   ssr=false なので load は走らず、API を叩きにいくこともない。
-//   これで /・/admin・/admin/new が実ファイルになり、GitHub Pages でも 200 で返る。
+//   これで /・/admin・/admin/new・/manual が実ファイルになり、GitHub Pages でも 200 で返る。
 //   子ども名が入る /admin/[child] だけは列挙できないので prerender=false にして
 //   404.html フォールバック（adapter-static の fallback）に任せる。
 //

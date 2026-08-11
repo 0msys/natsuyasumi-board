@@ -6,7 +6,7 @@
 	import { beforeNavigate, goto, invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { ArrowLeft, RefreshCw, Save, TriangleAlert } from '@lucide/svelte';
+	import { ArrowLeft, CircleQuestionMark, RefreshCw, Save, TriangleAlert } from '@lucide/svelte';
 	import { api } from '$lib/api';
 	import { errorDetail } from '$lib/api/apiError';
 	import { AdminDraft } from '$lib/admin/draft.svelte';
@@ -142,6 +142,21 @@
 		{#if draft.years.length < 2 && draft.year}
 			<span class="shrink-0 text-sm text-text-dim">{draft.year}年</span>
 		{/if}
+		<!-- ml-auto で右端に寄せ、余りは truncate する <h1> に吸わせる
+		     （年の span が出ている・いないの両方で右端に着く）。
+		     別タブで開くのは admin/new と同じ理由＝未保存の入力を抱えた画面だから。
+		     ここは離脱ガードがあるので消えはしないが、同じタブだと「離れると変更は
+		     失われます」の確認が出て、読むか直すかの二択になる。 -->
+		<a
+			href={resolve('/manual')}
+			target="_blank"
+			rel="noopener"
+			aria-label="つかいかた（別のタブでひらきます）"
+			title="つかいかた（別のタブでひらきます）"
+			class="ml-auto flex shrink-0 items-center gap-1 text-sm text-text-dim hover:text-text-base"
+		>
+			<CircleQuestionMark size={16} /><span class="hidden sm:inline">つかいかた</span>
+		</a>
 	</header>
 
 	{#if draft.years.length > 1}

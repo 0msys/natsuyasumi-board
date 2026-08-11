@@ -3,7 +3,7 @@
 	// 新学期じゅんび・全期間の履歴グリッド（過去日修正）。
 	// 書き込みは confirm-before-update（サーバ成功後に全再取得。LAN では体感即時）。
 	import { onDestroy, onMount } from 'svelte';
-	import { Settings, Sun, TriangleAlert } from '@lucide/svelte';
+	import { CircleQuestionMark, Settings, Sun, TriangleAlert } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { api } from '$lib/api';
 	import { childErrorText } from '$lib/api/apiError';
@@ -319,6 +319,16 @@
 					/>
 				</span>
 			{/if}
+			<!-- ヘッダーはこの時点で名前ピル・タイマー・期間・歯車が並ぶので、ここだけアイコンのみ。
+			     幅の取り合いに負けないよう、文字は持たせず aria-label で名前を与える。 -->
+			<a
+				href={resolve('/manual')}
+				aria-label="つかいかた"
+				title="つかいかた"
+				class="text-text-dim/60"
+			>
+				<CircleQuestionMark size={16} />
+			</a>
 			<a
 				href={resolve('/admin')}
 				aria-label={backupNeeded ? 'せってい（バックアップをおすすめします）' : 'せってい'}

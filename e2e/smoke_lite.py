@@ -15,6 +15,8 @@
   ⑧ Service Worker が入り、圏外でも各ページが開ける（ホーム画面に追加した先での想定）
   ⑨ 保存が使えない端末（プライベートブラウズ相当）では、設定を入れる前に警告が出る
   ⑩ 要るものが揃わないときは Service Worker を入れない（古いキャッシュを消さない）
+  ⑪ マニュアルが開き、版の切り替えが lite を選んだ状態で始まる
+     （__NYB_LITE__ は vite の define なので bun test では検証できない。ここが唯一の番人）
 
 docker 版の smoke_child_page.py と対になる。あちらはサーバ権威の往復を見るが、
 こちらは「サーバが無くても同じことができる」を見る。
@@ -171,6 +173,19 @@ async def main() -> int:
             if CHILD not in restored:
                 problems.append("⑦ バックアップから戻せなかった")
 
+        # ⑪ マニュアル。既定タブが lite であることを見る＝ vite の define が
+        #    typeof のガードを通り抜けて畳まれている、ということ。bun test には define が
+        #    無いので「docker 側」しか確かめられず、lite 側はここでしか押さえられない。
+        await page.goto(f"{BASE}/manual", wait_until="networkidle")
+        await page.wait_for_timeout(400)
+        if not await page.locator('input[name="manual-edition"][value="lite"]').is_checked():
+            problems.append("⑪ マニュアルの既定タブが lite になっていない")
+        manual_text = await page.inner_text("body")
+        if "ほぞんできた" not in manual_text:
+            problems.append("⑪ lite だけの説明（バックアップ手順）が出ていない")
+        if "VOICEVOX" in manual_text:
+            problems.append("⑪ lite なのに docker だけの説明（VOICEVOX）が出ている")
+
         # ⑧ 圏外でも開けるか（Service Worker が入っていること自体の確認でもある）
         await page.goto(f"{BASE}/", wait_until="networkidle")
         try:
@@ -179,7 +194,7 @@ async def main() -> int:
             problems.append("⑧ Service Worker が有効にならなかった")
         await page.wait_for_timeout(1500)
         await context.set_offline(True)
-        for path in ["/", "/admin", "/admin/new", f"/admin/{quote(CHILD)}"]:
+        for path in ["/", "/admin", "/admin/new", "/manual", f"/admin/{quote(CHILD)}"]:
             try:
                 await page.goto(f"{BASE}{path}", wait_until="domcontentloaded", timeout=10000)
                 await page.wait_for_timeout(600)
