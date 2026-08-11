@@ -262,6 +262,31 @@ def test_同じ子の別の年はインポートできキーは振り直され�
     assert _keys(exported) & _keys(r.json()["doc"]) == set()
 
 
+def test_消した年を書き出したJSONから登録しなおすと記録も戻る(client):
+    """年ごとの削除は記録を残す（画面も「記録は消えません」と約束している）.
+
+    「同じ子の別の年が居る」だけでキーを振り直していたころは、その約束が取り込みの
+    側で破れていた——のこした記録は古いキーのまま孤児になり、書き出しておいた JSON から
+    登録しなおしても二度と結びつかない（復元した画面は真っさらのまま）。
+    """
+    exported = client.get("/api/admin/definitions/はな/export").json()
+    client.post("/api/admin/definitions/はな/next-year")  # 同じ子の別の年が居る状態にする
+    key = exported["habits"][0]["key"]
+    client.post(
+        "/api/summer/check/set",
+        json={"child": "はな", "day": "2026-08-01", "item_key": key, "status": "done"},
+    )
+    score = client.get("/api/summer/state?child=はな").json()["today_score"]["score"]
+    assert score > 0  # 前提: 記録が点数に出ている
+
+    assert client.request("DELETE", "/api/admin/definitions/はな?year=2026").status_code == 200
+    r = client.post("/api/admin/definitions/import", json={"doc": exported})
+    assert r.status_code == 200 and r.json()["year"] == 2026
+    assert _keys(r.json()["doc"]) == _keys(exported), "登録しなおしでキーが振り直されている"
+    state = client.get("/api/summer/state?child=はな").json()
+    assert state["today_score"]["score"] == score, "のこしておいた記録が戻ってこない"
+
+
 def test_きかんの外の記録の警告は他の年で誤爆しない(client, monkeypatch):
     doc = client.get("/api/admin/definitions/はな").json()["doc"]
     daily_key = doc["daily_homework"][0]["key"]

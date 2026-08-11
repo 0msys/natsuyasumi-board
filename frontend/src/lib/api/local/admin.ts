@@ -13,7 +13,7 @@ import {
 	type SummerDefinition
 } from '$lib/core/definition';
 import { GRADE_KANJI_SOURCE } from '$lib/core/generated/kanjiTable';
-import { assignKeys, shiftDocToNextYear, stripKeys } from '$lib/core/keys';
+import { assignKeys, collectKeys, shiftDocToNextYear, stripKeys } from '$lib/core/keys';
 import { TEMPLATES, type Period } from '$lib/core/template';
 import { validateDocument } from '$lib/core/validate';
 import { mutate, read } from '$lib/store/db';
@@ -86,6 +86,19 @@ function assertKeyable(definition: SummerDefinition): void {
 	}
 }
 
+/** 同じ子の、**いま登録されている**別の年が使っている項目キー。
+ *
+ *  旧形式のまま保存されている定義（practice_homework）は、畳んでから集める。
+ *  区画の名前が違うだけでキーは生きているので、そのまま数えると見落とす。 */
+function keysOfOtherYears(db: Db, child: string, year: number): Set<string> {
+	const keys = new Set<string>();
+	for (const row of Object.values(db.definitions)) {
+		if (row.child !== child || row.year === year) continue;
+		for (const key of collectKeys(migrateDoc(clone(row.doc)))) keys.add(key);
+	}
+	return keys;
+}
+
 /**
  * 新しい定義を作る（ウィザード・インポート共用）。同じ子の同じ年が居れば 409。
  *
@@ -93,7 +106,7 @@ function assertKeyable(definition: SummerDefinition): void {
  * **別の年の定義は必ず別のキー空間**でなければならない（去年の「絵日記できた」が
  * 今年も済み扱いになる）。ウィザードと来年コピーはキーを持たない doc を渡すので
  * 採番で新しくなる。エクスポート JSON の取り込みだけはキーを持ったまま来るので、
- * ここで年が既存と違えば振り直す。
+ * ここで**生きている別の年とキーがぶつかるなら**振り直す。
  */
 export function createDefinition(db: Db, incoming: Doc) {
 	const doc = clone(incoming);
@@ -106,10 +119,14 @@ export function createDefinition(db: Db, incoming: Doc) {
 			`「${definition.child}」の${definition.year}年ぶんはもう登録されています`
 		);
 	}
-	const hasOtherYear = Object.values(db.definitions).some(
-		(r) => r.child === definition.child && r.year !== definition.year
-	);
-	if (hasOtherYear) {
+	// 「別の年が居る」だけで振り直してはいけない。年ごとの削除は記録を残す
+	// （画面も「記録は消えません」と約束している）ので、消した年を書き出しておいた
+	// JSON から登録しなおす道も、ここを通る。ぶつかってもいないのに振り直すと、
+	// のこしておいた記録は古いキーのまま孤児になり、二度と結びつかない。
+	// ぶつかるとき——まだ登録されている年からコピーした doc——だけ分ければ足りる。
+	const taken = keysOfOtherYears(db, definition.child, definition.year);
+	const collides = [...collectKeys(doc)].some((key) => taken.has(key));
+	if (collides) {
 		stripKeys(doc);
 		assignKeys(doc);
 		definition = parseOr422(doc, definition.child);
