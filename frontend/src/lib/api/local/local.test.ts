@@ -406,6 +406,43 @@ describe('消した年の登録しなおし', () => {
 			'ss_same'
 		);
 	});
+
+	// えらぶ宿題の選択肢だけは、記録に載るキーの形が変わる（`グループ.選択肢`）。
+	// doc に書かれた生の key（グループと選択肢が別々）を並べて比べると、この連結が
+	// 見えないので、同じ文字列を key に持つ一回ものが素通りしてしまう。
+	it('えらぶ宿題の選択肢と同じ形の key も、ぶつかりとして見る', async () => {
+		const year = Number(today.slice(0, 4));
+		// 生の key はどこも重ねない（重なると、実効キーを見なくても振り直しが走る）
+		const base = (y: number) => ({
+			child: CHILD,
+			child_kana: CHILD,
+			year: y,
+			grade: '小2',
+			period: {
+				start: `${y}-07-21`,
+				end: `${y}-08-31`,
+				first_day_of_school: `${y}-09-01`
+			},
+			habits: [{ key: `h_${y}`, label: 'はみがき' }]
+		});
+		await api.adminImportDefinition({
+			...base(year),
+			choice_homework: [
+				{ key: 'cg_x', label: 'どれかひとつ', options: [{ key: 'o_1', label: 'こうさく' }] }
+			]
+		});
+		// 上の選択肢が flags に書くキーは 'cg_x.o_1'。同じ文字列を次の年が持っている
+		const next = await api.adminImportDefinition({
+			...base(year + 1),
+			one_shot_homework: [{ key: 'cg_x.o_1', label: 'じゆうけんきゅう', required: false }]
+		});
+
+		const doc = next.doc as Record<string, { key: string }[]>;
+		expect(
+			doc.one_shot_homework[0].key,
+			'去年の選択肢を押しただけで、今年の一回ものが済みになる'
+		).not.toBe('cg_x.o_1');
+	});
 });
 
 describe('やる／やらない', () => {

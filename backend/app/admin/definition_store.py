@@ -240,15 +240,30 @@ def create_definition(doc: dict, db_path: Path | None = None) -> dict:
             # 振り直すと、のこしておいた記録は古いキーのまま孤児になり、二度と
             # 結びつかない。ぶつかるとき——まだ登録されている年からコピーした doc
             # ——だけ分ければ足りる。
-            taken: set[str] = set()
+            #
+            # 突き合わせるのは doc に書かれた key ではなく、**記録に載る実効キー**
+            # （parse 後）。えらぶ宿題の選択肢だけは形が変わり、"グループ.選択肢" に
+            # 連結して summer_flags へ入るので、doc の生の key を並べて比べると、
+            # 別の年の "g.o" と同じ文字列を持つ一回もの・じゅんびが素通りする。
+            # 日次とフラグは別々に見る（保存先が別なので、またいで同じでも混ざらない）。
+            collides = False
             for (raw,) in conn.execute(
                 "SELECT doc FROM summer_definitions WHERE child = ? AND year != ?",
                 (definition.child, definition.year),
             ):
-                # 旧形式のまま保存されている定義は畳んでから集める（区画の名前が
-                # 違うだけでキーは生きているので、そのまま数えると見落とす）
-                taken |= _collect_keys(summer_definition.migrate_doc(json.loads(raw)))
-            if _collect_keys(doc) & taken:
+                try:
+                    other = parse_definition(json.loads(raw), source=definition.child)
+                except SummerDefinitionError:
+                    # 読めない年は、どのキーを使っているか分からない＝分けておく
+                    collides = True
+                    break
+                if definition.daily_item_keys() & other.daily_item_keys():
+                    collides = True
+                    break
+                if definition.flag_item_keys() & other.flag_item_keys():
+                    collides = True
+                    break
+            if collides:
                 # まだ登録されている年とキー空間を分ける（上の docstring 参照）
                 strip_keys(doc)
                 assign_keys(doc)

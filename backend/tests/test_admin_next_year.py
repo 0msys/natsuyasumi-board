@@ -262,6 +262,44 @@ def test_同じ子の別の年はインポートできキーは振り直され�
     assert _keys(exported) & _keys(r.json()["doc"]) == set()
 
 
+def test_選択肢と同じ形のkeyもぶつかりとして扱う(client):
+    """えらぶ宿題の選択肢は "グループ.選択肢" に連結して summer_flags へ入る.
+
+    doc に書かれた生の key（グループと選択肢が別々）を並べて比べると、この連結が
+    見えない。同じ文字列を key に持つ一回もの・じゅんびが素通りすると、summer_flags は
+    (child, item_key) で年を持たないので、去年の「できた」が次の年にも出てしまう。
+    """
+
+    def base(year: int) -> dict:
+        # 生の key はどこも重ねない（重なると、実効キーを見なくても振り直しが走る）
+        return {
+            "child": "そら",
+            "child_kana": "そら",
+            "grade": "小2",
+            "year": year,
+            "period": {
+                "start": f"{year}-07-21",
+                "end": f"{year}-08-31",
+                "first_day_of_school": f"{year}-09-01",
+            },
+            "habits": [{"key": f"h_{year}", "label": "はみがき"}],
+        }
+
+    first = dict(base(2027), choice_homework=[
+        {"key": "cg_x", "label": "どれかひとつ", "options": [{"key": "o_1", "label": "こうさく"}]}
+    ])
+    assert client.post("/api/admin/definitions/import", json={"doc": first}).status_code == 200
+    # 上の選択肢が flags に書くキーは "cg_x.o_1"。同じ文字列を次の年が持っている
+    second = dict(base(2028), one_shot_homework=[
+        {"key": "cg_x.o_1", "label": "じゆうけんきゅう", "required": False}
+    ])
+    r = client.post("/api/admin/definitions/import", json={"doc": second})
+    assert r.status_code == 200
+    assert r.json()["doc"]["one_shot_homework"][0]["key"] != "cg_x.o_1", (
+        "去年の選択肢を押しただけで、今年の一回ものが済みになる"
+    )
+
+
 def test_消した年を書き出したJSONから登録しなおすと記録も戻る(client):
     """年ごとの削除は記録を残す（画面も「記録は消えません」と約束している）.
 

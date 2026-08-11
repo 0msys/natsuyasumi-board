@@ -13,7 +13,7 @@ import {
 	type SummerDefinition
 } from '$lib/core/definition';
 import { GRADE_KANJI_SOURCE } from '$lib/core/generated/kanjiTable';
-import { assignKeys, collectKeys, shiftDocToNextYear, stripKeys } from '$lib/core/keys';
+import { assignKeys, shiftDocToNextYear, stripKeys } from '$lib/core/keys';
 import { TEMPLATES, type Period } from '$lib/core/template';
 import { validateDocument } from '$lib/core/validate';
 import { mutate, read } from '$lib/store/db';
@@ -86,17 +86,34 @@ function assertKeyable(definition: SummerDefinition): void {
 	}
 }
 
-/** 同じ子の、**いま登録されている**別の年が使っている項目キー。
+const sharesKey = (a: Set<string>, b: Set<string>): boolean => [...a].some((key) => b.has(key));
+
+/** 同じ子の、**いま登録されている**別の年と、記録のキーがぶつかるか。
  *
- *  旧形式のまま保存されている定義（practice_homework）は、畳んでから集める。
- *  区画の名前が違うだけでキーは生きているので、そのまま数えると見落とす。 */
-function keysOfOtherYears(db: Db, child: string, year: number): Set<string> {
-	const keys = new Set<string>();
+ *  突き合わせるのは doc に書かれた key ではなく、**記録に載る実効キー**（parse 後）。
+ *  えらぶ宿題の選択肢だけは形が変わり、`グループ.選択肢` に連結して保存されるので、
+ *  doc の生の key（`グループ` と `選択肢` が別々）を並べて比べると、別の年の
+ *  `g.o` と同じ文字列を持つ一回もの・じゅんびが素通りする。
+ *
+ *  日次とフラグは**別々に**見る。保存先が別なので、日次の key と別の年のフラグの key が
+ *  同じでも記録は混ざらない——ここで一緒くたにすると、ぶつかっていないのに振り直す。
+ *
+ *  読めない年が居たら、どのキーを使っているか分からないので分けておく（fail closed）。 */
+function collidesWithOtherYear(db: Db, definition: SummerDefinition): boolean {
 	for (const row of Object.values(db.definitions)) {
-		if (row.child !== child || row.year === year) continue;
-		for (const key of collectKeys(migrateDoc(clone(row.doc)))) keys.add(key);
+		if (row.child !== definition.child || row.year === definition.year) continue;
+		let other: SummerDefinition;
+		try {
+			// parse は doc を書き換える（旧形式を畳む）ので、保存の実体ではなく写しを渡す
+			other = parseDefinition(clone(row.doc), `${definition.child}（${row.year}年）`);
+		} catch (e) {
+			if (e instanceof SummerDefinitionError) return true;
+			throw e;
+		}
+		if (sharesKey(dailyItemKeys(definition), dailyItemKeys(other))) return true;
+		if (sharesKey(flagItemKeys(definition), flagItemKeys(other))) return true;
 	}
-	return keys;
+	return false;
 }
 
 /**
@@ -124,9 +141,7 @@ export function createDefinition(db: Db, incoming: Doc) {
 	// JSON から登録しなおす道も、ここを通る。ぶつかってもいないのに振り直すと、
 	// のこしておいた記録は古いキーのまま孤児になり、二度と結びつかない。
 	// ぶつかるとき——まだ登録されている年からコピーした doc——だけ分ければ足りる。
-	const taken = keysOfOtherYears(db, definition.child, definition.year);
-	const collides = [...collectKeys(doc)].some((key) => taken.has(key));
-	if (collides) {
+	if (collidesWithOtherYear(db, definition)) {
 		stripKeys(doc);
 		assignKeys(doc);
 		definition = parseOr422(doc, definition.child);
