@@ -49,6 +49,7 @@
 	</ul>
 	<p class="flex items-start gap-1">
 		<TriangleAlert size={16} class="mt-0.5 shrink-0 text-attn" />
+		<span class="sr-only">注意: </span>
 		<span
 			>「{SCREEN.decideSkip}」にしたままの宿題を、あとから設定で「かならずやる」に変えると、その項目は操作できなくなります。直すには一度「かならずやる」を外して、お子さんに「{SCREEN.decideDo}」へ戻してもらってから付け直してください。</span
 		>

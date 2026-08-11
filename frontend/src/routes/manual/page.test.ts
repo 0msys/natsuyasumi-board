@@ -85,6 +85,25 @@ describe('マニュアル画面', () => {
 		expect(mentions(DOCKER_ONLY)).toBeGreaterThan(0);
 	});
 
+	// 警告の段落は ⚠ アイコンだけを目印にしている。Lucide の svg は children も a11y prop も
+	// 無いと aria-hidden="true" が付く（node_modules/@lucide/svelte/dist/Icon.svelte）ので、
+	// 読み上げには何も残らない。文字の目印を消して色と形だけにしないための番人。
+	// 見出し（h3）は見出しの文そのものが用件を言うので対象外。
+	it.each(['docker版', 'lite版'])('%s の警告段落は、読み上げにも警告と分かる', async (edition) => {
+		const { container } = render(Page);
+		await selectEdition(edition);
+
+		const warnings = Array.from(container.querySelectorAll('p')).filter((p) =>
+			p.querySelector('svg[class*="triangle-alert"]')
+		);
+		expect(warnings.length).toBeGreaterThan(0);
+		for (const p of warnings) {
+			expect(p.textContent?.trim(), `⚠ の段落に文字の目印が無い: ${p.textContent?.slice(0, 40)}`).toMatch(
+				/^注意[:：]/
+			);
+		}
+	});
+
 	it('こまったときの質問は、版を切り替えても見出しが残る', () => {
 		// <details> の開閉は happy-dom の実装が不完全なので、質問文が描けていることだけ見る。
 		render(Page);

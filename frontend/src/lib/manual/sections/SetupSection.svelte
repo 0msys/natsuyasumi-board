@@ -59,6 +59,7 @@
 	</ul>
 	<p class="flex items-start gap-1">
 		<TriangleAlert size={16} class="mt-0.5 shrink-0 text-attn" />
+		<span class="sr-only">注意: </span>
 		<span
 			>「からっぽ」を選んだときは、<strong
 				>「せいかつ」と「しゅくだい」に、それぞれ1つ以上の項目を入れてください。</strong
@@ -104,8 +105,8 @@
 
 	<EditionNote only="lite" {edition}>
 		<p class="flex items-center gap-1">
-			<TriangleAlert size={16} class="shrink-0 text-danger" /><strong
-				>赤い「記録が保存されません」の帯が出たとき</strong
+			<TriangleAlert size={16} class="shrink-0 text-danger" /><span class="sr-only">注意: </span
+			><strong>赤い「記録が保存されません」の帯が出たとき</strong
 			>
 		</p>
 		<p>

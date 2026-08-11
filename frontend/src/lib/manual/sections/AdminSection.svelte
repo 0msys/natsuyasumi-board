@@ -98,6 +98,7 @@
 	<EditionNote only="lite" {edition}>
 		<p class="flex items-center gap-1">
 			<TriangleAlert size={16} class="shrink-0 text-danger" />
+			<span class="sr-only">注意: </span>
 			赤い「記録が保存されません」の帯が出たときは、プライベートブラウズで開いています。ふつうのタブで開き直してください。
 		</p>
 	</EditionNote>

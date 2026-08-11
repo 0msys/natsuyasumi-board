@@ -57,6 +57,7 @@
 		</p>
 		<p class="flex items-start gap-1">
 			<TriangleAlert size={16} class="mt-0.5 shrink-0 text-danger" />
+			<span class="sr-only">注意: </span>
 			<span
 				><strong>いまこの端末に入っている内容は、まるごと入れかわります。</strong
 				>確認が出るので、よく読んでから進めてください。</span
@@ -82,6 +83,7 @@
 		</p>
 		<p class="flex items-start gap-1">
 			<TriangleAlert size={16} class="mt-0.5 shrink-0 text-attn" />
+			<span class="sr-only">注意: </span>
 			<span
 				>おうちの中だけで使うつくりです。<strong
 					>インターネットからつながるようにしないでください。</strong
