@@ -126,6 +126,9 @@ gh api repos/OWNER/REPO/pulls/PR/comments --paginate --slurp \
 gh api repos/OWNER/REPO/issues/PR/comments --paginate --slurp \
   | jq -r '[.[][]] | map(select(.user.login=="chatgpt-codex-connector[bot]")) | .[]
            | "\(.id) \(.created_at)\n  \(.body | split("\n") | map(select(length > 0)) | .[0:2] | join(" / "))"'
+# PR 本体のリアクション（👍 の時刻。要約が落ちた形の手がかり）
+gh api repos/OWNER/REPO/issues/PR/reactions --paginate \
+  --jq '.[] | select(.user.login=="chatgpt-codex-connector[bot]") | "\(.content) \(.created_at)"'
 # 未返信の指摘が無いかを in_reply_to_id で突き合わせる（下の「未返信の洗い出し」）
 ```
 
@@ -140,6 +143,12 @@ gh api repos/OWNER/REPO/issues/PR/comments --paginate --slurp \
 **レビューとインライン指摘も同じ。** 本文が空のレビュー＋インライン1件は設定エラーの形で
 （[取り直しの打ち切り](#取り直しの打ち切り)）、本物の指摘は本文が `### 💡 Codex Review` で
 各コメントに P バッジが付く。ID と sha と時刻だけ見ていると、この2つを取り違える。
+
+**PR 本体のリアクションも見る。** 👍 が在るのに、その時刻以降の要約が無ければ
+[要約が落ちることがある](#要約が落ちることがある)の形。ここで気づかないと、引き継いだあとは
+どの合図も出ない——監視は既存のリアクションを全部既読にする（リアクションのシードには
+起動前という切り口が無く、在るものを全部入れる）ので `THUMBSUP` は出ず、自動レビューだけで
+終わっている PR には `@codex review` の依頼コメントが無いため `QUIET` も節ごと動かない。
 
 ここで分類しないと、起動後は取り返せない。監視は起動より前のものを既読にするので
 （`seed_before_start` は issue コメント・レビュー・インライン指摘の3つにかかる）、
