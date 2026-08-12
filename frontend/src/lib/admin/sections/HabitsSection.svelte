@@ -61,6 +61,15 @@
 		if (value === 'range') {
 			habit.window_start ??= '';
 			habit.window_end ??= '';
+		} else {
+			// 「きかん限定」をやめたら日付ごと捨てる。メモ欄の種類（DailyHomeworkSection）と
+			// 一回ものの目標数は逆に「種類を変えても元の設定値を残す」——あちらは種類を戻せば
+			// 入力欄がまた画面に出るので、残った値を親が確かめて直せる。ここは違う: 日付欄は
+			// window === 'range' のときしか描かないので、残した値は親から見えない。しかも検証も
+			// range のときしか日付を見ないため、window: null ＋ window_start: '' がそのまま
+			// 保存でき、あとで「来年ぶんを作る」の年ずらしがその空文字を読んで落ちていた。
+			delete habit.window_start;
+			delete habit.window_end;
 		}
 		draft.markDirty();
 	}
