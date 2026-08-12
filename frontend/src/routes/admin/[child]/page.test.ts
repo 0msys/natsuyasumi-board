@@ -8,6 +8,7 @@
 //     未保存のまま年を切り替えると警告なしにドラフトが作り直されて編集が消える
 import { beforeEach, describe, expect, it } from 'bun:test';
 import { cleanup, fireEvent, render, screen } from '@testing-library/svelte';
+import { ApiError } from '$lib/api/contract';
 import { validateDocument } from '$lib/core/validate';
 import { setApi } from '../../../test-support/apiMock';
 import {
@@ -174,5 +175,38 @@ describe('開いた時点の検証', () => {
 		// 開いただけでは未保存にならない＝「ほぞんする」は押せないまま
 		expect(screen.queryByText('保存していない変更があります')).toBeNull();
 		expect(screen.getByRole('button', { name: 'ほぞんする' }).hasAttribute('disabled')).toBe(true);
+	});
+
+	// 保存競合の「読み直す」は、同じ子・同じ年のまま定義を入れ替える。initFrom が警告を
+	// 消すので、ここで検証しなおさないと、読み直した定義の問題が次の保存まで見えなくなる。
+	it('保存競合のあと読み直したら、読み直した定義で検証しなおす', async () => {
+		let warnNow = false;
+		setApi({
+			adminUsage: () => Promise.resolve({ usage: {} }),
+			adminKanji: () => Promise.resolve({ grades: { '1': '一二三', '2': '', '3': '' } }),
+			adminValidateDefinition: () =>
+				Promise.resolve({
+					ok: true,
+					errors: [],
+					warnings: warnNow
+						? [{ path: '/habits', code: 'test', message: 'よみなおした定義の注意', detail: {} }]
+						: []
+				}),
+			adminSaveDefinition: () => Promise.reject(new ApiError(409, 'ほかの画面で変更されています')),
+			adminGetDefinition: () =>
+				Promise.resolve({ child: 'はな', year: 2027, years: [2026, 2027], revision: 9, updated_at: 0, doc: doc() })
+		});
+		render(Page, { props: { data: data() } });
+
+		await fireEvent.click(screen.getByRole('button', { name: '習慣をふやす' }));
+		await fireEvent.click(screen.getByRole('button', { name: 'ほぞんする' }));
+		await screen.findByText('ほかの画面で変更されています。読み直してから保存してください。');
+
+		warnNow = true; // サーバ側は、この画面が持っていたものと違う定義になっている
+		setConfirmAnswer(true); // 「読み直すと、この画面の変更は失われます」
+		await fireEvent.click(screen.getByRole('button', { name: '読み直す' }));
+
+		// IssueList はタブ名と同じ要素に文言を並べるので、部分一致で見る
+		await screen.findByText(/よみなおした定義の注意/);
 	});
 });

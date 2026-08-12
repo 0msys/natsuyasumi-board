@@ -22,8 +22,13 @@ export class AdminDraft {
 	saveError = $state<string | null>(null);
 	savedAt = $state<number | null>(null);
 
+	// 読み込んだ定義の世代。initFrom で中身が入れ替わるたびに進む。画面はこれを見て
+	// 「この定義はまだ検証していない」を判断する——子どもと年で見ると、保存競合のあと
+	// 同じ子・同じ年を読み直した場合を取りこぼす（initFrom が警告を消したまま戻らない）。
+	generation = $state(0);
+
 	// 検証の世代。応答を書き戻してよいのは最後に投げた1本だけ（下の validate() を参照）。
-	// 画面には出さないので $state にしない。
+	// generation とは別物: こちらは validate() のたびに進むので、画面が見ると回り続ける。
 	#validateSeq = 0;
 
 	/** load 結果（SSR）や保存レスポンスの entry からまるごと初期化する. */
@@ -39,9 +44,10 @@ export class AdminDraft {
 		this.warnings = [];
 		this.saveError = null;
 		this.savedAt = null;
-		// 別の子ども・別の年に入れ替わった＝飛んでいる検証の応答はもう別物。捨てる。
+		// 中身が入れ替わった＝飛んでいる検証の応答はもう別物。捨てて、世代を進める。
 		this.#validateSeq++;
 		this.validating = false;
+		this.generation++;
 	}
 
 	/** サーバから読み直す（409 後の「読み直す」ボタン用）。編集中の年のまま読む. */

@@ -71,11 +71,12 @@
 	// 届かなかった（issue #34）。dirty は触らないので「保存していない変更があります」には
 	// ならず、「ほぞんする」も disabled のまま。失敗は黙って捨てる——読むためだけの検証で、
 	// 画面を止める理由にはならない（つながらないなら保存のときに同じ経路で分かる）。
-	let validatedFor = '';
+	// 見るのは draft.generation（initFrom で入れ替わるたびに進む）。子どもと年で見ると、
+	// 保存競合のあと「読み直す」で同じ子・同じ年を読み直した回を取りこぼす。
+	let validatedFor = -1;
 	$effect(() => {
-		const key = `${draft.child}:${draft.year}`;
-		if (!draft.doc || validatedFor === key) return;
-		validatedFor = key;
+		if (!draft.doc || validatedFor === draft.generation) return;
+		validatedFor = draft.generation;
 		void draft.validate().catch(() => {});
 	});
 
