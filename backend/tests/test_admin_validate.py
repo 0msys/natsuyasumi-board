@@ -334,6 +334,24 @@ def test_rewards_unreachable_チャレンジを減らしても鳴る(sample_doc)
     assert [w["detail"]["score_max"] for w in warns] == [100, 100]
 
 
+def test_rewards_unreachable_空の区分ぶん上限が下がる(sample_doc):
+    # 空の区分は0点固定で、ボーナスは base が100点のときだけ付く（judge.daily_score）。
+    # つまり しゅくだいが空なら1日50点が上限＝avg80 のランクにも届かない。ここを
+    # 「100＋チャレンジ」で決め打つと、いちばん設定を間違えている定義が無警告になる。
+    sample_doc["daily_homework"] = []
+    result = validate_document(sample_doc)
+    warns = [w for w in result["warnings"] if w["code"] == "rewards_unreachable"]
+    assert [w["path"] for w in warns] == [f"/rewards/{i}/avg" for i in range(4)]
+    assert {w["detail"]["score_max"] for w in warns} == {50}
+    assert result["ok"] is True  # 保存はできる（作りかけを止めない）
+
+    # 区分がそろえばボーナスも効く＝サンプル定義（チャレンジ4件）は 200点まで
+    sample_doc["daily_homework"] = load_sample_doc()["daily_homework"]
+    assert [
+        w for w in validate_document(sample_doc)["warnings"] if w["code"] == "rewards_unreachable"
+    ] == []
+
+
 def test_rewards_unreachable_avgが不正なランクでは鳴らさない(sample_doc):
     # avg 自体がエラーなら「届く／届かない」は判定しない（エラーが先・警告は重ねない）。
     sample_doc["special_challenges"] = []

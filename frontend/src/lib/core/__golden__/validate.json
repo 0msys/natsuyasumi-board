@@ -4903,6 +4903,38 @@
             "path": "/habits",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -4931,6 +4963,38 @@
             "path": "/habits",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -4959,6 +5023,38 @@
             "path": "/habits",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -4987,6 +5083,38 @@
             "path": "/habits",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -5015,6 +5143,38 @@
             "path": "/habits",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -5043,6 +5203,38 @@
             "path": "/habits",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -5066,6 +5258,38 @@
             "path": "/habits",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -5094,6 +5318,38 @@
             "path": "/habits",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -5148,6 +5404,38 @@
             "path": "/habits",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -5170,6 +5458,38 @@
             "path": "/habits",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -13024,6 +13344,38 @@
             "path": "/daily_homework",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -13052,6 +13404,38 @@
             "path": "/daily_homework",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -13080,6 +13464,38 @@
             "path": "/daily_homework",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -13108,6 +13524,38 @@
             "path": "/daily_homework",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -13136,6 +13584,38 @@
             "path": "/daily_homework",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -13164,6 +13644,38 @@
             "path": "/daily_homework",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -13187,6 +13699,38 @@
             "path": "/daily_homework",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -13215,6 +13759,38 @@
             "path": "/daily_homework",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -13269,6 +13845,38 @@
             "path": "/daily_homework",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }
@@ -13291,6 +13899,38 @@
             "path": "/daily_homework",
             "code": "empty_score_section",
             "detail": {}
+          },
+          {
+            "path": "/rewards/0/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 80,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 100,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 50
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 50
+            }
           }
         ]
       }

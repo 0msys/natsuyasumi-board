@@ -25,7 +25,7 @@ from app.summer.definition import (
     META_TYPES,
     WINDOWS,
 )
-from app.summer.judge import CHALLENGE_POINTS
+from app.summer.judge import CHALLENGE_POINTS, DAILY_MAX, HABITS_MAX
 
 _GRADES = ("小1", "小2", "小3", "小4", "小5", "小6")
 
@@ -383,11 +383,19 @@ def validate_document(
         _check_date(errors, item, "due", path)
 
     # ---- ごほうびランク ----
-    # 1日にとれる最大点（service.build_state の score_max と同じ式）。ランクの到達点は
-    # avg × 日数、グラフの縦軸上限は score_max × 日数なので、avg がこれを超えるランクは
-    # 「1日も欠かさず全部やっても届かない」＝グラフにも帯が出ない。日数は両辺に等しく
-    # かかるので、期間が壊れていても 1日あたりの比較だけで判定できる。
-    score_max = 100 + CHALLENGE_POINTS * len(_list(doc.get("special_challenges")))
+    # 1日にとれる最大点。judge.daily_score と同じ組み立てで、空の区分は0点固定・
+    # ボーナスは base が満点のときだけ付く＝片方でも空なら1日50点が上限になる
+    # （ここを 100+チャレンジ で決め打つと、しゅくだいが空の定義で avg 80 のランクが
+    # 「届かないのに無警告」になる）。ランクの到達点は avg × 日数、上限は score_max × 日数で
+    # 日数が両辺に等しくかかるので、1日あたりで比べれば足りる＝期間が壊れていても判定できる。
+    #
+    # これは上限値なので「必ず届かない」ものだけを拾う。記録欄を出す日を絞った習慣のように
+    # 日ごとに上限が下がる設定までは見ない（見逃しは許すが、誤検知は出さない）。
+    base_max = (HABITS_MAX if _list(doc.get("habits")) else 0) + (
+        DAILY_MAX if _list(doc.get("daily_homework")) else 0
+    )
+    challenge_max = CHALLENGE_POINTS * len(_list(doc.get("special_challenges")))
+    score_max = base_max + (challenge_max if base_max == HABITS_MAX + DAILY_MAX else 0)
     prev_avg: int | None = None
     reward_keys: list[str] = []
     for i, rank in enumerate(_entries(errors, doc.get("rewards"), "/rewards")):
@@ -416,7 +424,7 @@ def validate_document(
                 "rewards_unreachable",
                 f"1日にとれるのは最大{score_max}点なので、平均{avg}点のこのランクは"
                 "毎日ぜんぶできても届きません"
-                "（平均点を下げるか、スペシャルチャレンジを増やしてください）",
+                "（平均点を下げるか、せいかつ・しゅくだい・スペシャルチャレンジの項目を見直してください）",
                 {"avg": avg, "score_max": score_max},
             )
     if len(reward_keys) != len(set(reward_keys)):
