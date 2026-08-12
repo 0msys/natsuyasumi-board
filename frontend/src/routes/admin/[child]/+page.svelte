@@ -66,6 +66,19 @@
 			.catch(() => {});
 	});
 
+	// 開いた時点でも一度検証する（保存はしない）。検証は save() の中からしか走っていなかった
+	// ので、「からっぽ」で作って編集画面を眺めているだけの親には、直す先を指す警告が1つも
+	// 届かなかった（issue #34）。dirty は触らないので「保存していない変更があります」には
+	// ならず、「ほぞんする」も disabled のまま。失敗は黙って捨てる——読むためだけの検証で、
+	// 画面を止める理由にはならない（つながらないなら保存のときに同じ経路で分かる）。
+	let validatedFor = '';
+	$effect(() => {
+		const key = `${draft.child}:${draft.year}`;
+		if (!draft.doc || validatedFor === key) return;
+		validatedFor = key;
+		void draft.validate().catch(() => {});
+	});
+
 	// dirty での離脱ガード。タブ切替（同じ年の中の ?section= 遷移）だけ素通しする。
 	// 年の切替は同じ URL パスでもドラフトを作り直す＝素通しすると編集内容が黙って消える。
 	beforeNavigate((nav) => {

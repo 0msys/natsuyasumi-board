@@ -11,7 +11,7 @@
 | EDT-01 | 管理画面を開く | PIN または運用設定を確認する | 画面表示時 | [管理画面へのアクセス](../features/admin-access.md) |
 | EDT-02 | 年度切り替え | 同じ子どもの別年度を開く | 複数年度があるとき | [子どもと年度の管理](../features/admin-child-management.md) |
 | EDT-03 | タブ切り替え | 編集対象を9分類から選ぶ | 定義取得後 | [設定項目](../features/admin-settings.md) |
-| EDT-04 | 入力検証 | エラーと警告を該当タブに表示する | 保存時 | [編集・検証・保存](../features/admin-edit-save.md) |
+| EDT-04 | 入力検証 | エラーと警告を該当タブに表示する | 画面表示時と保存時 | [編集・検証・保存](../features/admin-edit-save.md) |
 | EDT-05 | 保存 | 定義全体を検証して保存する | 未保存の変更があるとき | [編集・検証・保存](../features/admin-edit-save.md) |
 | EDT-06 | 保存競合 | 他画面の変更を検出し、読み直しを促す | revision 不一致時 | [編集・検証・保存](../features/admin-edit-save.md) |
 | EDT-07 | 未保存警告 | 年度変更や画面離脱前に確認する | 未保存の変更があるとき | [編集・検証・保存](../features/admin-edit-save.md) |

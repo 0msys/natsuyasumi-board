@@ -8,6 +8,7 @@
 //     未保存のまま年を切り替えると警告なしにドラフトが作り直されて編集が消える
 import { beforeEach, describe, expect, it } from 'bun:test';
 import { cleanup, fireEvent, render, screen } from '@testing-library/svelte';
+import { validateDocument } from '$lib/core/validate';
 import { setApi } from '../../../test-support/apiMock';
 import {
 	confirmMessages,
@@ -53,7 +54,12 @@ beforeEach(() => {
 	setApi({
 		adminUsage: () => Promise.resolve({ usage: {} }),
 		// 習慣を足すとラベル欄（RubyTextInput）が配当漢字のライブ lint を取りに行く
-		adminKanji: () => Promise.resolve({ grades: { '1': '一二三', '2': '', '3': '' } })
+		adminKanji: () => Promise.resolve({ grades: { '1': '一二三', '2': '', '3': '' } }),
+		// 開いた時点の検証。ここは年とタブの検査なので「問題なし」を返させる——本物を
+		// 通すと IssueList がタブと同じ名前のリンク（せいかつ・しゅくだい）を描き、
+		// 下の href() の getByRole('link') が「複数見つかった」で落ちる。
+		// 警告そのものは下の describe が本物の validateDocument で見る。
+		adminValidateDefinition: () => Promise.resolve({ ok: true, errors: [], warnings: [] })
 	});
 	// せいかつタブを開いた状態（きほんタブは VOICEVOX の一覧取得まで走るので避ける）
 	setPageUrl('/admin/はな?section=habits&year=2027');
@@ -143,5 +149,30 @@ describe('未保存のまま離れるとき', () => {
 		);
 		expect(confirmMessages).toEqual([]);
 		expect(cancelled).toBe(false);
+	});
+});
+
+// 検証は save() の中からしか走っていなかったので、「からっぽ」で作って編集画面を眺めて
+// いるだけの親には注意が1つも届かなかった（issue #34）。フィクスチャの定義はまさにその形
+// （せいかつ・しゅくだいが両方とも空）なので、そのまま開いて確かめられる。
+describe('開いた時点の検証', () => {
+	beforeEach(() => {
+		setApi({
+			adminUsage: () => Promise.resolve({ usage: {} }),
+			adminKanji: () => Promise.resolve({ grades: { '1': '一二三', '2': '', '3': '' } }),
+			// ここだけ本物の検証を通す（lite の adminValidateDefinition と同じ経路）
+			adminValidateDefinition: (_child: string, doc: unknown) =>
+				Promise.resolve(validateDocument(doc))
+		});
+	});
+
+	it('保存を押さなくても、空の区分の注意が区分ごとに出る', async () => {
+		render(Page, { props: { data: data() } });
+
+		await screen.findByText(/「せいかつ」の項目が1つもないと/);
+		expect(screen.getByText(/「しゅくだい」の項目が1つもないと/)).toBeTruthy();
+		// 開いただけでは未保存にならない＝「ほぞんする」は押せないまま
+		expect(screen.queryByText('保存していない変更があります')).toBeNull();
+		expect(screen.getByRole('button', { name: 'ほぞんする' }).hasAttribute('disabled')).toBe(true);
 	});
 });

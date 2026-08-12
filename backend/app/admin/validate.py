@@ -314,13 +314,13 @@ def validate_document(
         _check_daily_items(section)
 
     # ---- 採点区分が空（judge.daily_score の配点50+50が片肺になる） ----
-    # 空の区分は0点固定なので、片方だけ空にすると満点が50点になり、満点スタンプも
-    # 連続満点ストリークもスペシャルチャレンジの加点も永久に出ない。気づけないので警告する。
-    for section, other, label in (
-        ("habits", "daily_homework", "せいかつ"),
-        ("daily_homework", "habits", "しゅくだい"),
-    ):
-        if not _list(doc.get(section)) and _list(doc.get(other)):
+    # 空の区分は0点固定。片方が空なら満点が50点になり、両方空なら0点から動かない。
+    # どちらも満点スタンプも連続満点ストリークもスペシャルチャレンジの加点も永久に出ない。
+    # 「相手の区分に項目がある」を条件にしていたころは、いちばん警告が要る両方空
+    # ——初回ウィザードの「からっぽ」で作った直後——だけが素通りしていた（issue #34）。
+    # 区分ごとに1本ずつ出す＝画面のタブ別件数と、該当タブへのリンクがそのまま効く。
+    for section, label in (("habits", "せいかつ"), ("daily_homework", "しゅくだい")):
+        if not _list(doc.get(section)):
             _warn(
                 warnings,
                 f"/{section}",

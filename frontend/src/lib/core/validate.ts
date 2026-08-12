@@ -267,13 +267,16 @@ export function validateDocument(
 	}
 
 	// ---- 採点区分が空（judge.dailyScore の配点50+50が片肺になる） ----
-	// 空の区分は0点固定なので、片方だけ空にすると満点が50点になり、満点スタンプも
-	// れんぞく満点もスペシャルチャレンジの加点も永久に出ない。気づけないので警告する。
-	for (const [section, other, label] of [
-		['habits', 'daily_homework', 'せいかつ'],
-		['daily_homework', 'habits', 'しゅくだい']
+	// 空の区分は0点固定。片方が空なら満点が50点になり、両方空なら0点から動かない。
+	// どちらも満点スタンプもれんぞく満点もスペシャルチャレンジの加点も永久に出ない。
+	// 「相手の区分に項目がある」を条件にしていたころは、いちばん警告が要る両方空
+	// ——初回ウィザードの「からっぽ」で作った直後——だけが素通りしていた（issue #34）。
+	// 区分ごとに1本ずつ出す＝画面のタブ別件数と、該当タブへのリンクがそのまま効く。
+	for (const [section, label] of [
+		['habits', 'せいかつ'],
+		['daily_homework', 'しゅくだい']
 	]) {
-		if (asList(doc[section]).length === 0 && asList(doc[other]).length > 0) {
+		if (asList(doc[section]).length === 0) {
 			warn(
 				`/${section}`,
 				'empty_score_section',

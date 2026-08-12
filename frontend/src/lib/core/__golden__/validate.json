@@ -52196,6 +52196,52 @@
         "errors": [],
         "warnings": []
       }
+    },
+    {
+      "name": "空テンプレート（作った直後は空区分の警告が2件）",
+      "input": {
+        "doc": {
+          "child": "はな",
+          "child_kana": "はな",
+          "year": 2026,
+          "grade": "小2",
+          "period": {
+            "start": "2026-07-21",
+            "end": "2026-08-31",
+            "first_day_of_school": "2026-09-01"
+          },
+          "away": [],
+          "card_rules": {
+            "edges_window_days": 5
+          },
+          "media_timer": {
+            "limit_minutes": 120
+          },
+          "habits": [],
+          "daily_homework": [],
+          "special_challenges": [],
+          "rewards": [],
+          "one_shot_homework": [],
+          "choice_homework": [],
+          "school_start_items": []
+        }
+      },
+      "output": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          {
+            "path": "/habits",
+            "code": "empty_score_section",
+            "detail": {}
+          },
+          {
+            "path": "/daily_homework",
+            "code": "empty_score_section",
+            "detail": {}
+          }
+        ]
+      }
     }
   ]
 }

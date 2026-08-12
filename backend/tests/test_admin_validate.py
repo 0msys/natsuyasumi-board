@@ -4,8 +4,8 @@
 同じ doc を同じように受け入れ／拒む（乖離ドリフト防止・両向き）。
   parse 拒否 → validate も errors  … 保存できたのに子ども画面が 503、を防ぐ
   parse 受理 → validate も errors なし … 取り込めたのに保存できない、を防ぐ
-加えて kanji_grade / mid_period_add / rewards_unreachable / delete_with_records /
-records_outside_period の warning を固定する。
+加えて kanji_grade / empty_score_section / mid_period_add / rewards_unreachable /
+delete_with_records / records_outside_period の warning を固定する。
 """
 
 from __future__ import annotations
@@ -300,11 +300,18 @@ def test_empty_score_section_warning(sample_doc):
     assert result["ok"] is True  # 保存はできる
     assert len(warns) == 1 and warns[0]["path"] == "/daily_homework"
 
-    # 両方空（＝まだ何も入れていない作りかけ）は当たり前なので鳴らさない
+
+def test_empty_score_section_warning_両方空でも区分ごとに鳴る(sample_doc):
+    # 両方空は「まだ何も入れていない作りかけ」ではなく、初回ウィザードの「からっぽ」で
+    # 作った直後そのもの＝点数が0点から永久に動かない状態。以前はここだけが素通りしていて、
+    # いちばん手がかりが要る親が注意を1つも受け取れなかった（issue #34）。
+    # 区分ごとに1本ずつ出す＝画面の該当タブへのリンクとタブ別件数が、両方のタブに付く。
     sample_doc["habits"] = []
-    assert [
-        w for w in validate_document(sample_doc)["warnings"] if w["code"] == "empty_score_section"
-    ] == []
+    sample_doc["daily_homework"] = []
+    result = validate_document(sample_doc)
+    warns = [w for w in result["warnings"] if w["code"] == "empty_score_section"]
+    assert result["ok"] is True  # 「からっぽ」は正当な出発点なので保存は通す
+    assert [w["path"] for w in warns] == ["/habits", "/daily_homework"]
 
 
 def test_rewards_unreachable_warning(sample_doc):

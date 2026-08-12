@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import pytest
 
-from app.admin.template import TEMPLATES, standard_template
+from app.admin.template import TEMPLATES, empty_template, standard_template
 from app.admin.validate import validate_document
 from app.summer.judge import CHALLENGE_POINTS
 
@@ -38,3 +38,18 @@ def test_標準テンプレートは検証を警告なしで通る(grade):
     # 「作った直後に赤や黄が出ている」か「出ないまま到達不可能」のどちらかで、どちらも困る。
     doc = standard_template("はな", "はな", grade, 2026, PERIOD)
     assert validate_document(doc) == {"ok": True, "errors": [], "warnings": []}
+
+
+@pytest.mark.parametrize("grade", GRADES)
+def test_空テンプレートは空区分の警告だけを連れて通る(grade):
+    # 「からっぽ」は正当な出発点なので保存は通す（errors なし）。ただし両区分とも空＝
+    # 点数が0点から永久に動かない状態なので、直す先を指す警告が必ず要る（issue #34）。
+    # テンプレートと検証の交差で固定する——どちらかを触ったときに、ここで気づける。
+    doc = empty_template("はな", "はな", grade, 2026, PERIOD)
+    result = validate_document(doc)
+    assert result["ok"] is True
+    assert result["errors"] == []
+    assert [(w["code"], w["path"]) for w in result["warnings"]] == [
+        ("empty_score_section", "/habits"),
+        ("empty_score_section", "/daily_homework"),
+    ]
