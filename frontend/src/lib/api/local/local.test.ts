@@ -355,6 +355,44 @@ describe('来年ぶん', () => {
 		expect((next.doc as { away: unknown[] }).away).toEqual([]);
 	});
 
+	it('きかん限定をやめた習慣の、空の日付を来年ぶんに書き込まない', async () => {
+		// 「きかん限定」にして日付を入れないまま「毎日」へ戻すと、この形が保存できてしまう
+		// （検証は window が range のときしか日付を見ない）。前はその空文字を年ずらしして
+		// window_start: '0001-00--1' を書き込んでいた（Docker 版は同じ入力で 500）。
+		await wizard();
+		const entry = await api.adminGetDefinition(CHILD);
+		const habits = (entry.doc as Record<string, Record<string, unknown>[]>).habits;
+		habits[0].window = null;
+		habits[0].window_start = '';
+		habits[0].window_end = '';
+		await api.adminSaveDefinition(CHILD, entry.doc, entry.revision);
+
+		const next = await api.adminCreateNextYear(CHILD);
+		const habit = (next.doc as Record<string, Record<string, unknown>[]>).habits[0];
+		expect(habit.window_start).toBeUndefined();
+		expect(habit.window_end).toBeUndefined();
+		expect(JSON.stringify(next.doc)).not.toContain('0001-'); // 壊れた日付が1つも無いこと
+	});
+
+	it('きかん限定の習慣の日付は、落とさずに1年ぶん進める', async () => {
+		// backend/tests/test_admin_next_year.py の
+		// test_きかん限定の習慣の期間も1年ぶん進む と対。月日が保たれることは
+		// src/lib/core/dates.test.ts の shiftYear が押さえるので、ここは年だけ見る。
+		await wizard();
+		const entry = await api.adminGetDefinition(CHILD);
+		const habits = (entry.doc as Record<string, Record<string, unknown>[]>).habits;
+		habits[0].window = 'range';
+		habits[0].window_start = PERIOD.start;
+		habits[0].window_end = PERIOD.end;
+		await api.adminSaveDefinition(CHILD, entry.doc, entry.revision);
+
+		const next = await api.adminCreateNextYear(CHILD);
+		const habit = (next.doc as Record<string, Record<string, string>[]>).habits[0];
+		expect(habit.window).toBe('range');
+		expect(habit.window_start.startsWith(String(next.year))).toBe(true);
+		expect(habit.window_end.startsWith(String(next.year))).toBe(true);
+	});
+
 	it('小6の次は作れない', async () => {
 		await api.adminCreateDefinition({
 			child: 'ろく',

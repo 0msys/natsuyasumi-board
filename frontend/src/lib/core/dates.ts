@@ -71,8 +71,14 @@ export const dayOfMonth = (day: DayString): number => Number(day.slice(8, 10));
 /** 年。 */
 export const yearOf = (day: DayString): number => Number(day.slice(0, 4));
 
-/** 年を n だけずらす。2/29 は存在しない年では 2/28 に丸める。 */
+/** 年を n だけずらす。2/29 は存在しない年では 2/28 に丸める。
+ *
+ *  読めない値は投げる（addDays / diffDays と同じ）。形を確かめずに年・月・日を切り出して
+ *  いたころは shiftYear('', 1) が '0001-00--1'、shiftYear('abc', 1) が '0NaN-00--1' という
+ *  「日付に見えるゴミ」を返し、そのまま来年ぶんの定義に書き込まれていた。下の丸めは
+ *  「うるう日だけがここに来る」前提なので、入口で守らないとその前提が成り立たない。 */
 export function shiftYear(day: DayString, n: number): DayString {
+	mustParseDay(day);
 	const y = yearOf(day) + n;
 	const mo = monthOf(day);
 	const d = dayOfMonth(day);
