@@ -20196,6 +20196,2420 @@
           "days_total": 45
         }
       }
+    },
+    {
+      "name": "しゅくだいが空（1日の上限が50点に下がる）",
+      "input": {
+        "doc": {
+          "child": "はな",
+          "child_kana": "はな",
+          "year": 2026,
+          "grade": "小2",
+          "period": {
+            "start": "2026-07-18",
+            "end": "2026-08-31",
+            "first_day_of_school": "2026-09-01"
+          },
+          "away": [
+            {
+              "start": "2026-08-07",
+              "end": "2026-08-14",
+              "label": "おばあちゃんのいえ"
+            }
+          ],
+          "card_rules": {
+            "edges_window_days": 5
+          },
+          "media_timer": {
+            "limit_minutes": 120
+          },
+          "voice": {
+            "speaker": 3,
+            "label": "ずんだもん（ノーマル）"
+          },
+          "habits": [
+            {
+              "key": "hamigaki_asa",
+              "label": "はみがき（朝《あさ》）"
+            },
+            {
+              "key": "hamigaki_hiru",
+              "label": "はみがき（昼《ひる》）"
+            },
+            {
+              "key": "hamigaki_yoru",
+              "label": "はみがき（夜《よる》）"
+            },
+            {
+              "key": "hayaoki",
+              "label": "7時《じ》30分《ぷん》までにおきた",
+              "window": "edges"
+            },
+            {
+              "key": "asagohan",
+              "label": "朝《あさ》ごはんをしっかり食《た》べた",
+              "window": "edges"
+            },
+            {
+              "key": "hayane",
+              "label": "9時《じ》30分《ぷん》までにねた",
+              "window": "edges"
+            },
+            {
+              "key": "outmedia",
+              "label": "テレビ・ゲーム・タブレットは2時間《じかん》まで",
+              "window": "edges"
+            },
+            {
+              "key": "radio_taisou",
+              "label": "ラジオたいそう",
+              "window": "range",
+              "window_start": "2026-07-21",
+              "window_end": "2026-07-24",
+              "cancelable": true
+            }
+          ],
+          "daily_homework": [],
+          "special_challenges": [
+            {
+              "key": "gakki",
+              "label": "がっきのれんしゅう"
+            },
+            {
+              "key": "otetsudai",
+              "label": "おてつだい"
+            },
+            {
+              "key": "eigo",
+              "label": "えいごのうた"
+            },
+            {
+              "key": "tairyoku_ch",
+              "label": "体力《たいりょく》づくり"
+            }
+          ],
+          "rewards": [
+            {
+              "key": "c",
+              "label": "ランクC",
+              "avg": 80
+            },
+            {
+              "key": "b",
+              "label": "ランクB",
+              "avg": 100
+            },
+            {
+              "key": "a",
+              "label": "ランクA",
+              "avg": 150
+            },
+            {
+              "key": "s",
+              "label": "ランクS",
+              "avg": 180
+            }
+          ],
+          "one_shot_homework": [
+            {
+              "key": "enikki",
+              "label": "絵《え》日記《にっき》（絵《え》に色《いろ》をぬる）",
+              "required": true
+            },
+            {
+              "key": "kansatsu",
+              "label": "あさがおのかんさつカード1まい",
+              "required": true
+            },
+            {
+              "key": "dokusho",
+              "label": "読書《どくしょ》（カードにだいめいを書《か》く）",
+              "type": "count",
+              "target": 5,
+              "required": true
+            },
+            {
+              "key": "drill_marutsuke",
+              "label": "ドリルの丸《まる》つけ・やり直《なお》し",
+              "required": true
+            },
+            {
+              "key": "jiyu_kenkyu",
+              "label": "じゆうけんきゅう",
+              "required": false
+            },
+            {
+              "key": "tairyoku",
+              "label": "体力《たいりょく》づくり（すいえいなど）",
+              "required": false
+            }
+          ],
+          "choice_homework": [
+            {
+              "key": "sakuhin",
+              "label": "国語《こくご》か図工《ずこう》のさくひん（1点《てん》いじょう作《つく》る）",
+              "min_required": 1,
+              "options": [
+                {
+                  "key": "kansobun",
+                  "label": "読書《どくしょ》かんそうぶん",
+                  "category": "国語《こくご》"
+                },
+                {
+                  "key": "shi",
+                  "label": "しやたんかを作《つく》る",
+                  "category": "国語《こくご》"
+                },
+                {
+                  "key": "shodou",
+                  "label": "書道《しょどう》のさくひん",
+                  "category": "国語《こくご》"
+                },
+                {
+                  "key": "kaiga",
+                  "label": "絵《え》をかく",
+                  "category": "図工《ずこう》"
+                },
+                {
+                  "key": "kousaku",
+                  "label": "こうさく",
+                  "category": "図工《ずこう》"
+                },
+                {
+                  "key": "poster",
+                  "label": "ポスター",
+                  "category": "図工《ずこう》"
+                }
+              ]
+            }
+          ],
+          "school_start_items": [
+            {
+              "key": "uwabaki",
+              "label": "うわばきをあらう",
+              "due": "2026-08-31"
+            },
+            {
+              "key": "teishutsu",
+              "label": "ていしゅつぶつをそろえる（ドリル・日記《にっき》・カードるい）",
+              "due": "2026-09-01"
+            },
+            {
+              "key": "fudebako",
+              "label": "れんらくちょう・ふでばこ",
+              "due": "2026-09-01"
+            },
+            {
+              "key": "zoukin",
+              "label": "ぞうきん1まい（名前《なまえ》を書《か》く）",
+              "due": "2026-09-01"
+            }
+          ]
+        },
+        "today": "2026-07-28",
+        "checks": {
+          "2026-07-28": {
+            "asagohan": "done",
+            "hamigaki_asa": "done",
+            "hamigaki_hiru": "done",
+            "hamigaki_yoru": "done",
+            "hayane": "done",
+            "hayaoki": "done",
+            "outmedia": "done",
+            "radio_taisou": "done"
+          }
+        },
+        "metaByDay": {},
+        "flags": {}
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "grade": "小2",
+        "grade_level": 2,
+        "ui": {
+          "header_title": "{name}の夏休《なつやす》み",
+          "period_range": "{start}〜{end}（しぎょうしきは {first}）",
+          "period_ended": "夏休《なつやす》みのきかんがおわったよ。きろくは下《した》のひょうで見《み》られるよ。",
+          "away_today": "今日《きょう》はお出《で》かけの日《ひ》（{away}）。できたぶんだけきろくしよう。",
+          "rank_achieved_title": "{rank} たっせい！",
+          "rank_achieved_sub": "つみあげ点《てん》が ランクに とどいたよ！",
+          "rank_achieved_speech": "ランク{rank}、たっせい！",
+          "celebration_title": "まんてん！",
+          "celebration_sub": "今日《きょう》のチェックが ぜんぶ できたよ",
+          "today_checks_title": "今日《きょう》のチェック",
+          "todo_speech_ask": "今日《きょう》やることをきく",
+          "todo_speech_busy": "じゅんびちゅう…",
+          "section_habits": "生活《せいかつ》",
+          "section_daily": "しゅくだい",
+          "check_done": "やった",
+          "check_not_done": "やらなかった",
+          "check_cancelled": "中止《ちゅうし》",
+          "check_cancelled_aria": "中止《ちゅうし》（雨《あめ》などでおやすみ）",
+          "comment_title": "今日《きょう》のがんばり",
+          "score_of_max": "点《てん》 / {max}点《てん》",
+          "score_homework_label": "しゅくだい",
+          "score_challenge_label": "スペシャルチャレンジ",
+          "listen_aria": "読《よ》みあげる",
+          "challenge_title": "スペシャルチャレンジ",
+          "challenge_bonus": "1つできると +25点《てん》",
+          "challenge_all": "ぜんぶできたら 50点《てん》 まんてん！",
+          "challenge_now": "いま +{bonus}点《てん》",
+          "challenge_locked_hint": "しゅくだいを 100点《てん》 にしたら チャレンジできるよ！",
+          "challenge_locked_overlay": "しゅくだいを 100点《てん》 にしたら あけられるよ",
+          "school_start_title": "しんがっきのじゅんび",
+          "school_start_done": "{done}/{total} できたよ",
+          "school_start_next": "つぎは {due}までに {item}",
+          "school_start_due": "{due}まで",
+          "homework_title": "しゅくだいのすすみぐあい",
+          "homework_progress_days": "夏休《なつやす》み {elapsed}日《にち》め / {total}日《にち》",
+          "homework_optional": "やってもやらなくてもいい しゅくだい",
+          "homework_done_days_title": "やった日《ひ》のかず",
+          "homework_done_days": "{days}日《にち》",
+          "decide_do": "やる",
+          "decide_skip": "やらない",
+          "done_aria": "おわった",
+          "count_minus_aria": "へらす",
+          "count_plus_aria": "ふやす",
+          "choice_satisfied": "できたよ",
+          "choice_unsatisfied": "どれか1つはえらんでね",
+          "reward_title": "ごほうびランク",
+          "reward_now": "いま {total} 点《てん》",
+          "reward_achieved": "たっせい: {rank}",
+          "reward_next": "つぎは {rank}（あと{rest}点《てん》）",
+          "reward_pace": "このペースなら → {rank}",
+          "reward_hint": "毎日《まいにち》の点数《てんすう》をつみあげて、ランクをめざそう",
+          "reward_chart_aria": "いま{total}点《てん》",
+          "reward_chart_aria_pace": "。このペースなら{rank}",
+          "chart_away": "お出《で》かけ",
+          "chart_points": "{points}点《てん》",
+          "chart_tooltip_future": "これから",
+          "history_title": "夏休《なつやす》みのきろく",
+          "history_streak_current": "れんぞくまんてん {days}日《にち》",
+          "history_streak_total": "まんてん {times}回《かい》",
+          "history_streak_best": "さいこう {days}日《にち》",
+          "history_hint": "日《ひ》にちをタップすると、前《まえ》の日《ひ》のきろくをかえられるよ",
+          "history_score_row": "点数《てんすう》",
+          "day_edit_aria": "きろくのへんしゅう",
+          "day_edit_title": "{date}のきろく",
+          "day_edit_editing": "へんしゅうちゅう",
+          "day_edit_button": "へんしゅう",
+          "day_edit_away": "お出《で》かけの日《ひ》（{away}）",
+          "day_edit_view_only": "きろくを見《み》ています。なおすときは「へんしゅう」をおしてね。",
+          "close": "とじる",
+          "close_aria": "とじる",
+          "timer_title": "テレビタイマー",
+          "timer_watched_today": "今日《きょう》 見《み》た 時間《じかん》",
+          "timer_over_limit": "2時間《じかん》を こえたよ",
+          "timer_remaining": "2時間《じかん》まで（のこり {left}）",
+          "timer_stop": "ストップ（けした）",
+          "timer_resume": "さいかい（またつけた）",
+          "timer_start": "スタート（つけた）",
+          "timer_error_load": "テレビタイマーが よみこめなかったよ",
+          "timer_error_start": "スタートできなかったよ",
+          "timer_error_pause": "ストップできなかったよ",
+          "stopwatch_label": "ストップウォッチ",
+          "stopwatch_start": "スタート",
+          "stopwatch_stop": "ストップ",
+          "unit_minutes": "分《ふん》",
+          "unit_seconds": "びょう"
+        },
+        "today": "2026-07-28",
+        "in_period": true,
+        "period": {
+          "start": "2026-07-18",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away_today": null,
+        "away": [
+          {
+            "start": "2026-08-07",
+            "end": "2026-08-14",
+            "label": "おばあちゃんのいえ"
+          }
+        ],
+        "habits": [
+          {
+            "key": "hamigaki_asa",
+            "label": "はみがき（朝《あさ》）",
+            "window": null,
+            "window_start": null,
+            "window_end": null,
+            "cancelable": false,
+            "window_active": true,
+            "status": "done"
+          },
+          {
+            "key": "hamigaki_hiru",
+            "label": "はみがき（昼《ひる》）",
+            "window": null,
+            "window_start": null,
+            "window_end": null,
+            "cancelable": false,
+            "window_active": true,
+            "status": "done"
+          },
+          {
+            "key": "hamigaki_yoru",
+            "label": "はみがき（夜《よる》）",
+            "window": null,
+            "window_start": null,
+            "window_end": null,
+            "cancelable": false,
+            "window_active": true,
+            "status": "done"
+          },
+          {
+            "key": "hayaoki",
+            "label": "7時《じ》30分《ぷん》までにおきた",
+            "window": "edges",
+            "window_start": null,
+            "window_end": null,
+            "cancelable": false,
+            "window_active": false,
+            "status": "done"
+          },
+          {
+            "key": "asagohan",
+            "label": "朝《あさ》ごはんをしっかり食《た》べた",
+            "window": "edges",
+            "window_start": null,
+            "window_end": null,
+            "cancelable": false,
+            "window_active": false,
+            "status": "done"
+          },
+          {
+            "key": "hayane",
+            "label": "9時《じ》30分《ぷん》までにねた",
+            "window": "edges",
+            "window_start": null,
+            "window_end": null,
+            "cancelable": false,
+            "window_active": false,
+            "status": "done"
+          },
+          {
+            "key": "outmedia",
+            "label": "テレビ・ゲーム・タブレットは2時間《じかん》まで",
+            "window": "edges",
+            "window_start": null,
+            "window_end": null,
+            "cancelable": false,
+            "window_active": false,
+            "status": "done"
+          },
+          {
+            "key": "radio_taisou",
+            "label": "ラジオたいそう",
+            "window": "range",
+            "window_start": "2026-07-21",
+            "window_end": "2026-07-24",
+            "cancelable": true,
+            "window_active": false,
+            "status": "done"
+          }
+        ],
+        "daily_homework": [],
+        "special_challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "status": null,
+            "done_days": 0
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "status": null,
+            "done_days": 0
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "status": null,
+            "done_days": 0
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "status": null,
+            "done_days": 0
+          }
+        ],
+        "score_max": 50,
+        "rewards": {
+          "total": 50,
+          "cumulative": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            50,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "ranks": [
+            {
+              "key": "c",
+              "label": "ランクC",
+              "avg": 80,
+              "threshold": 3600,
+              "prize": null,
+              "achieved": false
+            },
+            {
+              "key": "b",
+              "label": "ランクB",
+              "avg": 100,
+              "threshold": 4500,
+              "prize": null,
+              "achieved": false
+            },
+            {
+              "key": "a",
+              "label": "ランクA",
+              "avg": 150,
+              "threshold": 6750,
+              "prize": null,
+              "achieved": false
+            },
+            {
+              "key": "s",
+              "label": "ランクS",
+              "avg": 180,
+              "threshold": 8100,
+              "prize": null,
+              "achieved": false
+            }
+          ],
+          "achieved_key": null,
+          "pace_key": null,
+          "projected_total": 0,
+          "max_total": 2250
+        },
+        "one_shot": [
+          {
+            "key": "enikki",
+            "label": "絵《え》日記《にっき》（絵《え》に色《いろ》をぬる）",
+            "type": "flag",
+            "required": true,
+            "value": 0,
+            "target": null,
+            "done": false,
+            "decision": null
+          },
+          {
+            "key": "kansatsu",
+            "label": "あさがおのかんさつカード1まい",
+            "type": "flag",
+            "required": true,
+            "value": 0,
+            "target": null,
+            "done": false,
+            "decision": null
+          },
+          {
+            "key": "dokusho",
+            "label": "読書《どくしょ》（カードにだいめいを書《か》く）",
+            "type": "count",
+            "required": true,
+            "value": 0,
+            "target": 5,
+            "done": false,
+            "decision": null
+          },
+          {
+            "key": "drill_marutsuke",
+            "label": "ドリルの丸《まる》つけ・やり直《なお》し",
+            "type": "flag",
+            "required": true,
+            "value": 0,
+            "target": null,
+            "done": false,
+            "decision": null
+          },
+          {
+            "key": "jiyu_kenkyu",
+            "label": "じゆうけんきゅう",
+            "type": "flag",
+            "required": false,
+            "value": 0,
+            "target": null,
+            "done": false,
+            "decision": null
+          },
+          {
+            "key": "tairyoku",
+            "label": "体力《たいりょく》づくり（すいえいなど）",
+            "type": "flag",
+            "required": false,
+            "value": 0,
+            "target": null,
+            "done": false,
+            "decision": null
+          }
+        ],
+        "choice_groups": [
+          {
+            "key": "sakuhin",
+            "label": "国語《こくご》か図工《ずこう》のさくひん（1点《てん》いじょう作《つく》る）",
+            "min_required": 1,
+            "satisfied": false,
+            "options": [
+              {
+                "key": "sakuhin.kansobun",
+                "label": "読書《どくしょ》かんそうぶん",
+                "category": "国語《こくご》",
+                "decision": null,
+                "done": false
+              },
+              {
+                "key": "sakuhin.shi",
+                "label": "しやたんかを作《つく》る",
+                "category": "国語《こくご》",
+                "decision": null,
+                "done": false
+              },
+              {
+                "key": "sakuhin.shodou",
+                "label": "書道《しょどう》のさくひん",
+                "category": "国語《こくご》",
+                "decision": null,
+                "done": false
+              },
+              {
+                "key": "sakuhin.kaiga",
+                "label": "絵《え》をかく",
+                "category": "図工《ずこう》",
+                "decision": null,
+                "done": false
+              },
+              {
+                "key": "sakuhin.kousaku",
+                "label": "こうさく",
+                "category": "図工《ずこう》",
+                "decision": null,
+                "done": false
+              },
+              {
+                "key": "sakuhin.poster",
+                "label": "ポスター",
+                "category": "図工《ずこう》",
+                "decision": null,
+                "done": false
+              }
+            ]
+          }
+        ],
+        "school_start_items": [
+          {
+            "key": "uwabaki",
+            "label": "うわばきをあらう",
+            "due": "2026-08-31",
+            "done": false
+          },
+          {
+            "key": "teishutsu",
+            "label": "ていしゅつぶつをそろえる（ドリル・日記《にっき》・カードるい）",
+            "due": "2026-09-01",
+            "done": false
+          },
+          {
+            "key": "fudebako",
+            "label": "れんらくちょう・ふでばこ",
+            "due": "2026-09-01",
+            "done": false
+          },
+          {
+            "key": "zoukin",
+            "label": "ぞうきん1まい（名前《なまえ》を書《か》く）",
+            "due": "2026-09-01",
+            "done": false
+          }
+        ],
+        "card_guide": null,
+        "practice_homework": [],
+        "history": [
+          {
+            "day": "2026-07-18",
+            "weekday": "土",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-19",
+            "weekday": "日",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-20",
+            "weekday": "月",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-21",
+            "weekday": "火",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-22",
+            "weekday": "水",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-23",
+            "weekday": "木",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-24",
+            "weekday": "金",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-25",
+            "weekday": "土",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-26",
+            "weekday": "日",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-27",
+            "weekday": "月",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-28",
+            "weekday": "火",
+            "statuses": {
+              "asagohan": "done",
+              "hamigaki_asa": "done",
+              "hamigaki_hiru": "done",
+              "hamigaki_yoru": "done",
+              "hayane": "done",
+              "hayaoki": "done",
+              "outmedia": "done",
+              "radio_taisou": "done"
+            },
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": false,
+            "is_today": true,
+            "score": 50,
+            "total": 50
+          },
+          {
+            "day": "2026-07-29",
+            "weekday": "水",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-30",
+            "weekday": "木",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-31",
+            "weekday": "金",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-01",
+            "weekday": "土",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-02",
+            "weekday": "日",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-03",
+            "weekday": "月",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-04",
+            "weekday": "火",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-05",
+            "weekday": "水",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-06",
+            "weekday": "木",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-07",
+            "weekday": "金",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-08",
+            "weekday": "土",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-09",
+            "weekday": "日",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-10",
+            "weekday": "月",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-11",
+            "weekday": "火",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-12",
+            "weekday": "水",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-13",
+            "weekday": "木",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-14",
+            "weekday": "金",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-15",
+            "weekday": "土",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-16",
+            "weekday": "日",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-17",
+            "weekday": "月",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-18",
+            "weekday": "火",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-19",
+            "weekday": "水",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-20",
+            "weekday": "木",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-21",
+            "weekday": "金",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-22",
+            "weekday": "土",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-23",
+            "weekday": "日",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-24",
+            "weekday": "月",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-25",
+            "weekday": "火",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-26",
+            "weekday": "水",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-27",
+            "weekday": "木",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-28",
+            "weekday": "金",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-29",
+            "weekday": "土",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-30",
+            "weekday": "日",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-31",
+            "weekday": "月",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          }
+        ],
+        "streaks": {
+          "perfect_current": 0,
+          "perfect_best": 0,
+          "perfect_total": 0
+        },
+        "today_score": {
+          "score": 50,
+          "bonus": 0,
+          "total": 50,
+          "unlocked": false,
+          "challenge_done": 0,
+          "challenge_max": 100,
+          "parts": [
+            {
+              "name": "habits",
+              "label": "せいかつ",
+              "points": 50,
+              "max_points": 50,
+              "done": 3,
+              "total": 3
+            },
+            {
+              "name": "daily",
+              "label": "しゅくだい",
+              "points": 0,
+              "max_points": 50,
+              "done": 0,
+              "total": 0
+            }
+          ]
+        },
+        "remaining_today": [],
+        "comment": {
+          "score": 50,
+          "bonus": 0,
+          "total": 50,
+          "band": "good",
+          "text": "今日《きょう》は 50点《てん》だよ。今日《きょう》の 分《ぶん》も ちゃんと すすんだよ。だいじょうぶ。"
+        },
+        "progress": {
+          "days_elapsed": 11,
+          "days_total": 45
+        }
+      }
+    },
+    {
+      "name": "採点区分が両方とも空（上限0点・記録は残る）",
+      "input": {
+        "doc": {
+          "child": "はな",
+          "child_kana": "はな",
+          "year": 2026,
+          "grade": "小2",
+          "period": {
+            "start": "2026-07-18",
+            "end": "2026-08-31",
+            "first_day_of_school": "2026-09-01"
+          },
+          "away": [
+            {
+              "start": "2026-08-07",
+              "end": "2026-08-14",
+              "label": "おばあちゃんのいえ"
+            }
+          ],
+          "card_rules": {
+            "edges_window_days": 5
+          },
+          "media_timer": {
+            "limit_minutes": 120
+          },
+          "voice": {
+            "speaker": 3,
+            "label": "ずんだもん（ノーマル）"
+          },
+          "habits": [],
+          "daily_homework": [],
+          "special_challenges": [
+            {
+              "key": "gakki",
+              "label": "がっきのれんしゅう"
+            },
+            {
+              "key": "otetsudai",
+              "label": "おてつだい"
+            },
+            {
+              "key": "eigo",
+              "label": "えいごのうた"
+            },
+            {
+              "key": "tairyoku_ch",
+              "label": "体力《たいりょく》づくり"
+            }
+          ],
+          "rewards": [
+            {
+              "key": "c",
+              "label": "ランクC",
+              "avg": 80
+            },
+            {
+              "key": "b",
+              "label": "ランクB",
+              "avg": 100
+            },
+            {
+              "key": "a",
+              "label": "ランクA",
+              "avg": 150
+            },
+            {
+              "key": "s",
+              "label": "ランクS",
+              "avg": 180
+            }
+          ],
+          "one_shot_homework": [
+            {
+              "key": "enikki",
+              "label": "絵《え》日記《にっき》（絵《え》に色《いろ》をぬる）",
+              "required": true
+            },
+            {
+              "key": "kansatsu",
+              "label": "あさがおのかんさつカード1まい",
+              "required": true
+            },
+            {
+              "key": "dokusho",
+              "label": "読書《どくしょ》（カードにだいめいを書《か》く）",
+              "type": "count",
+              "target": 5,
+              "required": true
+            },
+            {
+              "key": "drill_marutsuke",
+              "label": "ドリルの丸《まる》つけ・やり直《なお》し",
+              "required": true
+            },
+            {
+              "key": "jiyu_kenkyu",
+              "label": "じゆうけんきゅう",
+              "required": false
+            },
+            {
+              "key": "tairyoku",
+              "label": "体力《たいりょく》づくり（すいえいなど）",
+              "required": false
+            }
+          ],
+          "choice_homework": [
+            {
+              "key": "sakuhin",
+              "label": "国語《こくご》か図工《ずこう》のさくひん（1点《てん》いじょう作《つく》る）",
+              "min_required": 1,
+              "options": [
+                {
+                  "key": "kansobun",
+                  "label": "読書《どくしょ》かんそうぶん",
+                  "category": "国語《こくご》"
+                },
+                {
+                  "key": "shi",
+                  "label": "しやたんかを作《つく》る",
+                  "category": "国語《こくご》"
+                },
+                {
+                  "key": "shodou",
+                  "label": "書道《しょどう》のさくひん",
+                  "category": "国語《こくご》"
+                },
+                {
+                  "key": "kaiga",
+                  "label": "絵《え》をかく",
+                  "category": "図工《ずこう》"
+                },
+                {
+                  "key": "kousaku",
+                  "label": "こうさく",
+                  "category": "図工《ずこう》"
+                },
+                {
+                  "key": "poster",
+                  "label": "ポスター",
+                  "category": "図工《ずこう》"
+                }
+              ]
+            }
+          ],
+          "school_start_items": [
+            {
+              "key": "uwabaki",
+              "label": "うわばきをあらう",
+              "due": "2026-08-31"
+            },
+            {
+              "key": "teishutsu",
+              "label": "ていしゅつぶつをそろえる（ドリル・日記《にっき》・カードるい）",
+              "due": "2026-09-01"
+            },
+            {
+              "key": "fudebako",
+              "label": "れんらくちょう・ふでばこ",
+              "due": "2026-09-01"
+            },
+            {
+              "key": "zoukin",
+              "label": "ぞうきん1まい（名前《なまえ》を書《か》く）",
+              "due": "2026-09-01"
+            }
+          ]
+        },
+        "today": "2026-07-28",
+        "checks": {
+          "2026-07-28": {
+            "asagohan": "done",
+            "hamigaki_asa": "done",
+            "hamigaki_hiru": "done",
+            "hamigaki_yoru": "done",
+            "hayane": "done",
+            "hayaoki": "done",
+            "outmedia": "done",
+            "radio_taisou": "done"
+          }
+        },
+        "metaByDay": {},
+        "flags": {}
+      },
+      "output": {
+        "child": "はな",
+        "child_kana": "はな",
+        "grade": "小2",
+        "grade_level": 2,
+        "ui": {
+          "header_title": "{name}の夏休《なつやす》み",
+          "period_range": "{start}〜{end}（しぎょうしきは {first}）",
+          "period_ended": "夏休《なつやす》みのきかんがおわったよ。きろくは下《した》のひょうで見《み》られるよ。",
+          "away_today": "今日《きょう》はお出《で》かけの日《ひ》（{away}）。できたぶんだけきろくしよう。",
+          "rank_achieved_title": "{rank} たっせい！",
+          "rank_achieved_sub": "つみあげ点《てん》が ランクに とどいたよ！",
+          "rank_achieved_speech": "ランク{rank}、たっせい！",
+          "celebration_title": "まんてん！",
+          "celebration_sub": "今日《きょう》のチェックが ぜんぶ できたよ",
+          "today_checks_title": "今日《きょう》のチェック",
+          "todo_speech_ask": "今日《きょう》やることをきく",
+          "todo_speech_busy": "じゅんびちゅう…",
+          "section_habits": "生活《せいかつ》",
+          "section_daily": "しゅくだい",
+          "check_done": "やった",
+          "check_not_done": "やらなかった",
+          "check_cancelled": "中止《ちゅうし》",
+          "check_cancelled_aria": "中止《ちゅうし》（雨《あめ》などでおやすみ）",
+          "comment_title": "今日《きょう》のがんばり",
+          "score_of_max": "点《てん》 / {max}点《てん》",
+          "score_homework_label": "しゅくだい",
+          "score_challenge_label": "スペシャルチャレンジ",
+          "listen_aria": "読《よ》みあげる",
+          "challenge_title": "スペシャルチャレンジ",
+          "challenge_bonus": "1つできると +25点《てん》",
+          "challenge_all": "ぜんぶできたら 0点《てん》 まんてん！",
+          "challenge_now": "いま +{bonus}点《てん》",
+          "challenge_locked_hint": "しゅくだいを 100点《てん》 にしたら チャレンジできるよ！",
+          "challenge_locked_overlay": "しゅくだいを 100点《てん》 にしたら あけられるよ",
+          "school_start_title": "しんがっきのじゅんび",
+          "school_start_done": "{done}/{total} できたよ",
+          "school_start_next": "つぎは {due}までに {item}",
+          "school_start_due": "{due}まで",
+          "homework_title": "しゅくだいのすすみぐあい",
+          "homework_progress_days": "夏休《なつやす》み {elapsed}日《にち》め / {total}日《にち》",
+          "homework_optional": "やってもやらなくてもいい しゅくだい",
+          "homework_done_days_title": "やった日《ひ》のかず",
+          "homework_done_days": "{days}日《にち》",
+          "decide_do": "やる",
+          "decide_skip": "やらない",
+          "done_aria": "おわった",
+          "count_minus_aria": "へらす",
+          "count_plus_aria": "ふやす",
+          "choice_satisfied": "できたよ",
+          "choice_unsatisfied": "どれか1つはえらんでね",
+          "reward_title": "ごほうびランク",
+          "reward_now": "いま {total} 点《てん》",
+          "reward_achieved": "たっせい: {rank}",
+          "reward_next": "つぎは {rank}（あと{rest}点《てん》）",
+          "reward_pace": "このペースなら → {rank}",
+          "reward_hint": "毎日《まいにち》の点数《てんすう》をつみあげて、ランクをめざそう",
+          "reward_chart_aria": "いま{total}点《てん》",
+          "reward_chart_aria_pace": "。このペースなら{rank}",
+          "chart_away": "お出《で》かけ",
+          "chart_points": "{points}点《てん》",
+          "chart_tooltip_future": "これから",
+          "history_title": "夏休《なつやす》みのきろく",
+          "history_streak_current": "れんぞくまんてん {days}日《にち》",
+          "history_streak_total": "まんてん {times}回《かい》",
+          "history_streak_best": "さいこう {days}日《にち》",
+          "history_hint": "日《ひ》にちをタップすると、前《まえ》の日《ひ》のきろくをかえられるよ",
+          "history_score_row": "点数《てんすう》",
+          "day_edit_aria": "きろくのへんしゅう",
+          "day_edit_title": "{date}のきろく",
+          "day_edit_editing": "へんしゅうちゅう",
+          "day_edit_button": "へんしゅう",
+          "day_edit_away": "お出《で》かけの日《ひ》（{away}）",
+          "day_edit_view_only": "きろくを見《み》ています。なおすときは「へんしゅう」をおしてね。",
+          "close": "とじる",
+          "close_aria": "とじる",
+          "timer_title": "テレビタイマー",
+          "timer_watched_today": "今日《きょう》 見《み》た 時間《じかん》",
+          "timer_over_limit": "2時間《じかん》を こえたよ",
+          "timer_remaining": "2時間《じかん》まで（のこり {left}）",
+          "timer_stop": "ストップ（けした）",
+          "timer_resume": "さいかい（またつけた）",
+          "timer_start": "スタート（つけた）",
+          "timer_error_load": "テレビタイマーが よみこめなかったよ",
+          "timer_error_start": "スタートできなかったよ",
+          "timer_error_pause": "ストップできなかったよ",
+          "stopwatch_label": "ストップウォッチ",
+          "stopwatch_start": "スタート",
+          "stopwatch_stop": "ストップ",
+          "unit_minutes": "分《ふん》",
+          "unit_seconds": "びょう"
+        },
+        "today": "2026-07-28",
+        "in_period": true,
+        "period": {
+          "start": "2026-07-18",
+          "end": "2026-08-31",
+          "first_day_of_school": "2026-09-01"
+        },
+        "away_today": null,
+        "away": [
+          {
+            "start": "2026-08-07",
+            "end": "2026-08-14",
+            "label": "おばあちゃんのいえ"
+          }
+        ],
+        "habits": [],
+        "daily_homework": [],
+        "special_challenges": [
+          {
+            "key": "gakki",
+            "label": "がっきのれんしゅう",
+            "status": null,
+            "done_days": 0
+          },
+          {
+            "key": "otetsudai",
+            "label": "おてつだい",
+            "status": null,
+            "done_days": 0
+          },
+          {
+            "key": "eigo",
+            "label": "えいごのうた",
+            "status": null,
+            "done_days": 0
+          },
+          {
+            "key": "tairyoku_ch",
+            "label": "体力《たいりょく》づくり",
+            "status": null,
+            "done_days": 0
+          }
+        ],
+        "score_max": 0,
+        "rewards": {
+          "total": 0,
+          "cumulative": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "ranks": [
+            {
+              "key": "c",
+              "label": "ランクC",
+              "avg": 80,
+              "threshold": 3600,
+              "prize": null,
+              "achieved": false
+            },
+            {
+              "key": "b",
+              "label": "ランクB",
+              "avg": 100,
+              "threshold": 4500,
+              "prize": null,
+              "achieved": false
+            },
+            {
+              "key": "a",
+              "label": "ランクA",
+              "avg": 150,
+              "threshold": 6750,
+              "prize": null,
+              "achieved": false
+            },
+            {
+              "key": "s",
+              "label": "ランクS",
+              "avg": 180,
+              "threshold": 8100,
+              "prize": null,
+              "achieved": false
+            }
+          ],
+          "achieved_key": null,
+          "pace_key": null,
+          "projected_total": 0,
+          "max_total": 0
+        },
+        "one_shot": [
+          {
+            "key": "enikki",
+            "label": "絵《え》日記《にっき》（絵《え》に色《いろ》をぬる）",
+            "type": "flag",
+            "required": true,
+            "value": 0,
+            "target": null,
+            "done": false,
+            "decision": null
+          },
+          {
+            "key": "kansatsu",
+            "label": "あさがおのかんさつカード1まい",
+            "type": "flag",
+            "required": true,
+            "value": 0,
+            "target": null,
+            "done": false,
+            "decision": null
+          },
+          {
+            "key": "dokusho",
+            "label": "読書《どくしょ》（カードにだいめいを書《か》く）",
+            "type": "count",
+            "required": true,
+            "value": 0,
+            "target": 5,
+            "done": false,
+            "decision": null
+          },
+          {
+            "key": "drill_marutsuke",
+            "label": "ドリルの丸《まる》つけ・やり直《なお》し",
+            "type": "flag",
+            "required": true,
+            "value": 0,
+            "target": null,
+            "done": false,
+            "decision": null
+          },
+          {
+            "key": "jiyu_kenkyu",
+            "label": "じゆうけんきゅう",
+            "type": "flag",
+            "required": false,
+            "value": 0,
+            "target": null,
+            "done": false,
+            "decision": null
+          },
+          {
+            "key": "tairyoku",
+            "label": "体力《たいりょく》づくり（すいえいなど）",
+            "type": "flag",
+            "required": false,
+            "value": 0,
+            "target": null,
+            "done": false,
+            "decision": null
+          }
+        ],
+        "choice_groups": [
+          {
+            "key": "sakuhin",
+            "label": "国語《こくご》か図工《ずこう》のさくひん（1点《てん》いじょう作《つく》る）",
+            "min_required": 1,
+            "satisfied": false,
+            "options": [
+              {
+                "key": "sakuhin.kansobun",
+                "label": "読書《どくしょ》かんそうぶん",
+                "category": "国語《こくご》",
+                "decision": null,
+                "done": false
+              },
+              {
+                "key": "sakuhin.shi",
+                "label": "しやたんかを作《つく》る",
+                "category": "国語《こくご》",
+                "decision": null,
+                "done": false
+              },
+              {
+                "key": "sakuhin.shodou",
+                "label": "書道《しょどう》のさくひん",
+                "category": "国語《こくご》",
+                "decision": null,
+                "done": false
+              },
+              {
+                "key": "sakuhin.kaiga",
+                "label": "絵《え》をかく",
+                "category": "図工《ずこう》",
+                "decision": null,
+                "done": false
+              },
+              {
+                "key": "sakuhin.kousaku",
+                "label": "こうさく",
+                "category": "図工《ずこう》",
+                "decision": null,
+                "done": false
+              },
+              {
+                "key": "sakuhin.poster",
+                "label": "ポスター",
+                "category": "図工《ずこう》",
+                "decision": null,
+                "done": false
+              }
+            ]
+          }
+        ],
+        "school_start_items": [
+          {
+            "key": "uwabaki",
+            "label": "うわばきをあらう",
+            "due": "2026-08-31",
+            "done": false
+          },
+          {
+            "key": "teishutsu",
+            "label": "ていしゅつぶつをそろえる（ドリル・日記《にっき》・カードるい）",
+            "due": "2026-09-01",
+            "done": false
+          },
+          {
+            "key": "fudebako",
+            "label": "れんらくちょう・ふでばこ",
+            "due": "2026-09-01",
+            "done": false
+          },
+          {
+            "key": "zoukin",
+            "label": "ぞうきん1まい（名前《なまえ》を書《か》く）",
+            "due": "2026-09-01",
+            "done": false
+          }
+        ],
+        "card_guide": null,
+        "practice_homework": [],
+        "history": [
+          {
+            "day": "2026-07-18",
+            "weekday": "土",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-19",
+            "weekday": "日",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-20",
+            "weekday": "月",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-21",
+            "weekday": "火",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-22",
+            "weekday": "水",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-23",
+            "weekday": "木",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-24",
+            "weekday": "金",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-25",
+            "weekday": "土",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-26",
+            "weekday": "日",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-27",
+            "weekday": "月",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": false,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-28",
+            "weekday": "火",
+            "statuses": {
+              "asagohan": "done",
+              "hamigaki_asa": "done",
+              "hamigaki_hiru": "done",
+              "hamigaki_yoru": "done",
+              "hayane": "done",
+              "hayaoki": "done",
+              "outmedia": "done",
+              "radio_taisou": "done"
+            },
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": false,
+            "is_today": true,
+            "score": 0,
+            "total": 0
+          },
+          {
+            "day": "2026-07-29",
+            "weekday": "水",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-30",
+            "weekday": "木",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-07-31",
+            "weekday": "金",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-01",
+            "weekday": "土",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-02",
+            "weekday": "日",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-03",
+            "weekday": "月",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-04",
+            "weekday": "火",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-05",
+            "weekday": "水",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-06",
+            "weekday": "木",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-07",
+            "weekday": "金",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-08",
+            "weekday": "土",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-09",
+            "weekday": "日",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-10",
+            "weekday": "月",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-11",
+            "weekday": "火",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-12",
+            "weekday": "水",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-13",
+            "weekday": "木",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-14",
+            "weekday": "金",
+            "statuses": {},
+            "meta": {},
+            "away": "おばあちゃんのいえ",
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-15",
+            "weekday": "土",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-16",
+            "weekday": "日",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-17",
+            "weekday": "月",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-18",
+            "weekday": "火",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-19",
+            "weekday": "水",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-20",
+            "weekday": "木",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-21",
+            "weekday": "金",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-22",
+            "weekday": "土",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-23",
+            "weekday": "日",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-24",
+            "weekday": "月",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-25",
+            "weekday": "火",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-26",
+            "weekday": "水",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": false,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-27",
+            "weekday": "木",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-28",
+            "weekday": "金",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-29",
+            "weekday": "土",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-30",
+            "weekday": "日",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          },
+          {
+            "day": "2026-08-31",
+            "weekday": "月",
+            "statuses": {},
+            "meta": {},
+            "away": null,
+            "edges_window": true,
+            "is_future": true,
+            "is_today": false,
+            "score": null,
+            "total": null
+          }
+        ],
+        "streaks": {
+          "perfect_current": 0,
+          "perfect_best": 0,
+          "perfect_total": 0
+        },
+        "today_score": {
+          "score": 0,
+          "bonus": 0,
+          "total": 0,
+          "unlocked": false,
+          "challenge_done": 0,
+          "challenge_max": 100,
+          "parts": [
+            {
+              "name": "habits",
+              "label": "せいかつ",
+              "points": 0,
+              "max_points": 50,
+              "done": 0,
+              "total": 0
+            },
+            {
+              "name": "daily",
+              "label": "しゅくだい",
+              "points": 0,
+              "max_points": 50,
+              "done": 0,
+              "total": 0
+            }
+          ]
+        },
+        "remaining_today": [],
+        "comment": {
+          "score": 0,
+          "bonus": 0,
+          "total": 0,
+          "band": "keep_going",
+          "text": "今日《きょう》は 0点《てん》だよ。少《すこ》しずつで だいじょうぶ。明日《あした》が 楽《たの》しみだね。"
+        },
+        "progress": {
+          "days_elapsed": 11,
+          "days_total": 45
+        }
+      }
     }
   ]
 }

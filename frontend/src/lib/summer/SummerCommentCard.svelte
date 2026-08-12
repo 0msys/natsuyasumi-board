@@ -6,6 +6,7 @@
 	import type { SummerComment, SummerScore, SummerUiText } from '$lib/api';
 	import Ruby from './Ruby.svelte';
 	import { stripRuby } from './ruby';
+	import { baseScoreMax } from './scoreScale';
 	import { fmt } from './uiText';
 
 	let {
@@ -39,7 +40,8 @@
 			{/if}
 			<span class="text-4xl font-bold lg:text-5xl {rainbow ? 'rainbow-text' : 'text-accent'}">{todayScore.total}</span>
 			<span class="pb-1 text-sm text-text-dim lg:text-base">
-				<Ruby text={fmt(ui.score_of_max, { max: todayScore.unlocked ? scoreMax : 100 })} />
+				<!-- 解放前の分母は基本点の満点。区分が空の子に「50点 / 100点」と出さない -->
+				<Ruby text={fmt(ui.score_of_max, { max: todayScore.unlocked ? scoreMax : baseScoreMax(scoreMax) })} />
 			</span>
 		</div>
 		{#if rainbow}

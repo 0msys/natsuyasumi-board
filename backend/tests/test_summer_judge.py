@@ -16,6 +16,7 @@ from app.summer.judge import (
     RemainingItem,
     can_skip,
     daily_score,
+    day_score_max,
     habits_due,
     in_edges_window,
     perfect_streaks,
@@ -387,3 +388,34 @@ def test_reward_paceは到達見込みの最大ランク():
     # 完了2日で合計300 → projected = 300/2×45 = 6750 = ランクA閾値ちょうど → pace_key=a（>= 判定）
     rp = reward_progress(_pad([150, 150, 0]), 3, 2, DAYS_TOTAL, REWARD_RANKS)
     assert rp.projected_total == 6750 and rp.pace_key == "a"
+
+
+# ---- 1日の最大点（画面の文言・履歴グラフの y 軸・ごほうびの到達判定が共有する式） ----
+
+
+@pytest.mark.parametrize(
+    "habits,daily,challenges,expected",
+    [
+        (7, 4, 2, 150),  # 標準テンプレート
+        (8, 6, 4, 200),  # サンプル定義
+        (8, 6, 0, 100),  # チャレンジ無しなら基本点まで
+        (8, 0, 4, 50),  # しゅくだいが空 → 50点固定。ボーナスは base==100 が条件なので付かない
+        (0, 6, 4, 50),  # せいかつが空でも同じ
+        (0, 0, 4, 0),  # 両方空なら1点も入らない
+    ],
+)
+def test_day_score_max(habits, daily, challenges, expected):
+    assert day_score_max(habits, daily, challenges) == expected
+
+
+def test_day_score_max_はdaily_scoreの実測と一致する():
+    """式と実際の採点がずれていないこと（ずれると画面が到達不能な満点を名乗る）."""
+    doc = load_sample_doc()
+    doc["daily_homework"] = []
+    definition = parse_definition(doc)
+    statuses = {h.key: "done" for h in definition.habits}
+    statuses |= {c.key: "done" for c in definition.special_challenges}
+    got = daily_score(statuses, date(2026, 8, 1), definition)
+    assert got.total == day_score_max(
+        len(definition.habits), len(definition.daily_homework), len(definition.special_challenges)
+    )

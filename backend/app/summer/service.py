@@ -219,7 +219,9 @@ def build_state(child: str, today=None, db_path: Path | None = None) -> dict:
     days_elapsed = min(max((today - definition.start).days + 1, 0), days_total)
 
     # ご褒美ランク（総積み上げ点数）。定義に rewards が無ければ None＝フロントはカード非表示。
-    score_max = 100 + judge.CHALLENGE_POINTS * len(definition.special_challenges)
+    score_max = judge.day_score_max(
+        len(definition.habits), len(definition.daily_homework), len(definition.special_challenges)
+    )
     rewards_out = None
     if definition.rewards:
         # ペース分母は今日を除く経過日数（today と start が同日なら 0）。0..days_total にクランプ。

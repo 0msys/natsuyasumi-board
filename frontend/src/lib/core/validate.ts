@@ -6,7 +6,8 @@
 // こちらも必ず検出する」ことをテストが恒常検査する（乖離ドリフト防止）。
 //
 //   errors   … 保存できない
-//   warnings … 保存はできるが利用者に見せる（配当外漢字・期間中の追加・記録つき削除など）
+//   warnings … 保存はできるが利用者に見せる（配当外漢字・期間中の追加・記録つき削除・
+//              どうやっても届かないごほうびなど）
 import { isDay, type DayString } from './dates';
 import {
 	EDGES_WINDOW_DAYS_DEFAULT,
@@ -17,6 +18,7 @@ import {
 	isText,
 	migrateDoc
 } from './definition';
+import { dayScoreMax } from './judge';
 import { gradeOf, nameExceptionsFor, nonconformingKanji } from './kanji';
 
 const GRADES = ['小1', '小2', '小3', '小4', '小5', '小6'];
@@ -343,6 +345,19 @@ export function validateDocument(
 	});
 
 	// ---- ごほうびランク ----
+	// 1日にとれる最大点。画面（buildState）と同じ dayScoreMax を使う——空の区分は0点固定で
+	// ボーナスも付かないので、片方でも空なら1日50点が上限。ここだけ 100+チャレンジ で決め打つと、
+	// しゅくだいが空の定義で avg 80 のランクが「届かないのに無警告」になり、画面の
+	// 「全部できたら◯点」とも食い違う。
+	//
+	// ランクの到達点は avg × 日数、上限は scoreMax × 日数で日数が両辺に等しくかかるので、
+	// 1日あたりで比べれば足りる＝期間が壊れていても判定できる。
+	// これは上限値なので「必ず届かない」ものだけを拾う（見逃しは許すが、誤検知は出さない）。
+	const scoreMax = dayScoreMax(
+		asList(doc.habits).length,
+		asList(doc.daily_homework).length,
+		asList(doc.special_challenges).length
+	);
 	let prevAvg: number | null = null;
 	const rewardKeys: string[] = [];
 	entries(doc.rewards, '/rewards').forEach((rank, i) => {
@@ -364,6 +379,17 @@ export function validateDocument(
 			err(`${path}/avg`, 'rewards_order', 'ランクは平均点の小さい→大きい順にしてください');
 		}
 		prevAvg = avg;
+		// ちょうど scoreMax（＝全日満点で到達）は正当な設計なので鳴らさない。超えたときだけ。
+		if (avg > scoreMax) {
+			warn(
+				`${path}/avg`,
+				'rewards_unreachable',
+				`1日にとれるのは最大${scoreMax}点なので、平均${avg}点のこのランクは` +
+					'毎日ぜんぶできても届きません' +
+					'（平均点を下げるか、せいかつ・しゅくだい・スペシャルチャレンジの項目を見直してください）',
+				{ avg, score_max: scoreMax }
+			);
+		}
 	});
 	if (rewardKeys.length !== new Set(rewardKeys).size) {
 		err('/rewards', 'key_dup', 'ランクの key が重複しています');

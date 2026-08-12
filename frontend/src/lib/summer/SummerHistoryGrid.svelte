@@ -15,6 +15,7 @@
 	import { periodLabel } from './dateLabel';
 	import Ruby from './Ruby.svelte';
 	import { stripRuby } from './ruby';
+	import { chartScoreMax } from './scoreScale';
 	import { fmt } from './uiText';
 
 	let {
@@ -101,7 +102,10 @@
 		if (!chart || !chart.xs.length) return null;
 		const { w, h, xs, yTop, yBottom } = chart;
 		// y 軸上限はチャレンジ込みの scoreMax（4項目で200）。total を折れ線にする。
-		const yOf = (s: number) => yBottom - ((yBottom - yTop) * s) / scoreMax;
+		// 採点区分が両方とも空だと scoreMax は0になり得るので、分母だけ持ち上げる（0除算＝NaN で
+		// 折れ線ごと消えるのを防ぐ。chartScoreMax の但し書き参照）。
+		const axisMax = chartScoreMax(scoreMax);
+		const yOf = (s: number) => yBottom - ((yBottom - yTop) * s) / axisMax;
 		const segs: { x: number; y: number }[][] = [];
 		let cur: { x: number; y: number }[] = [];
 		history.forEach((d, i) => {

@@ -733,6 +733,50 @@ def dump_validate() -> None:
             ),
         }
     )
+    # ごほうびの上限（1日にとれる最大点＝100＋チャレンジ数×25）の境目。敵対的な値には
+    # 大きい整数が無いので、スイープだけでは「上限ちょうど」と「上限+1」を作れない。
+    # サンプル定義はチャレンジ4件＝200点。境目を明示的に固める（>= に変えたら落ちる）。
+    for avg in (200, 201):
+        doc = load_sample_doc()
+        doc["rewards"][3]["avg"] = avg
+        cases.append(
+            {
+                "name": f"ごほうび 最上位ランク avg={avg}（1日の上限は200点）",
+                "input": {"mutation": {"path": ["rewards", 3, "avg"], "op": "set", "value": avg}},
+                "output": shape(validate_document(doc)),
+            }
+        )
+
+    # 上限超えは「そのランクだけ」に付く（順序エラーと同居しても混ざらない）
+    doc = load_sample_doc()
+    doc["rewards"][1]["avg"] = 999
+    cases.append(
+        {
+            "name": "ごほうび 中位ランクだけ上限超え（順序エラーと同居）",
+            "input": {"mutation": {"path": ["rewards", 1, "avg"], "op": "set", "value": 999}},
+            "output": shape(validate_document(doc)),
+        }
+    )
+
+    # はじめの設定（標準テンプレート）が、そのままで警告ゼロであること。テンプレートの
+    # 閾値とチャレンジ数がずれた issue #28 の再発を、テンプレートと検証の交差で止める。
+    from app.admin.template import standard_template
+
+    template_doc = standard_template(
+        "はな",
+        "はな",
+        "小2",
+        2026,
+        {"start": "2026-07-21", "end": "2026-08-31", "first_day_of_school": "2026-09-01"},
+    )
+    cases.append(
+        {
+            "name": "標準テンプレート（作った直後は警告ゼロ）",
+            "input": {"doc": template_doc},
+            "output": shape(validate_document(template_doc)),
+        }
+    )
+
     write("validate.json", cases, "全件収集バリデータの (path, code) と warning の detail")
 
 
@@ -874,6 +918,71 @@ def dump_state() -> None:
         snapshot("フラグつき・終了1週間前", definition.end - timedelta(days=6))
         snapshot("フラグつき・終了8日前", definition.end - timedelta(days=8))
         snapshot("フラグつき・期間後（じゅんびだけ出る）", definition.end + timedelta(days=1))
+
+    # しゅくだいが空の定義。空の区分は0点固定で、ボーナスは基本点が満点の日にしか付かない
+    # ＝1日の上限が 50点に下がる。画面の score_max・ごほうびの max_total・「全部できたら◯点」の
+    # 文言まで、その値で組み立てられていることを固める。健全な定義だけだと
+    # judge.day_score_max の引数の並びを取り違えても素通りする（8/6/4 はどう並べても200）。
+    with tempfile.TemporaryDirectory() as tmp:
+        db = Path(tmp) / "summer.db"
+        ensure_schema(db)
+        thin = load_sample_doc()
+        thin["daily_homework"] = []
+        thin_stored = definition_store.create_definition(thin, db_path=db)["doc"]
+        thin_def = parse_definition(thin_stored)
+        thin_today = thin_def.start + timedelta(days=10)
+        for item in thin_stored.get("habits", []):
+            store.set_check_status(child, thin_today, item["key"], "done", db_path=db)
+        flags = store.list_flags(child, db_path=db)
+        cases.append(
+            {
+                "name": "しゅくだいが空（1日の上限が50点に下がる）",
+                "input": {
+                    "doc": thin_stored,
+                    "today": thin_today.isoformat(),
+                    "checks": store.list_checks(child, thin_def.start, thin_def.end, db_path=db),
+                    "metaByDay": store.list_meta(child, thin_def.start, thin_def.end, db_path=db),
+                    "flags": {
+                        k: {"value": f.value, "decision": f.decision} for k, f in flags.items()
+                    },
+                },
+                "output": service.build_state(child, today=thin_today, db_path=db),
+            }
+        )
+
+    # 採点区分が両方とも空。記録は項目を消しても残るので、上限0点のまま total=0 の日が届く
+    # （画面はこの0を分母にしないこと＝summer/scoreScale.chartScoreMax）。
+    with tempfile.TemporaryDirectory() as tmp:
+        db = Path(tmp) / "summer.db"
+        ensure_schema(db)
+        empty = load_sample_doc()
+        full = definition_store.create_definition(empty, db_path=db)
+        empty_today = parse_definition(full["doc"]).start + timedelta(days=10)
+        for item in full["doc"].get("habits", []):
+            store.set_check_status(child, empty_today, item["key"], "done", db_path=db)
+        # 記録を入れたあとで両区分を消す（作りかけではなく「あとから空にした」形）
+        stripped = json.loads(json.dumps(full["doc"]))
+        stripped["habits"] = []
+        stripped["daily_homework"] = []
+        saved = definition_store.save_document(child, stripped, full["revision"], db_path=db)
+        empty_stored = saved["doc"]
+        empty_def = parse_definition(empty_stored)
+        flags = store.list_flags(child, db_path=db)
+        cases.append(
+            {
+                "name": "採点区分が両方とも空（上限0点・記録は残る）",
+                "input": {
+                    "doc": empty_stored,
+                    "today": empty_today.isoformat(),
+                    "checks": store.list_checks(child, empty_def.start, empty_def.end, db_path=db),
+                    "metaByDay": store.list_meta(child, empty_def.start, empty_def.end, db_path=db),
+                    "flags": {
+                        k: {"value": f.value, "decision": f.decision} for k, f in flags.items()
+                    },
+                },
+                "output": service.build_state(child, today=empty_today, db_path=db),
+            }
+        )
 
     write("state.json", cases, "build_state（保存層の出力もそのまま入力として固めてある）")
 
