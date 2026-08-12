@@ -23653,7 +23653,24 @@
       "output": {
         "ok": true,
         "errors": [],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 100
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 100
+            }
+          }
+        ]
       }
     },
     {
@@ -23675,7 +23692,24 @@
             "code": "type"
           }
         ],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 100
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 100
+            }
+          }
+        ]
       }
     },
     {
@@ -23697,7 +23731,24 @@
             "code": "type"
           }
         ],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 100
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 100
+            }
+          }
+        ]
       }
     },
     {
@@ -23719,7 +23770,24 @@
             "code": "type"
           }
         ],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 100
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 100
+            }
+          }
+        ]
       }
     },
     {
@@ -23741,7 +23809,24 @@
             "code": "type"
           }
         ],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 100
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 100
+            }
+          }
+        ]
       }
     },
     {
@@ -23763,7 +23848,24 @@
             "code": "type"
           }
         ],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 100
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 100
+            }
+          }
+        ]
       }
     },
     {
@@ -23780,7 +23882,24 @@
       "output": {
         "ok": true,
         "errors": [],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 100
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 100
+            }
+          }
+        ]
       }
     },
     {
@@ -23802,7 +23921,24 @@
             "code": "type"
           }
         ],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 100
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 100
+            }
+          }
+        ]
       }
     },
     {
@@ -23826,7 +23962,24 @@
             "code": "type"
           }
         ],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 125
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 125
+            }
+          }
+        ]
       }
     },
     {
@@ -23850,7 +24003,24 @@
             "code": "type"
           }
         ],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 100
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 100
+            }
+          }
+        ]
       }
     },
     {
@@ -23866,7 +24036,24 @@
       "output": {
         "ok": true,
         "errors": [],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 150,
+              "score_max": 100
+            }
+          },
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 100
+            }
+          }
+        ]
       }
     },
     {
@@ -24117,7 +24304,16 @@
       "output": {
         "ok": true,
         "errors": [],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 175
+            }
+          }
+        ]
       }
     },
     {
@@ -24842,7 +25038,16 @@
       "output": {
         "ok": true,
         "errors": [],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 175
+            }
+          }
+        ]
       }
     },
     {
@@ -25567,7 +25772,16 @@
       "output": {
         "ok": true,
         "errors": [],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 175
+            }
+          }
+        ]
       }
     },
     {
@@ -26292,7 +26506,16 @@
       "output": {
         "ok": true,
         "errors": [],
-        "warnings": []
+        "warnings": [
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 180,
+              "score_max": 175
+            }
+          }
+        ]
       }
     },
     {
@@ -51129,6 +51352,209 @@
             }
           }
         ]
+      }
+    },
+    {
+      "name": "ごほうび 最上位ランク avg=200（1日の上限は200点）",
+      "input": {
+        "mutation": {
+          "path": [
+            "rewards",
+            3,
+            "avg"
+          ],
+          "op": "set",
+          "value": 200
+        }
+      },
+      "output": {
+        "ok": true,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    {
+      "name": "ごほうび 最上位ランク avg=201（1日の上限は200点）",
+      "input": {
+        "mutation": {
+          "path": [
+            "rewards",
+            3,
+            "avg"
+          ],
+          "op": "set",
+          "value": 201
+        }
+      },
+      "output": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          {
+            "path": "/rewards/3/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 201,
+              "score_max": 200
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ごほうび 中位ランクだけ上限超え（順序エラーと同居）",
+      "input": {
+        "mutation": {
+          "path": [
+            "rewards",
+            1,
+            "avg"
+          ],
+          "op": "set",
+          "value": 999
+        }
+      },
+      "output": {
+        "ok": false,
+        "errors": [
+          {
+            "path": "/rewards/2/avg",
+            "code": "rewards_order"
+          }
+        ],
+        "warnings": [
+          {
+            "path": "/rewards/1/avg",
+            "code": "rewards_unreachable",
+            "detail": {
+              "avg": 999,
+              "score_max": 200
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "標準テンプレート（作った直後は警告ゼロ）",
+      "input": {
+        "doc": {
+          "child": "はな",
+          "child_kana": "はな",
+          "year": 2026,
+          "grade": "小2",
+          "period": {
+            "start": "2026-07-21",
+            "end": "2026-08-31",
+            "first_day_of_school": "2026-09-01"
+          },
+          "away": [],
+          "card_rules": {
+            "edges_window_days": 5
+          },
+          "media_timer": {
+            "limit_minutes": 120
+          },
+          "habits": [
+            {
+              "key": "hamigaki_asa",
+              "label": "はみがき（朝《あさ》）"
+            },
+            {
+              "key": "hamigaki_hiru",
+              "label": "はみがき（昼《ひる》）"
+            },
+            {
+              "key": "hamigaki_yoru",
+              "label": "はみがき（夜《よる》）"
+            },
+            {
+              "key": "hayaoki",
+              "label": "はやおきできた",
+              "window": "edges"
+            },
+            {
+              "key": "asagohan",
+              "label": "朝《あさ》ごはんを しっかり食《た》べた",
+              "window": "edges"
+            },
+            {
+              "key": "hayane",
+              "label": "早《はや》ねできた",
+              "window": "edges"
+            },
+            {
+              "key": "outmedia",
+              "label": "テレビ・ゲーム・タブレットは 2時間《じかん》まで",
+              "window": "edges"
+            }
+          ],
+          "daily_homework": [
+            {
+              "key": "ondoku",
+              "label": "音読《おんどく》",
+              "meta": [
+                {
+                  "key": "book",
+                  "type": "text",
+                  "label": "読《よ》んだ本《ほん》",
+                  "placeholder": "本《ほん》のだいめいを書《か》こう"
+                }
+              ]
+            },
+            {
+              "key": "nikki",
+              "label": "日記《にっき》"
+            },
+            {
+              "key": "keisan",
+              "label": "計算《けいさん》の れんしゅう"
+            },
+            {
+              "key": "drill",
+              "label": "ドリルを すすめる"
+            }
+          ],
+          "special_challenges": [
+            {
+              "key": "otetsudai",
+              "label": "お手《て》つだい"
+            },
+            {
+              "key": "undou",
+              "label": "うんどう"
+            }
+          ],
+          "rewards": [
+            {
+              "key": "c",
+              "label": "ランクC",
+              "avg": 60
+            },
+            {
+              "key": "b",
+              "label": "ランクB",
+              "avg": 90
+            },
+            {
+              "key": "a",
+              "label": "ランクA",
+              "avg": 110
+            },
+            {
+              "key": "s",
+              "label": "ランクS",
+              "avg": 130
+            }
+          ],
+          "one_shot_homework": [],
+          "choice_homework": [],
+          "school_start_items": []
+        }
+      },
+      "output": {
+        "ok": true,
+        "errors": [],
+        "warnings": []
       }
     }
   ]

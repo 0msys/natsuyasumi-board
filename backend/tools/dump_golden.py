@@ -733,6 +733,50 @@ def dump_validate() -> None:
             ),
         }
     )
+    # ごほうびの上限（1日にとれる最大点＝100＋チャレンジ数×25）の境目。敵対的な値には
+    # 大きい整数が無いので、スイープだけでは「上限ちょうど」と「上限+1」を作れない。
+    # サンプル定義はチャレンジ4件＝200点。境目を明示的に固める（>= に変えたら落ちる）。
+    for avg in (200, 201):
+        doc = load_sample_doc()
+        doc["rewards"][3]["avg"] = avg
+        cases.append(
+            {
+                "name": f"ごほうび 最上位ランク avg={avg}（1日の上限は200点）",
+                "input": {"mutation": {"path": ["rewards", 3, "avg"], "op": "set", "value": avg}},
+                "output": shape(validate_document(doc)),
+            }
+        )
+
+    # 上限超えは「そのランクだけ」に付く（順序エラーと同居しても混ざらない）
+    doc = load_sample_doc()
+    doc["rewards"][1]["avg"] = 999
+    cases.append(
+        {
+            "name": "ごほうび 中位ランクだけ上限超え（順序エラーと同居）",
+            "input": {"mutation": {"path": ["rewards", 1, "avg"], "op": "set", "value": 999}},
+            "output": shape(validate_document(doc)),
+        }
+    )
+
+    # はじめの設定（標準テンプレート）が、そのままで警告ゼロであること。テンプレートの
+    # 閾値とチャレンジ数がずれた issue #28 の再発を、テンプレートと検証の交差で止める。
+    from app.admin.template import standard_template
+
+    template_doc = standard_template(
+        "はな",
+        "はな",
+        "小2",
+        2026,
+        {"start": "2026-07-21", "end": "2026-08-31", "first_day_of_school": "2026-09-01"},
+    )
+    cases.append(
+        {
+            "name": "標準テンプレート（作った直後は警告ゼロ）",
+            "input": {"doc": template_doc},
+            "output": shape(validate_document(template_doc)),
+        }
+    )
+
     write("validate.json", cases, "全件収集バリデータの (path, code) と warning の detail")
 
 

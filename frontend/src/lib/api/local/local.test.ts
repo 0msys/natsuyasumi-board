@@ -84,6 +84,19 @@ describe('初回登録と読み出し', () => {
 		expect(state.history).toHaveLength(31);
 	});
 
+	// はじめてこのアプリを触る親が最初に作る定義。作った直後に赤や黄が出ているのも、
+	// 出ないまま「絶対に取れないごほうび」が入っているのも困る（issue #28）。
+	it('ウィザードで作った定義は、そのまま検証を警告なしで通る', async () => {
+		await wizard();
+		const entry = await api.adminGetDefinition(CHILD);
+		const result = await api.adminValidateDefinition(CHILD, entry.doc);
+		expect(result.errors).toEqual([]);
+		expect(
+			result.warnings.map((w) => w.code),
+			'はじめの設定で作っただけの定義に警告が出ている'
+		).toEqual([]);
+	});
+
 	it('同じ子の同じ年は二度作れない', async () => {
 		await wizard();
 		expect(wizard()).rejects.toThrow(/もう登録されています/);

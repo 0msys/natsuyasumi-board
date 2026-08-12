@@ -7,7 +7,8 @@ path つきで集めて返す＝フォームの該当欄にアンカーできる
 
 返り値: {ok, errors: [{path, code, message}], warnings: [{path, code, message, detail}]}
   errors   … 保存できない（PUT は 422）
-  warnings … 保存できるが利用者に見せる（配当外漢字・期間中追加・記録つき削除など）
+  warnings … 保存できるが利用者に見せる（配当外漢字・期間中追加・記録つき削除・
+             どうやっても届かないごほうびなど）
 """
 
 from __future__ import annotations
@@ -24,6 +25,7 @@ from app.summer.definition import (
     META_TYPES,
     WINDOWS,
 )
+from app.summer.judge import CHALLENGE_POINTS
 
 _GRADES = ("小1", "小2", "小3", "小4", "小5", "小6")
 
@@ -381,6 +383,11 @@ def validate_document(
         _check_date(errors, item, "due", path)
 
     # ---- ごほうびランク ----
+    # 1日にとれる最大点（service.build_state の score_max と同じ式）。ランクの到達点は
+    # avg × 日数、グラフの縦軸上限は score_max × 日数なので、avg がこれを超えるランクは
+    # 「1日も欠かさず全部やっても届かない」＝グラフにも帯が出ない。日数は両辺に等しく
+    # かかるので、期間が壊れていても 1日あたりの比較だけで判定できる。
+    score_max = 100 + CHALLENGE_POINTS * len(_list(doc.get("special_challenges")))
     prev_avg: int | None = None
     reward_keys: list[str] = []
     for i, rank in enumerate(_entries(errors, doc.get("rewards"), "/rewards")):
@@ -401,6 +408,17 @@ def validate_document(
         if prev_avg is not None and avg <= prev_avg:
             _err(errors, f"{path}/avg", "rewards_order", "ランクは平均点の小さい→大きい順にしてください")
         prev_avg = avg
+        # ちょうど score_max（＝全日満点で到達）は正当な設計なので鳴らさない。超えたときだけ。
+        if avg > score_max:
+            _warn(
+                warnings,
+                f"{path}/avg",
+                "rewards_unreachable",
+                f"1日にとれるのは最大{score_max}点なので、平均{avg}点のこのランクは"
+                "毎日ぜんぶできても届きません"
+                "（平均点を下げるか、スペシャルチャレンジを増やしてください）",
+                {"avg": avg, "score_max": score_max},
+            )
     if len(reward_keys) != len(set(reward_keys)):
         _err(errors, "/rewards", "key_dup", "ランクの key が重複しています")
 

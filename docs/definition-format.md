@@ -113,6 +113,8 @@ meta フィールド: `{key, type, label, placeholder?, options?}`。
 
 - `avg` は「1日の平均点の目安」。**到達点数 = avg × 期間日数** はアプリが導出します
 - `avg` の昇順（小さい→大きい）で並べます。`prize` は任意
+- `avg` は **`100 + special_challenges の数 × 25`（＝1日にとれる最大点）以下** にします。
+  超えても保存はできますが、1日も欠かさず全部やっても届かないランクになるため警告が出ます
 
 ## one_shot_homework
 

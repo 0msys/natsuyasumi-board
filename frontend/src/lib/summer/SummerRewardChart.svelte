@@ -7,6 +7,7 @@
 	import { Trophy } from '@lucide/svelte';
 	import type { SummerHistoryDay, SummerRewards, SummerUiText } from '$lib/api';
 	import Ruby from './Ruby.svelte';
+	import { chartTopValue } from './rewardChartScale';
 	import { stripRuby } from './ruby';
 	import { fmt } from './uiText';
 	import { mdOf } from './dateLabel';
@@ -31,7 +32,9 @@
 	const geo = $derived.by(() => {
 		const n = history.length;
 		if (!(w > 0) || !(hpx > 0) || n < 2) return null;
-		const maxTotal = rewards.max_total || 1;
+		// 縦軸の上端。1日の上限を超える平均点のランク（検証は警告どまりで保存できる）があると
+		// max_total より上のしきい値が来るので、そのぶん伸ばす。ふだんは max_total のまま。
+		const maxTotal = chartTopValue(rewards);
 		const ML = 6;
 		const MR = 46; // 右端のランクしきい値ラベル（例「S 8100」）用
 		const MT = 12;
