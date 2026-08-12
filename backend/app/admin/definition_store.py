@@ -15,7 +15,12 @@ from pathlib import Path
 
 from app import db as app_db
 from app.summer import definition as summer_definition
-from app.summer.definition import SummerDefinitionError, parse_definition, parse_grade
+from app.summer.definition import (
+    WINDOW_RANGE,
+    SummerDefinitionError,
+    parse_definition,
+    parse_grade,
+)
 
 HISTORY_KEEP = 10  # 子ども×年ごとに残す履歴世代数
 
@@ -372,9 +377,20 @@ def delete_definition(child: str, db_path: Path | None = None, year: int | None 
             raise
 
 
-def _shift_year(iso: str, delta: int) -> str:
-    """'YYYY-MM-DD' を delta 年ずらす（2/29 だけは 2/28 に丸める）."""
-    day = date.fromisoformat(iso)
+def _shift_year(iso: str, delta: int, where: str) -> str:
+    """'YYYY-MM-DD' を delta 年ずらす（2/29 だけは 2/28 に丸める）.
+
+    読めない日付はここで止める。呼ぶ側は parse_definition を通した doc しか渡さないので
+    本来ここへは来ないが、素の ValueError を漏らすと routers/admin.py は
+    DefinitionStoreError しか拾わない＝detail の無い 500 になり、親の画面には
+    「失敗しました（500）」としか出ない。どこが読めなかったかまで返す。
+    """
+    try:
+        day = date.fromisoformat(iso)
+    except ValueError:
+        raise DefinitionStoreError(
+            422, f"{where} が日付として読めないのでコピーできません（「{iso}」）"
+        ) from None
     try:
         return day.replace(year=day.year + delta).isoformat()
     except ValueError:
@@ -413,15 +429,24 @@ def create_next_year(child: str, db_path: Path | None = None) -> dict:
     if isinstance(period, dict):
         for key in ("start", "end", "first_day_of_school"):
             if isinstance(period.get(key), str):
-                period[key] = _shift_year(period[key], 1)
-    for item in _items(doc.get("habits")):
-        if isinstance(item, dict):
-            for key in ("window_start", "window_end"):
-                if isinstance(item.get(key), str):
-                    item[key] = _shift_year(item[key], 1)
-    for item in _items(doc.get("school_start_items")):
+                period[key] = _shift_year(period[key], 1, f"/period/{key}")
+    for i, item in enumerate(_items(doc.get("habits"))):
+        if not isinstance(item, dict):
+            continue
+        # 日付が意味を持つのは window が range のときだけ。それ以外の習慣に付いている
+        # window_start / window_end は「きかん限定にして戻した」ときの死んだ値で、
+        # 日付欄は range のときしか画面に出ない＝親には見えず直せない。
+        # ずらさず、来年ぶんにも持っていかない。
+        if item.get("window") != WINDOW_RANGE:
+            item.pop("window_start", None)
+            item.pop("window_end", None)
+            continue
+        for key in ("window_start", "window_end"):
+            if isinstance(item.get(key), str):
+                item[key] = _shift_year(item[key], 1, f"/habits/{i}/{key}")
+    for i, item in enumerate(_items(doc.get("school_start_items"))):
         if isinstance(item, dict) and isinstance(item.get("due"), str):
-            item["due"] = _shift_year(item["due"], 1)
+            item["due"] = _shift_year(item["due"], 1, f"/school_start_items/{i}/due")
     doc["away"] = []
     strip_keys(doc)  # 記録のキー空間を年で分ける（去年のチェックを持ち越さない）
     return create_definition(doc, db_path=db_path)

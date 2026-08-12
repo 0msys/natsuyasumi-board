@@ -209,7 +209,14 @@ export function createNextYear(db: Db, child: string) {
 			'小6の次の学年はありません（このアプリは小学生のなつやすみ用です）'
 		);
 	}
-	shiftDocToNextYear(doc, `小${level + 1}`, latest.year + 1);
+	// 年ずらしの途中で投げても、mutate は fn が throw すると save まで行かない＝途中まで
+	// 書き換えた doc は残らない。status と文言は backend の _shift_year と揃える。
+	try {
+		shiftDocToNextYear(doc, `小${level + 1}`, latest.year + 1);
+	} catch (e) {
+		if (e instanceof SummerDefinitionError) throw new ApiError(422, e.message);
+		throw e;
+	}
 	return createDefinition(db, doc);
 }
 

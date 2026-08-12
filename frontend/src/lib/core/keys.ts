@@ -4,7 +4,7 @@
 // ＝改名で履歴が切れない）。ラベルからキーを導出しないのは、そうすると「改名したら
 // キーも変えたくなる」誘惑が生まれるため。
 import { shiftYear, type DayString } from './dates';
-import { migrateDoc } from './definition';
+import { migrateDoc, SummerDefinitionError, WINDOW_RANGE } from './definition';
 
 /** 区画ごとのキー接頭辞（choice の選択肢はグループとドット連結で保存される）。 */
 export const KEY_PREFIXES = {
@@ -136,8 +136,19 @@ export function stripKeys(doc: Doc): Doc {
 	return doc;
 }
 
-/** 'YYYY-MM-DD' を1年ずらす（2/29 だけは 2/28 に丸める）。 */
-export const shiftIsoYear = (iso: DayString, delta: number): DayString => shiftYear(iso, delta);
+/** 'YYYY-MM-DD' を1年ずらす（2/29 だけは 2/28 に丸める）。
+ *
+ *  読めない値は SummerDefinitionError にして止める＝呼ぶ側（lite の createNextYear）が
+ *  422 に写す。backend/app/admin/definition_store.py の _shift_year と同じ場所・同じ文言。 */
+export function shiftIsoYear(iso: DayString, delta: number, where: string): DayString {
+	try {
+		return shiftYear(iso, delta);
+	} catch {
+		throw new SummerDefinitionError(
+			`${where} が日付として読めないのでコピーできません（「${iso}」）`
+		);
+	}
+}
 
 /** 来年ぶんのひな型を作る（doc を書き換えて返す。保存はしない）。
  *
@@ -150,18 +161,33 @@ export function shiftDocToNextYear(doc: Doc, nextGrade: string, nextYear: number
 	const period = doc.period;
 	if (isMap(period)) {
 		for (const key of ['start', 'end', 'first_day_of_school']) {
-			if (typeof period[key] === 'string') period[key] = shiftIsoYear(period[key], 1);
+			if (typeof period[key] === 'string') {
+				period[key] = shiftIsoYear(period[key], 1, `/period/${key}`);
+			}
 		}
 	}
-	for (const item of items(doc.habits)) {
-		if (!isMap(item)) continue;
+	items(doc.habits).forEach((item, i) => {
+		if (!isMap(item)) return;
+		// 日付が意味を持つのは window が range のときだけ。それ以外の習慣に付いている
+		// window_start / window_end は「きかん限定にして戻した」ときの死んだ値で、
+		// 日付欄は range のときしか画面に出ない＝親には見えず直せない。
+		// ずらさず、来年ぶんにも持っていかない（backend の create_next_year と同じ）。
+		if (item.window !== WINDOW_RANGE) {
+			delete item.window_start;
+			delete item.window_end;
+			return;
+		}
 		for (const key of ['window_start', 'window_end']) {
-			if (typeof item[key] === 'string') item[key] = shiftIsoYear(item[key], 1);
+			if (typeof item[key] === 'string') {
+				item[key] = shiftIsoYear(item[key], 1, `/habits/${i}/${key}`);
+			}
 		}
-	}
-	for (const item of items(doc.school_start_items)) {
-		if (isMap(item) && typeof item.due === 'string') item.due = shiftIsoYear(item.due, 1);
-	}
+	});
+	items(doc.school_start_items).forEach((item, i) => {
+		if (isMap(item) && typeof item.due === 'string') {
+			item.due = shiftIsoYear(item.due, 1, `/school_start_items/${i}/due`);
+		}
+	});
 	doc.away = [];
 	stripKeys(doc);
 	return doc;
