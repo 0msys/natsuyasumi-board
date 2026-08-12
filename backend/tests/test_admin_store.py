@@ -1,7 +1,7 @@
 """定義の保存・履歴・改名・利用状況（app/admin/definition_store.py）のテスト.
 
 create→get→save のラウンドトリップ・楽観ロック 409・履歴 prune（HISTORY_KEEP=10）・
-assign_keys の自動採番・rename_child の一括更新・usage・purge_orphans を固定する。
+assign_keys の自動採番・rename_child の一括更新・usage・purge_orphans・年ずらしを固定する。
 """
 
 from __future__ import annotations
@@ -307,3 +307,22 @@ def test_purge_orphans_定義に無いキーだけ消す(seeded_db):
     assert store.list_checks(CHILD, DAY, DAY, db_path=seeded_db) == {"2026-07-20": {"ondoku": "done"}}
     assert "enikki" in store.list_flags(CHILD, db_path=seeded_db)
     assert "ghost_flag" not in store.list_flags(CHILD, db_path=seeded_db)
+
+
+# ---- 年ずらし（_shift_year） ----
+
+
+@pytest.mark.parametrize("iso", ["", "abc", "2026-13-01", "0001-00--1"])
+def test_読めない日付の年ずらしは422で止まる(iso):
+    # 素の ValueError を漏らすと routers/admin.py が拾えず、detail の無い 500 になる
+    # ＝親の画面には「失敗しました（500）」しか出ず、原因も直しかたも分からない。
+    with pytest.raises(DefinitionStoreError) as e:
+        definition_store._shift_year(iso, 1, "/period/start")
+    assert e.value.status_code == 422
+    assert "/period/start" in e.value.detail  # どこが読めなかったかまで伝える
+
+
+def test_うるう日の年ずらしは前の日へ丸める():
+    # 上の fail closed が、うるう日のフォールバックを潰していないこと
+    assert definition_store._shift_year("2024-02-29", 1, "/period/start") == "2025-02-28"
+    assert definition_store._shift_year("2024-02-29", 4, "/period/start") == "2028-02-29"

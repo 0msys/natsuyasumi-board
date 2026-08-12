@@ -130,6 +130,51 @@ def test_きかん限定の習慣の期間も1年ぶん進む(client):
     assert radio["window_start"] == "2027-07-21" and radio["window_end"] == "2027-07-24"
 
 
+def test_きかん限定をやめた習慣に空の日付が残っていても来年ぶんは作れる(client):
+    # 「きかん限定」にして日付を入れないまま「毎日」へ戻すと、この形が保存できてしまう
+    # （検証は window が range のときしか日付を見ない）。その空文字を年ずらししようとした
+    # date.fromisoformat('') が、detail の無い 500 になっていた。
+    doc = client.get("/api/admin/definitions/はな").json()["doc"]
+    doc["habits"].append(
+        {
+            "key": "h_dead",
+            "label": "ラジオたいそう",
+            "window": None,
+            "window_start": "",
+            "window_end": "",
+        }
+    )
+    r = client.put("/api/admin/definitions/はな", json={"doc": doc, "revision": 1})
+    assert r.status_code == 200
+
+    r = client.post("/api/admin/definitions/はな/next-year")
+    assert r.status_code == 200
+    dead = next(h for h in r.json()["doc"]["habits"] if h["label"] == "ラジオたいそう")
+    assert "window_start" not in dead and "window_end" not in dead
+
+
+def test_きかん限定でない習慣の日付は来年ぶんに持ち越さない(client):
+    # 読める日付でも、window が range でなければ使われず、日付欄も画面に出ない。
+    # 持ち越すと、親から見えない値が年をまたぐたびに増える。
+    doc = client.get("/api/admin/definitions/はな").json()["doc"]
+    doc["habits"].append(
+        {
+            "key": "h_nawatobi",
+            "label": "なわとび",
+            "window": "edges",
+            "window_start": "2026-07-21",
+            "window_end": "2026-07-24",
+        }
+    )
+    r = client.put("/api/admin/definitions/はな", json={"doc": doc, "revision": 1})
+    assert r.status_code == 200
+
+    doc = client.post("/api/admin/definitions/はな/next-year").json()["doc"]
+    item = next(h for h in doc["habits"] if h["label"] == "なわとび")
+    assert item["window"] == "edges"  # 習慣そのものと種類は残る
+    assert "window_start" not in item and "window_end" not in item
+
+
 def test_小6の次は作れない(client):
     doc = client.get("/api/admin/definitions/はな").json()["doc"]
     doc["grade"] = "小6"
