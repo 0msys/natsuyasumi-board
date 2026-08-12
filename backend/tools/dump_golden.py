@@ -950,6 +950,40 @@ def dump_state() -> None:
             }
         )
 
+    # 採点区分が両方とも空。記録は項目を消しても残るので、上限0点のまま total=0 の日が届く
+    # （画面はこの0を分母にしないこと＝summer/scoreScale.chartScoreMax）。
+    with tempfile.TemporaryDirectory() as tmp:
+        db = Path(tmp) / "summer.db"
+        ensure_schema(db)
+        empty = load_sample_doc()
+        full = definition_store.create_definition(empty, db_path=db)
+        empty_today = parse_definition(full["doc"]).start + timedelta(days=10)
+        for item in full["doc"].get("habits", []):
+            store.set_check_status(child, empty_today, item["key"], "done", db_path=db)
+        # 記録を入れたあとで両区分を消す（作りかけではなく「あとから空にした」形）
+        stripped = json.loads(json.dumps(full["doc"]))
+        stripped["habits"] = []
+        stripped["daily_homework"] = []
+        saved = definition_store.save_document(child, stripped, full["revision"], db_path=db)
+        empty_stored = saved["doc"]
+        empty_def = parse_definition(empty_stored)
+        flags = store.list_flags(child, db_path=db)
+        cases.append(
+            {
+                "name": "採点区分が両方とも空（上限0点・記録は残る）",
+                "input": {
+                    "doc": empty_stored,
+                    "today": empty_today.isoformat(),
+                    "checks": store.list_checks(child, empty_def.start, empty_def.end, db_path=db),
+                    "metaByDay": store.list_meta(child, empty_def.start, empty_def.end, db_path=db),
+                    "flags": {
+                        k: {"value": f.value, "decision": f.decision} for k, f in flags.items()
+                    },
+                },
+                "output": service.build_state(child, today=empty_today, db_path=db),
+            }
+        )
+
     write("state.json", cases, "build_state（保存層の出力もそのまま入力として固めてある）")
 
 
