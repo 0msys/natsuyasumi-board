@@ -919,6 +919,37 @@ def dump_state() -> None:
         snapshot("フラグつき・終了8日前", definition.end - timedelta(days=8))
         snapshot("フラグつき・期間後（じゅんびだけ出る）", definition.end + timedelta(days=1))
 
+    # しゅくだいが空の定義。空の区分は0点固定で、ボーナスは基本点が満点の日にしか付かない
+    # ＝1日の上限が 50点に下がる。画面の score_max・ごほうびの max_total・「全部できたら◯点」の
+    # 文言まで、その値で組み立てられていることを固める。健全な定義だけだと
+    # judge.day_score_max の引数の並びを取り違えても素通りする（8/6/4 はどう並べても200）。
+    with tempfile.TemporaryDirectory() as tmp:
+        db = Path(tmp) / "summer.db"
+        ensure_schema(db)
+        thin = load_sample_doc()
+        thin["daily_homework"] = []
+        thin_stored = definition_store.create_definition(thin, db_path=db)["doc"]
+        thin_def = parse_definition(thin_stored)
+        thin_today = thin_def.start + timedelta(days=10)
+        for item in thin_stored.get("habits", []):
+            store.set_check_status(child, thin_today, item["key"], "done", db_path=db)
+        flags = store.list_flags(child, db_path=db)
+        cases.append(
+            {
+                "name": "しゅくだいが空（1日の上限が50点に下がる）",
+                "input": {
+                    "doc": thin_stored,
+                    "today": thin_today.isoformat(),
+                    "checks": store.list_checks(child, thin_def.start, thin_def.end, db_path=db),
+                    "metaByDay": store.list_meta(child, thin_def.start, thin_def.end, db_path=db),
+                    "flags": {
+                        k: {"value": f.value, "decision": f.decision} for k, f in flags.items()
+                    },
+                },
+                "output": service.build_state(child, today=thin_today, db_path=db),
+            }
+        )
+
     write("state.json", cases, "build_state（保存層の出力もそのまま入力として固めてある）")
 
 

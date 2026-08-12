@@ -13,8 +13,8 @@ import {
 	type SummerDefinition
 } from './definition';
 import {
-	CHALLENGE_POINTS,
 	dailyScore,
+	dayScoreMax,
 	habitActiveOn,
 	inEdgesWindow,
 	perfectStreaks,
@@ -187,7 +187,11 @@ export function buildState(args: {
 	const daysElapsed = Math.min(Math.max(diffDays(definition.start, today) + 1, 0), daysTotal);
 
 	// ご褒美ランク（総積み上げ点数）。定義に rewards が無ければ null＝画面はカード非表示。
-	const scoreMax = 100 + CHALLENGE_POINTS * definition.special_challenges.length;
+	const scoreMax = dayScoreMax(
+		definition.habits.length,
+		definition.daily_homework.length,
+		definition.special_challenges.length
+	);
 	let rewardsOut: Record<string, unknown> | null = null;
 	if (definition.rewards.length) {
 		// ペースの分母は今日を除く経過日数（today と start が同日なら 0）

@@ -29,6 +29,24 @@ export const DAILY_MAX = 50;
 /** スペシャルチャレンジ1つあたりの加点（base==100 のときだけ有効）。 */
 export const CHALLENGE_POINTS = 25;
 
+/** その定義で1日にとれる最大点（項目数だけで決まる。日付には依存しない）。
+ *
+ *  dailyScore と同じ組み立て：空の区分は0点固定で、ボーナスは基本点が満点の日にしか
+ *  付かない＝片方でも空なら1日50点が上限になる。画面の「全部できたら◯点」・履歴グラフの
+ *  y軸・ごほうびグラフの上限・ごほうびの到達判定が、この1つの式を共有する
+ *  （別々に書くと、片方だけが空の区分を数え忘れて食い違う）。
+ *
+ *  記録欄を出す日を絞った習慣まではここでは見ない（その日に出ている項目が0件なら
+ *  せいかつは0点になるので、日によってはこの値にも届かない）。上限値として使うこと。 */
+export function dayScoreMax(
+	habits: number,
+	dailyHomework: number,
+	specialChallenges: number
+): number {
+	const base = (habits ? HABITS_MAX : 0) + (dailyHomework ? DAILY_MAX : 0);
+	return base + (base === HABITS_MAX + DAILY_MAX ? CHALLENGE_POINTS * specialChallenges : 0);
+}
+
 /** 新学期じゅんび項目を「やること」に出し始める due 前日数。 */
 export const SCHOOL_START_LEAD_DAYS = 3;
 /** 一回もの宿題を「やること」に出し始める夏休み終了前日数。 */

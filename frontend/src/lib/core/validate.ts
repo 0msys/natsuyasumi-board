@@ -18,7 +18,7 @@ import {
 	isText,
 	migrateDoc
 } from './definition';
-import { CHALLENGE_POINTS, DAILY_MAX, HABITS_MAX } from './judge';
+import { dayScoreMax } from './judge';
 import { gradeOf, nameExceptionsFor, nonconformingKanji } from './kanji';
 
 const GRADES = ['小1', '小2', '小3', '小4', '小5', '小6'];
@@ -345,19 +345,19 @@ export function validateDocument(
 	});
 
 	// ---- ごほうびランク ----
-	// 1日にとれる最大点。dailyScore と同じ組み立てで、空の区分は0点固定・ボーナスは base が
-	// 満点のときだけ付く＝片方でも空なら1日50点が上限になる（ここを 100+チャレンジ で決め打つと、
-	// しゅくだいが空の定義で avg 80 のランクが「届かないのに無警告」になる）。ランクの到達点は
-	// avg × 日数、上限は scoreMax × 日数で日数が両辺に等しくかかるので、1日あたりで比べれば
-	// 足りる＝期間が壊れていても判定できる。
+	// 1日にとれる最大点。画面（buildState）と同じ dayScoreMax を使う——空の区分は0点固定で
+	// ボーナスも付かないので、片方でも空なら1日50点が上限。ここだけ 100+チャレンジ で決め打つと、
+	// しゅくだいが空の定義で avg 80 のランクが「届かないのに無警告」になり、画面の
+	// 「全部できたら◯点」とも食い違う。
 	//
-	// これは上限値なので「必ず届かない」ものだけを拾う。記録欄を出す日を絞った習慣のように
-	// 日ごとに上限が下がる設定までは見ない（見逃しは許すが、誤検知は出さない）。
-	const baseMax =
-		(asList(doc.habits).length ? HABITS_MAX : 0) +
-		(asList(doc.daily_homework).length ? DAILY_MAX : 0);
-	const challengeMax = CHALLENGE_POINTS * asList(doc.special_challenges).length;
-	const scoreMax = baseMax + (baseMax === HABITS_MAX + DAILY_MAX ? challengeMax : 0);
+	// ランクの到達点は avg × 日数、上限は scoreMax × 日数で日数が両辺に等しくかかるので、
+	// 1日あたりで比べれば足りる＝期間が壊れていても判定できる。
+	// これは上限値なので「必ず届かない」ものだけを拾う（見逃しは許すが、誤検知は出さない）。
+	const scoreMax = dayScoreMax(
+		asList(doc.habits).length,
+		asList(doc.daily_homework).length,
+		asList(doc.special_challenges).length
+	);
 	let prevAvg: number | null = null;
 	const rewardKeys: string[] = [];
 	entries(doc.rewards, '/rewards').forEach((rank, i) => {
