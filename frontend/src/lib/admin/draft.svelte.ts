@@ -22,6 +22,15 @@ export class AdminDraft {
 	saveError = $state<string | null>(null);
 	savedAt = $state<number | null>(null);
 
+	// 読み込んだ定義の世代。initFrom で中身が入れ替わるたびに進む。画面はこれを見て
+	// 「この定義はまだ検証していない」を判断する——子どもと年で見ると、保存競合のあと
+	// 同じ子・同じ年を読み直した場合を取りこぼす（initFrom が警告を消したまま戻らない）。
+	generation = $state(0);
+
+	// 検証の世代。応答を書き戻してよいのは最後に投げた1本だけ（下の validate() を参照）。
+	// generation とは別物: こちらは validate() のたびに進むので、画面が見ると回り続ける。
+	#validateSeq = 0;
+
 	/** load 結果（SSR）や保存レスポンスの entry からまるごと初期化する. */
 	initFrom(entry: AdminDefinitionEntry): void {
 		this.doc = entry.doc as DefinitionDoc;
@@ -35,6 +44,10 @@ export class AdminDraft {
 		this.warnings = [];
 		this.saveError = null;
 		this.savedAt = null;
+		// 中身が入れ替わった＝飛んでいる検証の応答はもう別物。捨てて、世代を進める。
+		this.#validateSeq++;
+		this.validating = false;
+		this.generation++;
 	}
 
 	/** サーバから読み直す（409 後の「読み直す」ボタン用）。編集中の年のまま読む. */
@@ -53,17 +66,27 @@ export class AdminDraft {
 		return $state.snapshot(this.doc) as unknown as AdminDocument;
 	}
 
-	/** ドライラン検証（保存しない）。errors が無ければ true. */
+	/** ドライラン検証（保存しない）。errors が無ければ true.
+	 *
+	 *  応答を errors / warnings へ書き戻すのは、最後に投げた1本だけ。追い越された古い応答は
+	 *  捨てる。画面を開いた時点の検証が飛んでいる最中に、保存や年の切替でもう1本走ることが
+	 *  あり、順不同で返ると古いほうが新しい結果を消してしまう——「保存できなかったのに
+	 *  理由が1つも出ていない」「切り替えた年に、前の年の指摘が出ている」になる。
+	 *  返り値（ok）は呼び出し元が自分の応答について判断するものなので、そのまま返す。 */
 	async validate(): Promise<boolean> {
 		if (!this.doc) return false;
+		const seq = ++this.#validateSeq;
 		this.validating = true;
 		try {
 			const res = await api.adminValidateDefinition(this.child, this.snapshot());
-			this.errors = res.errors;
-			this.warnings = res.warnings;
+			if (seq === this.#validateSeq) {
+				this.errors = res.errors;
+				this.warnings = res.warnings;
+			}
 			return res.ok;
 		} finally {
-			this.validating = false;
+			// 追い越されているなら、新しいほうがまだ走っている＝旗は下ろさない
+			if (seq === this.#validateSeq) this.validating = false;
 		}
 	}
 

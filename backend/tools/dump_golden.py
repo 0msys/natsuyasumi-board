@@ -760,20 +760,27 @@ def dump_validate() -> None:
 
     # はじめの設定（標準テンプレート）が、そのままで警告ゼロであること。テンプレートの
     # 閾値とチャレンジ数がずれた issue #28 の再発を、テンプレートと検証の交差で止める。
-    from app.admin.template import standard_template
+    from app.admin.template import empty_template, standard_template
 
-    template_doc = standard_template(
-        "はな",
-        "はな",
-        "小2",
-        2026,
-        {"start": "2026-07-21", "end": "2026-08-31", "first_day_of_school": "2026-09-01"},
-    )
+    period = {"start": "2026-07-21", "end": "2026-08-31", "first_day_of_school": "2026-09-01"}
+    template_doc = standard_template("はな", "はな", "小2", 2026, period)
     cases.append(
         {
             "name": "標準テンプレート（作った直後は警告ゼロ）",
             "input": {"doc": template_doc},
             "output": shape(validate_document(template_doc)),
+        }
+    )
+
+    # 「からっぽ」で作った直後（両区分とも空）。敵対的スイープは1パスずつしか壊さないので
+    # 両方空はそこから作れず、明示しないと金型に1件も現れない——issue #34 で素通りしていた
+    # のがちょうどこの形なので、区分ごとに1本ずつ警告が付くことをここで固める。
+    empty_doc = empty_template("はな", "はな", "小2", 2026, period)
+    cases.append(
+        {
+            "name": "空テンプレート（作った直後は空区分の警告が2件）",
+            "input": {"doc": empty_doc},
+            "output": shape(validate_document(empty_doc)),
         }
     )
 
