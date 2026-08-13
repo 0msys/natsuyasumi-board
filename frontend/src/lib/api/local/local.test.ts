@@ -181,11 +181,18 @@ describe('日次3値の記録', () => {
 		const opened = await api.summerState(CHILD);
 		expect(opened.today_score!.unlocked).toBe(true);
 		expect(opened.today_score!.score).toBeLessThan(100);
+		expect(opened.today_score!.bonus_pending).toBe(0); // まだ◯にしていない＝約束する点も無い
 
 		await api.summerSetCheck(CHILD, today, k.challenges[0], 'done');
 		const pending = await api.summerState(CHILD);
 		expect(pending.today_score!.challenge_done).toBe(1); // 記録は残る
 		expect(pending.today_score!.total).toBe(pending.today_score!.score); // まだ点にならない
+		expect(pending.today_score!.bonus_pending).toBe(25); // せいかつを終えれば入る点
+
+		// 2つ目を◯にすると予告額も増える（固定の25点ではない）
+		await api.summerSetCheck(CHILD, today, k.challenges[1], 'done');
+		expect((await api.summerState(CHILD)).today_score!.bonus_pending).toBe(50);
+		await api.summerSetCheck(CHILD, today, k.challenges[1], null);
 
 		const due = pending.habits.filter((h) => h.window_active).map((h) => h.key);
 		for (const key of due) {
@@ -194,6 +201,7 @@ describe('日次3値の記録', () => {
 		const scored = await api.summerState(CHILD);
 		expect(scored.today_score!.score).toBe(100);
 		expect(scored.today_score!.total).toBe(125); // 保留していた分がここで入る
+		expect(scored.today_score!.bonus_pending).toBe(0); // 加点側へ移ったので保留は残らない
 	});
 
 	it('生活をやらなかった日はチャレンジの点数が無効になる', async () => {

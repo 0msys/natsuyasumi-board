@@ -31,7 +31,7 @@ export const UI_TEXT_SOURCE: Record<string, string> = {
   "challenge_bonus": "1つできると +25点《てん》",
   "challenge_all": "全部《ぜんぶ》できたら {score_max}点《てん》 満点《まんてん》！",
   "challenge_now": "いま +{bonus}点《てん》",
-  "challenge_bonus_pending": "生活《せいかつ》も 全部《ぜんぶ》 できたら +25点《てん》 もらえるよ",
+  "challenge_bonus_pending": "生活《せいかつ》も 全部《ぜんぶ》 できたら +{bonus}点《てん》 もらえるよ",
   "challenge_locked_hint": "宿題《しゅくだい》を 全部《ぜんぶ》 やったら チャレンジできるよ！",
   "challenge_locked_overlay": "宿題《しゅくだい》を 全部《ぜんぶ》 やったら あけられるよ",
   "school_start_title": "新学期《しんがっき》のじゅんび",

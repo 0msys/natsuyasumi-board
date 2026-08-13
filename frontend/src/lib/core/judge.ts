@@ -71,6 +71,10 @@ export type ScoreBreakdown = {
 	// チャレンジ枠を操作できるか＝毎日の宿題を全部やった（せいかつは見ない）。
 	// 加点条件（base==100）とはわざと別物。dailyScore の但し書きを参照。
 	unlocked: boolean;
+	// base<100 のせいで保留になっている加点額（せいかつを全部やれば入る点）。
+	// done にしたチャレンジの件数から出すので、1件も done でなければ0＝画面は何も約束しない。
+	// base==100 の日は bonus 側に入っているので0。
+	bonus_pending: number;
 };
 export type RemainingItem = {
 	kind: 'habit' | 'daily' | 'one_shot' | 'school_start';
@@ -194,7 +198,8 @@ export function dailyScore(
 		done: statuses[c.key] === STATUS_DONE
 	}));
 	const challengeDone = challenges.filter((c) => c.done).length;
-	const bonus = base === 100 ? CHALLENGE_POINTS * challengeDone : 0;
+	const earned = CHALLENGE_POINTS * challengeDone; // 記録から見た加点額（base を見ない素の値）
+	const bonus = base === 100 ? earned : 0;
 
 	return {
 		score: base,
@@ -203,7 +208,8 @@ export function dailyScore(
 		total: base + bonus,
 		challenges,
 		challenge_max: CHALLENGE_POINTS * definition.special_challenges.length,
-		unlocked
+		unlocked,
+		bonus_pending: earned - bonus
 	};
 }
 

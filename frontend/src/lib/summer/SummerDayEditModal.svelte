@@ -84,10 +84,11 @@
 	// history[].unlocked に載せてくるので、ここでは組み直さない（未記録日・未来日は false）。
 	// 宿題をこのモーダルで全部○にすると、書き込みごとの再取得で day が差し替わるため、
 	// 閉じ直さずにその場で解放される。
-	// 加点は base==100 の日だけなので、開いていても点が入らない状態がありうる（bonusPending）。
+	// 加点は base==100 の日だけなので、開いていても点が入らない状態がありうる。保留額も
+	// state 側が出す（記録したチャレンジの件数ぶん。0件なら0＝もらえない点を約束しない）。
 	const unlocked = $derived(day.unlocked);
 	const bonus = $derived((day.total ?? 0) - (day.score ?? 0));
-	const bonusPending = $derived(day.unlocked && (day.score ?? 0) < 100);
+	const bonusPending = $derived(day.bonus_pending);
 
 	function dateLabel(iso: string): string {
 		return `${mdOf(iso)}（${day.weekday}）`;

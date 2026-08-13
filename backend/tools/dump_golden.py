@@ -613,6 +613,7 @@ def _score_to_dict(s: judge.ScoreBreakdown) -> dict:
         "challenges": [{"key": c.key, "label": c.label, "done": c.done} for c in s.challenges],
         "challenge_max": s.challenge_max,
         "unlocked": s.unlocked,
+        "bonus_pending": s.bonus_pending,
     }
 
 

@@ -25,7 +25,8 @@ runGolden(golden as unknown as GoldenFile<Input, unknown>, '褒めメッセー�
 			parts: [],
 			challenges: [],
 			challenge_max: 0,
-			unlocked: false
+			unlocked: false,
+			bonus_pending: 0
 		} as ScoreBreakdown,
 		hasRecords: input.hasRecords,
 		gradeLevel: input.gradeLevel,

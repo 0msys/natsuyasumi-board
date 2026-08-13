@@ -64,9 +64,10 @@ UI_TEXT: dict[str, str] = {
     "challenge_all": "全部《ぜんぶ》できたら {score_max}点《てん》 満点《まんてん》！",
     "challenge_now": "いま +{bonus}点《てん》",
     # 枠が開くのは宿題を全部やった時点だが、加点は base==100（せいかつも全部）の日だけ。
-    # ○にしたのに点が動かない理由をその場で説明する一行。25 は judge.CHALLENGE_POINTS と対
-    # （challenge_bonus と同じくハードコード。この定数は動かさない前提）。
-    "challenge_bonus_pending": "生活《せいかつ》も 全部《ぜんぶ》 できたら +25点《てん》 もらえるよ",
+    # ○にしたのに点が動かない理由をその場で説明する一行。{bonus} は保留中の加点額
+    # （judge の bonus_pending）＝done にしたチャレンジの件数ぶん。1件も done でなければ
+    # 0点になるので、画面はこの文ごと出さない（もらえない点を約束しない）。
+    "challenge_bonus_pending": "生活《せいかつ》も 全部《ぜんぶ》 できたら +{bonus}点《てん》 もらえるよ",
     "challenge_locked_hint": "宿題《しゅくだい》を 全部《ぜんぶ》 やったら チャレンジできるよ！",
     "challenge_locked_overlay": "宿題《しゅくだい》を 全部《ぜんぶ》 やったら あけられるよ",
     # ---- 新学期じゅんび（SummerSchoolStartItems.svelte） ----

@@ -57,6 +57,7 @@ function dayOf(over: Partial<SummerHistoryDay> = {}): SummerHistoryDay {
 		score: null,
 		total: null,
 		unlocked: false,
+		bonus_pending: 0,
 		...over
 	};
 }
@@ -125,12 +126,30 @@ describe('過去日モーダルのスペシャルチャレンジ', () => {
 		mount(dayOf({ score: 50, total: 50, unlocked: true, is_today: true }));
 		expect(challengeButton().disabled).toBe(false);
 		expect(shown()).not.toContain('challenge_locked_overlay');
-		// ◯にしても点が動かない理由をその場に出す
+	});
+
+	it('◯にしていないうちは加点予告を出さない（もらえない点を約束しない）', () => {
+		// 保留額は記録したチャレンジの件数から出る。0件なら約束できる点が無い
+		mount(dayOf({ score: 50, total: 50, unlocked: true, bonus_pending: 0, is_today: true }));
+		expect(shown()).not.toContain('challenge_bonus_pending');
+	});
+
+	it('◯にしてあって基本点が100点未満なら、保留中の加点を予告する', () => {
+		mount(
+			dayOf({
+				score: 50,
+				total: 50,
+				unlocked: true,
+				bonus_pending: 25,
+				statuses: { otetsudai: 'done' },
+				is_today: true
+			})
+		);
 		expect(shown()).toContain('challenge_bonus_pending');
 	});
 
 	it('基本点が100点の日には加点予告を出さない（もう入っている）', () => {
-		mount(dayOf({ score: 100, total: 100, unlocked: true, is_today: true }));
+		mount(dayOf({ score: 100, total: 125, unlocked: true, bonus_pending: 0, is_today: true }));
 		expect(shown()).not.toContain('challenge_bonus_pending');
 	});
 

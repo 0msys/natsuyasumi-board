@@ -210,6 +210,8 @@ def build_state(child: str, today=None, db_path: Path | None = None) -> dict:
                 # チャレンジ枠が開くか（その日の宿題を全部やったか）。過去日修正モーダルは
                 # ここを読む＝解放条件をコンポーネント側で組み直さない。未記録日は False。
                 "unlocked": sb.unlocked if sb else False,
+                # base<100 で保留になっている加点額（過去日モーダルの案内文に出す）
+                "bonus_pending": sb.bonus_pending if sb else 0,
             }
         )
         day += timedelta(days=1)
@@ -307,6 +309,7 @@ def build_state(child: str, today=None, db_path: Path | None = None) -> dict:
                 "bonus": score.bonus,
                 "total": score.total,  # base + ボーナス＝見出し数字・虹色/王冠の基準
                 "unlocked": score.unlocked,  # チャレンジ枠の解除条件（宿題を全部やった）
+                "bonus_pending": score.bonus_pending,  # base<100 で保留中の加点額
                 "challenge_done": sum(1 for c in score.challenges if c.done),
                 "challenge_max": score.challenge_max,
                 "parts": [

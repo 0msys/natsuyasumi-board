@@ -94,6 +94,10 @@ class ScoreBreakdown:
     # チャレンジ枠を操作できるか＝毎日の宿題を全部やった（せいかつは見ない）。
     # 加点条件（base==100）とはわざと別物。daily_score の但し書きを参照。
     unlocked: bool = False
+    # base<100 のせいで保留になっている加点額（せいかつを全部やれば入る点）。
+    # done にしたチャレンジの件数から出すので、1件も done でなければ0＝画面は何も約束しない。
+    # base==100 の日は bonus 側に入っているので0。
+    bonus_pending: int = 0
 
 
 @dataclass(frozen=True)
@@ -206,7 +210,8 @@ def daily_score(statuses: Mapping[str, str], day: date, definition: SummerDefini
         for c in definition.special_challenges
     )
     challenge_done = sum(1 for c in challenges if c.done)
-    bonus = CHALLENGE_POINTS * challenge_done if base == 100 else 0
+    earned = CHALLENGE_POINTS * challenge_done  # 記録から見た加点額（base を見ない素の値）
+    bonus = earned if base == 100 else 0
     return ScoreBreakdown(
         score=base,
         parts=parts,
@@ -215,6 +220,7 @@ def daily_score(statuses: Mapping[str, str], day: date, definition: SummerDefini
         challenges=challenges,
         challenge_max=CHALLENGE_POINTS * len(definition.special_challenges),
         unlocked=unlocked,
+        bonus_pending=earned - bonus,
     )
 
 

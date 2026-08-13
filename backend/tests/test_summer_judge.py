@@ -173,6 +173,25 @@ def test_challenge_宿題を全部やれば生活が残っていても解放さ�
     assert r.unlocked is True
     assert r.score < 100
     assert r.bonus == 0
+    assert r.bonus_pending == 0  # まだ1件も◯にしていない＝保留する点も無い
+
+
+def test_challenge_保留額は記録したチャレンジの件数ぶん(definition):
+    # 「せいかつも全部できたら +N点」の N。◯にしていない状態で点を約束しないため、
+    # 件数から出す（固定の25点ではない）。
+    base_lt_100 = {**DAILY_ALL}
+    assert daily_score(base_lt_100, date(2026, 8, 1), definition).bonus_pending == 0
+    one = daily_score({**base_lt_100, "gakki": "done"}, date(2026, 8, 1), definition)
+    assert one.bonus_pending == 25 and one.bonus == 0
+    two = daily_score(
+        {**base_lt_100, "gakki": "done", "otetsudai": "done"}, date(2026, 8, 1), definition
+    )
+    assert two.bonus_pending == 50 and two.bonus == 0
+
+
+def test_challenge_base100なら保留は0で加点側に入る(definition):
+    r = daily_score({**FULL_100, "gakki": "done"}, date(2026, 8, 1), definition)
+    assert r.bonus == 25 and r.bonus_pending == 0
 
 
 def test_challenge_宿題が1つでも欠けたら解放されない(definition):

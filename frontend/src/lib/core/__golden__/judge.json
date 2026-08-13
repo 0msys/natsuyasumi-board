@@ -54,7 +54,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -111,7 +112,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -169,7 +171,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -228,7 +231,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -285,7 +289,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -343,7 +348,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -402,7 +408,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -462,7 +469,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -523,7 +531,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -593,7 +602,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -664,7 +674,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -738,7 +749,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -808,7 +820,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 25
       }
     },
     {
@@ -878,7 +891,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 25
       }
     },
     {
@@ -937,7 +951,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 25
       }
     },
     {
@@ -992,7 +1007,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -1049,7 +1065,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -1107,7 +1124,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -1166,7 +1184,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -1223,7 +1242,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -1281,7 +1301,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -1340,7 +1361,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -1400,7 +1422,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -1461,7 +1484,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -1531,7 +1555,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -1602,7 +1627,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -1676,7 +1702,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -1746,7 +1773,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -1816,7 +1844,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 25
       }
     },
     {
@@ -1875,7 +1904,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 25
       }
     },
     {
@@ -1930,7 +1960,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -1987,7 +2018,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -2045,7 +2077,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -2104,7 +2137,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -2161,7 +2195,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -2219,7 +2254,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -2278,7 +2314,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -2338,7 +2375,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -2399,7 +2437,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -2469,7 +2508,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -2540,7 +2580,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -2614,7 +2655,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -2684,7 +2726,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -2754,7 +2797,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 25
       }
     },
     {
@@ -2813,7 +2857,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 25
       }
     },
     {
@@ -2868,7 +2913,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -2925,7 +2971,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -2983,7 +3030,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -3042,7 +3090,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -3099,7 +3148,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -3157,7 +3207,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -3216,7 +3267,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -3276,7 +3328,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -3337,7 +3390,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -3407,7 +3461,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -3478,7 +3533,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -3552,7 +3608,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -3622,7 +3679,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -3692,7 +3750,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 25
       }
     },
     {
@@ -3751,7 +3810,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 25
       }
     },
     {
@@ -3806,7 +3866,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -3863,7 +3924,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -3921,7 +3983,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -3980,7 +4043,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -4037,7 +4101,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -4095,7 +4160,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -4154,7 +4220,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -4214,7 +4281,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -4275,7 +4343,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -4345,7 +4414,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -4416,7 +4486,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -4490,7 +4561,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -4560,7 +4632,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -4630,7 +4703,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 25
       }
     },
     {
@@ -4689,7 +4763,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 25
       }
     },
     {
@@ -4744,7 +4819,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -4801,7 +4877,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -4859,7 +4936,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -4918,7 +4996,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -4975,7 +5054,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -5033,7 +5113,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -5092,7 +5173,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -5152,7 +5234,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -5213,7 +5296,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 0
       }
     },
     {
@@ -5283,7 +5367,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -5354,7 +5439,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -5428,7 +5514,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -5498,7 +5585,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
@@ -5568,7 +5656,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 25
       }
     },
     {
@@ -5627,7 +5716,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": false
+        "unlocked": false,
+        "bonus_pending": 25
       }
     },
     {
@@ -5697,7 +5787,8 @@
           }
         ],
         "challenge_max": 100,
-        "unlocked": true
+        "unlocked": true,
+        "bonus_pending": 0
       }
     },
     {
