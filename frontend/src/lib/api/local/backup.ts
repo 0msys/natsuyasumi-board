@@ -74,11 +74,20 @@ function acceptableTicket(meta: Meta, ticket: BackupTicket, now: number): boolea
  * 並べる物差しは通番を先にする。保存の世代が同じあいだ通番は下がらないので、時計に依らない。
  * 同じ通番なら記録は1件も変わっていない＝中身の同じファイルなので、書き出した時刻で決める
  * （そこも並びなら、入っているものを残す。どちらを聞いても同じことになる）。
+ *
+ * 通番を比べる前に世代を見るのは、通番が世代をまたぐと比べられないから（作り直された保存の
+ * 通番は 0 から振り直される）。**いまの世代のものを残す。** 新しく届いたほうではない——
+ * 止まっていたタブが、サイトデータを消される前の世代で書き出した控えを持って再開することが
+ * ある。それを新しいというだけで採ると、いま答えられる問いかけを、もう受け取れない控えで
+ * 上書きすることになる（backupStatus は世代の合わない控えを伏せるので、問いかけが消えたのと
+ * 同じ）。どちらも今の世代でなければ、どちらを残しても答えられないので順序の規則に任せる。
  */
-function newerPending(stored: PendingBackup | null, incoming: PendingBackup): PendingBackup {
+function newerPending(meta: Meta, incoming: PendingBackup): PendingBackup {
+	const stored = meta.pending_backup;
 	if (!stored) return incoming;
-	// 世代が違う控えは、もう受け取れない（acceptableTicket が断る）。生きているほうを採る。
-	if (stored.ticket.storage_id !== incoming.ticket.storage_id) return incoming;
+	const storedLives = stored.ticket.storage_id === meta.storage_id;
+	const incomingLives = incoming.ticket.storage_id === meta.storage_id;
+	if (storedLives !== incomingLives) return incomingLives ? incoming : stored;
 	if (incoming.ticket.seq !== stored.ticket.seq) {
 		return incoming.ticket.seq > stored.ticket.seq ? incoming : stored;
 	}
@@ -187,7 +196,7 @@ export const backupApi = {
 		// いちばん新しいファイルについての1つになる。
 		mutate(
 			(db) => {
-				db.meta.pending_backup = newerPending(db.meta.pending_backup, pending);
+				db.meta.pending_backup = newerPending(db.meta, pending);
 			},
 			{ local: true }
 		).then(() => undefined),

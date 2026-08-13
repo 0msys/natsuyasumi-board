@@ -1133,6 +1133,36 @@ describe('書き出しの控えを保存に残す', () => {
 		).toEqual({ ticket: newer.ticket, filename: newer.filename });
 	});
 
+	// 止まっていたタブが、サイトデータを消される前の世代で書き出した控えを持って再開する
+	// ことがある。それを「あとから届いた」というだけで採ると、いま答えられる問いかけを
+	// もう受け取れない控えで上書きすることになる（backupStatus は世代の合わない控えを
+	// 伏せるので、問いかけが消えたのと同じ）。
+	it('世代が変わっていたら、いまの世代の問いかけを残す', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+		const stale = await exportAndNote(); // 消される前の世代で書き出した
+
+		// サイトデータを消して入れ直し、新しい世代で書き出した状況を作る
+		const reborn = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
+		reborn.meta.storage_id = 'せだい2';
+		const live = {
+			ticket: { seq: stale.ticket.seq, exported_at: stale.ticket.exported_at - 60, storage_id: 'せだい2' },
+			filename: 'natsuyasumi-board-せだい2.json'
+		};
+		reborn.meta.pending_backup = live;
+		store.poke(reborn);
+		setPersistence(store);
+
+		// 止まっていたタブが、いまごろ「覚える」まで進んだ（時刻は新しいが、世代は古い）
+		await api.backupNotePending(stale);
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'いま答えられる問いかけを、もう受け取れない控えで上書きした'
+		).toEqual(live);
+	});
+
 	// 通番が同じ（記録が1件も変わっていない）ときは、中身の同じファイルが2つある状態。
 	// 並べる物差しが通番だけだと、ここで古いほうに置きかわる。
 	it('同じ通番なら、書き出した時刻の新しいほうを覚える', async () => {
