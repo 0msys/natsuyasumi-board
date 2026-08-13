@@ -31,6 +31,7 @@ export const SCREEN = {
 	listen: of('listen_aria'),
 	challengeTitle: of('challenge_title'),
 	challengeBonus: of('challenge_bonus'),
+	challengeBonusPending: of('challenge_bonus_pending'),
 	challengeLocked: of('challenge_locked_overlay'),
 	homeworkTitle: of('homework_title'),
 	homeworkOptional: of('homework_optional'),

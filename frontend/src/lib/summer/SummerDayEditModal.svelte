@@ -80,11 +80,14 @@
 	const dayChallenges = $derived(
 		challenges.map((c) => ({ ...c, status: day.statuses[c.key] ?? null }))
 	);
-	// 解放条件はきょうの画面と同じ「その日の基本点が100点」。未記録日は score が null
-	// （＝厳密等価でロック側に落ちる）。宿題をこのモーダルで100点にすると、書き込みごとの
-	// 再取得で day が差し替わるため、閉じ直さずにその場で解放される。
-	const unlocked = $derived(day.score === 100);
+	// 解放条件はきょうの画面と同じ「その日の宿題を全部やった」。判定は state 側が済ませて
+	// history[].unlocked に載せてくるので、ここでは組み直さない（未記録日・未来日は false）。
+	// 宿題をこのモーダルで全部○にすると、書き込みごとの再取得で day が差し替わるため、
+	// 閉じ直さずにその場で解放される。
+	// 加点は base==100 の日だけなので、開いていても点が入らない状態がありうる（bonusPending）。
+	const unlocked = $derived(day.unlocked);
 	const bonus = $derived((day.total ?? 0) - (day.score ?? 0));
+	const bonusPending = $derived(day.unlocked && (day.score ?? 0) < 100);
 
 	function dateLabel(iso: string): string {
 		return `${mdOf(iso)}（${day.weekday}）`;
@@ -159,6 +162,7 @@
 					challenges={dayChallenges}
 					{unlocked}
 					{bonus}
+					{bonusPending}
 					{scoreMax}
 					disabled={!editing}
 					onSet={(key, status) => onSet(day.day, key, status)}

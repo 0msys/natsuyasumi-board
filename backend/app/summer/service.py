@@ -207,6 +207,9 @@ def build_state(child: str, today=None, db_path: Path | None = None) -> dict:
                 "is_today": day == today,
                 "score": day_score,
                 "total": day_total,
+                # チャレンジ枠が開くか（その日の宿題を全部やったか）。過去日修正モーダルは
+                # ここを読む＝解放条件をコンポーネント側で組み直さない。未記録日は False。
+                "unlocked": sb.unlocked if sb else False,
             }
         )
         day += timedelta(days=1)
@@ -303,7 +306,7 @@ def build_state(child: str, today=None, db_path: Path | None = None) -> dict:
                 "score": score.score,  # base(0-100)＝満点花火・ストリークの基準
                 "bonus": score.bonus,
                 "total": score.total,  # base + ボーナス＝見出し数字・虹色/王冠の基準
-                "unlocked": score.score == 100,  # チャレンジ枠のロック解除条件
+                "unlocked": score.unlocked,  # チャレンジ枠の解除条件（宿題を全部やった）
                 "challenge_done": sum(1 for c in score.challenges if c.done),
                 "challenge_max": score.challenge_max,
                 "parts": [

@@ -20,7 +20,13 @@ runGolden(golden as unknown as GoldenFile<Input, unknown>, '褒めメッセー�
 		child: input.child,
 		day: input.day,
 		// build_praise が採点結果から見るのは score / bonus / total だけ
-		score: { ...input.score, parts: [], challenges: [], challenge_max: 0 } as ScoreBreakdown,
+		score: {
+			...input.score,
+			parts: [],
+			challenges: [],
+			challenge_max: 0,
+			unlocked: false
+		} as ScoreBreakdown,
 		hasRecords: input.hasRecords,
 		gradeLevel: input.gradeLevel,
 		awayLabel: input.awayLabel

@@ -172,6 +172,47 @@ describe('日次3値の記録', () => {
 		expect(withBonus.comment!.band).toBe('perfect_plus');
 	});
 
+	it('宿題だけ終えるとチャレンジ枠は開くが、生活を終えるまで加点されない', async () => {
+		// 夜の歯みがきが残っていても朝のうちに押せる、というのがこの解放条件の狙い
+		const k = await keysOf();
+		for (const key of k.daily) {
+			await api.summerSetCheck(CHILD, today, key, 'done');
+		}
+		const opened = await api.summerState(CHILD);
+		expect(opened.today_score!.unlocked).toBe(true);
+		expect(opened.today_score!.score).toBeLessThan(100);
+
+		await api.summerSetCheck(CHILD, today, k.challenges[0], 'done');
+		const pending = await api.summerState(CHILD);
+		expect(pending.today_score!.challenge_done).toBe(1); // 記録は残る
+		expect(pending.today_score!.total).toBe(pending.today_score!.score); // まだ点にならない
+
+		const due = pending.habits.filter((h) => h.window_active).map((h) => h.key);
+		for (const key of due) {
+			await api.summerSetCheck(CHILD, today, key, 'done');
+		}
+		const scored = await api.summerState(CHILD);
+		expect(scored.today_score!.score).toBe(100);
+		expect(scored.today_score!.total).toBe(125); // 保留していた分がここで入る
+	});
+
+	it('生活をやらなかった日はチャレンジの点数が無効になる', async () => {
+		const k = await keysOf();
+		const state0 = await api.summerState(CHILD);
+		const due = state0.habits.filter((h) => h.window_active).map((h) => h.key);
+		for (const key of [...due, ...k.daily]) {
+			await api.summerSetCheck(CHILD, today, key, 'done');
+		}
+		await api.summerSetCheck(CHILD, today, k.challenges[0], 'done');
+		expect((await api.summerState(CHILD)).today_score!.total).toBe(125);
+
+		await api.summerSetCheck(CHILD, today, due[0], 'not_done');
+		const invalid = await api.summerState(CHILD);
+		expect(invalid.today_score!.unlocked).toBe(true); // 枠は開いたまま
+		expect(invalid.today_score!.bonus).toBe(0);
+		expect(invalid.today_score!.total).toBe(invalid.today_score!.score);
+	});
+
 	it('「ぜんぶできたら○点」は項目数から出す（標準テンプレは2つで150点）', async () => {
 		// 数字を文言に直書きしていたころは、どの子にも「200点」（4項目ぶん）と出ていた
 		const state = await api.summerState(CHILD);

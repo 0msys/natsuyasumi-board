@@ -72,6 +72,7 @@ export type SummerHistoryDay = {
 	is_today: boolean;
 	score: number | null; // 日別スコア base(0-100)＝満点Star・ストリークの基準（未来/未記録は null）
 	total: number | null; // チャレンジ込みの合計＝グラフ数値・点数スタンプの表示値
+	unlocked: boolean; // その日の毎日の宿題が全部 done＝チャレンジ枠が開く（未来/未記録は false）
 };
 // 連続満点ストリーク（履歴グリッドのスタンプラリー表示）.
 export type SummerStreaks = { perfect_current: number; perfect_best: number; perfect_total: number };
@@ -88,7 +89,7 @@ export type SummerScore = {
 	parts: SummerScorePart[];
 	bonus: number; // スペシャルチャレンジの加点（base==100 のときのみ、else 0）
 	total: number; // base + bonus＝見出し数字・虹色/王冠の基準
-	unlocked: boolean; // base==100＝チャレンジ枠のロック解除
+	unlocked: boolean; // 毎日の宿題が全部 done＝チャレンジ枠が開く（加点条件の base==100 とは別）
 	challenge_done: number;
 	challenge_max: number; // 25 × チャレンジ項目数
 };
@@ -158,6 +159,7 @@ export type SummerUiKey =
 	| 'challenge_bonus'
 	| 'challenge_all'
 	| 'challenge_now'
+	| 'challenge_bonus_pending'
 	| 'challenge_locked_hint'
 	| 'challenge_locked_overlay'
 	| 'school_start_title'

@@ -40,7 +40,9 @@
 			{/if}
 			<span class="text-4xl font-bold lg:text-5xl {rainbow ? 'rainbow-text' : 'text-accent'}">{todayScore.total}</span>
 			<span class="pb-1 text-sm text-text-dim lg:text-base">
-				<!-- 解放前の分母は基本点の満点。区分が空の子に「50点 / 100点」と出さない -->
+				<!-- 分母はチャレンジ枠と同じ unlocked で切り替える（枠が「ぜんぶできたら◯点」と
+				     言い出す瞬間に一致させる）。解放前は基本点の満点＝区分が空の子に「50点 / 100点」
+				     と出さない。unlocked は「加点できる」ではなく「枠が開いた」であることに注意。 -->
 				<Ruby text={fmt(ui.score_of_max, { max: todayScore.unlocked ? scoreMax : baseScoreMax(scoreMax) })} />
 			</span>
 		</div>

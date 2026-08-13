@@ -68,6 +68,9 @@ export type ScoreBreakdown = {
 	total: number; // base + bonus。表示・履歴グラフの基準
 	challenges: ScoreChallenge[];
 	challenge_max: number;
+	// チャレンジ枠を操作できるか＝毎日の宿題を全部やった（せいかつは見ない）。
+	// 加点条件（base==100）とはわざと別物。dailyScore の但し書きを参照。
+	unlocked: boolean;
 };
 export type RemainingItem = {
 	kind: 'habit' | 'daily' | 'one_shot' | 'school_start';
@@ -137,6 +140,9 @@ export function canSkip(
  *
  * 区分が空（項目0件）だとその区分は0点＝その子は base==100 に届かなくなる。
  * 片方だけ空の定義を作らせないのは validate の責任。
+ *
+ * unlocked（チャレンジ枠が開くか）もここで出す。条件は「毎日の宿題を全部やった」だけで、
+ * 加点条件の base==100 とは別＝開いていても加点0のことがある。
  */
 export function dailyScore(
 	statuses: Readonly<Record<string, string>>,
@@ -152,6 +158,11 @@ export function dailyScore(
 	const dailyPoints = dailyItemsList.length
 		? roundHalfUp((DAILY_MAX * dailyDone) / dailyItemsList.length)
 		: 0;
+
+	// チャレンジ枠の解放条件は「毎日の宿題を全部やった」だけ。せいかつは見ない
+	// ＝夜の歯みがきが終わるまで枠が開かない、をやめるため。宿題0件の定義では開かない
+	// （開いても加点条件の base==100 に永久に届かない＝押せるのに点が入らない枠になる）。
+	const unlocked = dailyItemsList.length > 0 && dailyDone === dailyItemsList.length;
 
 	const parts: ScorePart[] = [
 		{
@@ -173,8 +184,10 @@ export function dailyScore(
 	];
 	const base = parts.reduce((sum, p) => sum + p.points, 0);
 
-	// スペシャルチャレンジ: base==100（宿題を全部やった）ときだけ 1つ +25点。
-	// base 未満のときは done でも加点しない（＝画面のロックと二重の担保）。
+	// スペシャルチャレンジ: 枠が開く条件（unlocked＝宿題を全部やった）と、加点の条件は別。
+	// 加点は base==100 の日だけ＝せいかつに「やらなかった」や未記入が残った日は、done を
+	// 記録してあっても0点。宿題を終えた朝に○を押せて、せいかつを最後まで終えた日にだけ
+	// 点が付く、という設計（画面は challenge_bonus_pending でその保留を説明する）。
 	const challenges: ScoreChallenge[] = definition.special_challenges.map((c) => ({
 		key: c.key,
 		label: c.label,
@@ -189,7 +202,8 @@ export function dailyScore(
 		bonus,
 		total: base + bonus,
 		challenges,
-		challenge_max: CHALLENGE_POINTS * definition.special_challenges.length
+		challenge_max: CHALLENGE_POINTS * definition.special_challenges.length,
+		unlocked
 	};
 }
 
