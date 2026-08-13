@@ -175,7 +175,12 @@ export function buildState(args: {
 			is_future: isFuture,
 			is_today: day === today,
 			score: dayScore,
-			total: dayTotal
+			total: dayTotal,
+			// チャレンジ枠が開くか（その日の宿題を全部やったか）。過去日修正モーダルは
+			// ここを読む＝解放条件をコンポーネント側で組み直さない。未記録日は false。
+			unlocked: sb ? sb.unlocked : false,
+			// base<100 で保留になっている加点額（過去日モーダルの案内文に出す）
+			bonus_pending: sb ? sb.bonus_pending : 0
 		});
 	}
 	const streaks = perfectStreaks(streakDays);
@@ -251,7 +256,8 @@ export function buildState(args: {
 					score: score.score, // base(0-100)＝満点花火・ストリークの基準
 					bonus: score.bonus,
 					total: score.total, // base + ボーナス＝見出し数字・虹色/王冠の基準
-					unlocked: score.score === 100, // チャレンジ枠のロック解除条件
+					unlocked: score.unlocked, // チャレンジ枠の解除条件（宿題を全部やった）
+					bonus_pending: score.bonus_pending, // base<100 で保留中の加点額
 					challenge_done: score.challenges.filter((c) => c.done).length,
 					challenge_max: score.challenge_max,
 					parts: score.parts

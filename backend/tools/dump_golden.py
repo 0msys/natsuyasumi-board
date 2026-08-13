@@ -612,6 +612,8 @@ def _score_to_dict(s: judge.ScoreBreakdown) -> dict:
         "total": s.total,
         "challenges": [{"key": c.key, "label": c.label, "done": c.done} for c in s.challenges],
         "challenge_max": s.challenge_max,
+        "unlocked": s.unlocked,
+        "bonus_pending": s.bonus_pending,
     }
 
 
@@ -874,6 +876,15 @@ def dump_state() -> None:
         for key in dailies[:1]:
             store.set_check_status(child, day, key, "done", db_path=db)
         snapshot("一部だけやった日", definition.start + timedelta(days=10))
+
+        # 2.5) 宿題だけ全部やった日＝チャレンジ枠は開く（unlocked）が、せいかつが未記入なので
+        # base<100 で加点は付かない。この分岐を通す state はここだけなので消さないこと。
+        only_daily = definition.start + timedelta(days=2)
+        for key in dailies:
+            store.set_check_status(child, only_daily, key, "done", db_path=db)
+        for key in challenges[:1]:
+            store.set_check_status(child, only_daily, key, "done", db_path=db)
+        snapshot("宿題だけ全部やった日（チャレンジは開くが加点なし）", only_daily)
 
         # 3) 満点＋チャレンジ（数日ぶん積む＝ごほうびランクとストリークが動く）
         for offset in range(4, 9):

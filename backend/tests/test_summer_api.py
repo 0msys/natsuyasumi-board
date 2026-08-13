@@ -136,12 +136,14 @@ def test_state_history点数とstreaks(client):
     assert s3["streaks"] == {"perfect_current": 1, "perfect_best": 1, "perfect_total": 1}
 
 
-# ---- スペシャルチャレンジ（100点で解放される +25点ボーナス） ----
+# ---- スペシャルチャレンジ（宿題を全部やると解放・加点は base==100 の日だけ） ----
 
 FULL_100_KEYS = (
     "hamigaki_asa", "hamigaki_hiru", "hamigaki_yoru",
     "ondoku", "nikki", "keisan", "kenban", "drill", "jishu",
 )  # 8/1（窓外）で base=100 になる9項目
+HABIT_KEYS = FULL_100_KEYS[:3]  # せいかつ（はみがき3回）
+DAILY_KEYS = FULL_100_KEYS[3:]  # しゅくだい6項目＝チャレンジ枠の解放条件
 
 
 def _set_all_done(client, day, keys):
@@ -187,6 +189,7 @@ def test_state_ごほうびランク(client):
 
 
 def test_challenge_100点未満はチェックしても加点されない(client):
+    # チャレンジ自体を◯にしても枠は開かない（解放するのは宿題を全部やったときだけ）
     client.post(
         "/api/summer/check/set",
         json={"child": CHILD, "day": "2026-08-01", "item_key": "gakki", "status": "done"},
@@ -194,6 +197,56 @@ def test_challenge_100点未満はチェックしても加点されない(client
     s = client.get("/api/summer/state", params={"child": CHILD}).json()
     assert s["today_score"]["unlocked"] is False
     assert s["today_score"]["total"] == s["today_score"]["score"]  # bonus 効かない
+
+
+def test_challenge_宿題を全部やると解放され_生活を終えてから加点される(client):
+    """朝に宿題を終えた時点で押せる。点が入るのは夜にせいかつを終えてから."""
+    _set_all_done(client, "2026-08-01", DAILY_KEYS)
+    ts = client.get("/api/summer/state", params={"child": CHILD}).json()["today_score"]
+    assert ts["unlocked"] is True and ts["score"] < 100  # せいかつが未記入でも開く
+    assert ts["bonus_pending"] == 0  # まだ◯にしていない＝約束する点も無い
+
+    client.post(
+        "/api/summer/check/set",
+        json={"child": CHILD, "day": "2026-08-01", "item_key": "gakki", "status": "done"},
+    )
+    ts2 = client.get("/api/summer/state", params={"child": CHILD}).json()["today_score"]
+    assert ts2["challenge_done"] == 1  # 記録は残る
+    assert ts2["bonus"] == 0 and ts2["total"] == ts2["score"]  # まだ点にならない
+    assert ts2["bonus_pending"] == 25  # せいかつを終えれば入る点
+
+    _set_all_done(client, "2026-08-01", HABIT_KEYS)  # 夜にせいかつを終える
+    ts3 = client.get("/api/summer/state", params={"child": CHILD}).json()["today_score"]
+    assert ts3["score"] == 100 and ts3["bonus"] == 25 and ts3["total"] == 125
+    assert ts3["bonus_pending"] == 0  # 加点側へ移ったので保留は残らない
+
+
+def test_challenge_生活をやらなかった日は加点が無効になる(client):
+    _set_all_done(client, "2026-08-01", FULL_100_KEYS)
+    client.post(
+        "/api/summer/check/set",
+        json={"child": CHILD, "day": "2026-08-01", "item_key": "gakki", "status": "done"},
+    )
+    assert client.get("/api/summer/state", params={"child": CHILD}).json()["today_score"]["total"] == 125
+    # 夜のはみがきを「やらなかった」に直す＝枠は開いたままだがボーナスは消える
+    client.post(
+        "/api/summer/check/set",
+        json={"child": CHILD, "day": "2026-08-01", "item_key": "hamigaki_yoru", "status": "not_done"},
+    )
+    ts = client.get("/api/summer/state", params={"child": CHILD}).json()["today_score"]
+    assert ts["unlocked"] is True and ts["challenge_done"] == 1
+    assert ts["bonus"] == 0 and ts["total"] == ts["score"]
+    assert ts["bonus_pending"] == 25  # ✖️を◯へ直せば入る点として案内する
+
+
+def test_history_の各日にも解放フラグが乗る(client):
+    """過去日修正モーダルはこのフラグを読む（score から組み直さない）."""
+    _set_all_done(client, "2026-07-31", DAILY_KEYS)
+    s = client.get("/api/summer/state", params={"child": CHILD}).json()
+    h = next(h for h in s["history"] if h["day"] == "2026-07-31")
+    assert h["unlocked"] is True and h["score"] < 100
+    assert next(h for h in s["history"] if h["day"] == "2026-07-30")["unlocked"] is False  # 未記録
+    assert next(h for h in s["history"] if h["day"] == "2026-08-02")["unlocked"] is False  # 未来日
 
 
 def test_challenge_100点で解放しボーナス加算_満点は100基準(client):

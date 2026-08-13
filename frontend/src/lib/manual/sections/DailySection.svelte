@@ -132,14 +132,17 @@
 	<h3><Star size={16} class="inline align-middle" /> {SCREEN.challengeTitle}</h3>
 	<p>
 		{SCREEN.challengeBonus}。ただし、<strong
-			>その日の基本点（{SCREEN.sectionHabits}＋{SCREEN.sectionDaily}）が100点になるまでは開きません</strong
+			>その日の「{SCREEN.sectionDaily}」を全部やるまでは開きません</strong
 		>（<Lock
 			size={13}
 			class="inline align-middle"
-		/>「{SCREEN.challengeLocked}」と出ます）。
+		/>「{SCREEN.challengeLocked}」と出ます）。「{SCREEN.sectionHabits}」は開く条件に入れていません。夜の歯みがきのように寝る前にしか終わらない項目があると、宿題を朝に終えても就寝直前まで押せなくなるためです。
 	</p>
 	<p>
-		「まず今日やることを全部おわらせる → ごほうびに追加点をねらう」という順番になります。あとから「{SCREEN.sectionHabits}」の記録を消して100点未満にもどすと、チャレンジの記録は残ったまま点だけ加算されなくなります。
+		<strong>開くことと点が入ることは別です。</strong>点が足されるのは、その日の基本点（{SCREEN.sectionHabits}＋{SCREEN.sectionDaily}）が100点になった日だけ。「{SCREEN.sectionHabits}」に「やらなかった」や未記入が残ったまま1日が終わると、チャレンジの記録は残っても点にはなりません。チャレンジを○にしてあって点がまだ入らないあいだは、「{SCREEN.sectionHabits}も全部できたらもらえるよ」と、保留になっている点数を添えて出ます（○にした数だけ増えます）。まだ1つも○にしていないうちは、もらえる点がないので何も出ません。
+	</p>
+	<p>
+		「まず今日やることを全部おわらせる → ごほうびに追加点をねらう」という順番は変わりません。あとから「{SCREEN.sectionHabits}」の記録を消して100点未満にもどすと、チャレンジの記録は残ったまま点だけ加算されなくなります。
 	</p>
 
 	<h3>画面の自動更新</h3>

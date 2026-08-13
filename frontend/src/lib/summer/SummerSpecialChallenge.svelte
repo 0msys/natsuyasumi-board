@@ -1,9 +1,11 @@
 <script lang="ts">
-	// スペシャルチャレンジ: 宿題で100点をとると解放されるごほうび枠（1つ +25てん・最大200てん）。
-	// base<100（unlocked=false）のあいだは鍵オーバーレイ＋ボタン disabled で操作できない。
-	// 100点になると解放され、◯にした瞬間だけ星はじけ＋「ポンッ」（SummerCheckButtons と同じ演出）。
+	// スペシャルチャレンジ: 宿題を全部やると解放されるごほうび枠（1つ +25てん・最大200てん）。
+	// 解放前（unlocked=false）は鍵オーバーレイ＋ボタン disabled で操作できない。
+	// 解放されると◯にでき、◯にした瞬間だけ星はじけ＋「ポンッ」（SummerCheckButtons と同じ演出）。
+	// ただし加点は base==100（せいかつも全部できた）日だけ＝解放されていても点が入らない
+	// あいだがある。その保留を説明するのが bonusPending。
 	// きょうの画面と過去日修正モーダル（SummerDayEditModal）で共用する。呼ぶ側は「その日の」
-	// status・base100・bonus を渡す（モーダルは day.statuses から組む）。
+	// status・unlocked・bonus を渡す（モーダルは day.statuses と day.unlocked から組む）。
 	import { Circle, Dumbbell, HandHeart, Headphones, Lock, Music, Sparkles, Star } from '@lucide/svelte';
 	import type { Component } from 'svelte';
 	import type { SummerCheckStatus, SummerSpecialChallenge, SummerUiText } from '$lib/api';
@@ -17,6 +19,7 @@
 		challenges,
 		unlocked,
 		bonus,
+		bonusPending = 0,
 		scoreMax,
 		disabled = false,
 		onSet
@@ -25,6 +28,11 @@
 		challenges: SummerSpecialChallenge[];
 		unlocked: boolean;
 		bonus: number;
+		// base<100 で保留中の加点額（judge の bonus_pending）。◯にしても点が動かない理由を、
+		// 実際に入る点として出すため。1件も◯にしていなければ0＝もらえない点を約束しない。
+		// unlocked（押せるか）・disabled（閲覧専用か）と合わせて3つあるので取り違えないこと。
+		// bonus > 0 は base==100 を含意するので bonusPending > 0 とは同時に立たない。
+		bonusPending?: number;
 		// 1日の最大点（100 + 項目数 × 25）。「ぜんぶできたら○点まんてん」に入れる。
 		// サーバ側でも差し替え済みなので、ここの fmt は基本 no-op（ui_text_for の但し書き参照）。
 		scoreMax: number;
@@ -98,7 +106,7 @@
 	</div>
 	<p class="mb-3 text-xs text-text-dim lg:text-sm">
 		{#if unlocked}
-			<Ruby text={fmt(ui.challenge_all, { score_max: scoreMax })} />{#if bonus > 0}<span class="font-bold text-violet-500"> <Ruby text={fmt(ui.challenge_now, { bonus })} /></span>{/if}
+			<Ruby text={fmt(ui.challenge_all, { score_max: scoreMax })} />{#if bonus > 0}<span class="font-bold text-violet-500"> <Ruby text={fmt(ui.challenge_now, { bonus })} /></span>{:else if bonusPending > 0}<span class="font-bold text-amber-500"> <Ruby text={fmt(ui.challenge_bonus_pending, { bonus: bonusPending })} /></span>{/if}
 		{:else}
 			<Ruby text={ui.challenge_locked_hint} />
 		{/if}

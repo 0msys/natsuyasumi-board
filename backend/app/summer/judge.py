@@ -91,6 +91,13 @@ class ScoreBreakdown:
     total: int = 0  # base + bonus。表示・履歴グラフの基準
     challenges: tuple[ScoreChallenge, ...] = ()  # チャレンジ各項目の当日 done 状態
     challenge_max: int = 0  # CHALLENGE_POINTS × チャレンジ項目数
+    # チャレンジ枠を操作できるか＝毎日の宿題を全部やった（せいかつは見ない）。
+    # 加点条件（base==100）とはわざと別物。daily_score の但し書きを参照。
+    unlocked: bool = False
+    # base<100 のせいで保留になっている加点額（せいかつを全部やれば入る点）。
+    # done にしたチャレンジの件数から出すので、1件も done でなければ0＝画面は何も約束しない。
+    # base==100 の日は bonus 側に入っているので0。
+    bonus_pending: int = 0
 
 
 @dataclass(frozen=True)
@@ -157,6 +164,9 @@ def daily_score(statuses: Mapping[str, str], day: date, definition: SummerDefini
 
     区分が空（項目0件）だとその区分は0点＝その子は base==100 に届かなくなる。
     片方だけ空の定義を作らせないのは admin.validate の責任。
+
+    unlocked（チャレンジ枠が開くか）もここで出す。条件は「毎日の宿題を全部やった」だけで、
+    加点条件の base==100 とは別＝開いていても加点0のことがある。
     """
     due = habits_due(day, definition)
     habit_done = sum(1 for h in due if _habit_credited(h, statuses.get(h.key)))
@@ -165,6 +175,11 @@ def daily_score(statuses: Mapping[str, str], day: date, definition: SummerDefini
     daily_items = definition.daily_homework
     daily_done = sum(1 for i in daily_items if statuses.get(i.key) == STATUS_DONE)
     daily_points = _round_half_up(DAILY_MAX * daily_done / len(daily_items)) if daily_items else 0
+
+    # チャレンジ枠の解放条件は「毎日の宿題を全部やった」だけ。せいかつは見ない
+    # ＝夜の歯みがきが終わるまで枠が開かない、をやめるため。宿題0件の定義では開かない
+    # （開いても加点条件の base==100 に永久に届かない＝押せるのに点が入らない枠になる）。
+    unlocked = bool(daily_items) and daily_done == len(daily_items)
 
     parts = (
         ScorePart(
@@ -186,14 +201,17 @@ def daily_score(statuses: Mapping[str, str], day: date, definition: SummerDefini
     )
     base = sum(p.points for p in parts)
 
-    # スペシャルチャレンジ: base==100（宿題を全部やった）ときだけ 1つ +25点。
-    # base 未満のときは done でも加点しない（＝画面のロックと二重の担保）。
+    # スペシャルチャレンジ: 枠が開く条件（unlocked＝宿題を全部やった）と、加点の条件は別。
+    # 加点は base==100 の日だけ＝せいかつに「やらなかった」や未記入が残った日は、done を
+    # 記録してあっても0点。宿題を終えた朝に○を押せて、せいかつを最後まで終えた日にだけ
+    # 点が付く、という設計（画面は challenge_bonus_pending でその保留を説明する）。
     challenges = tuple(
         ScoreChallenge(key=c.key, label=c.label, done=statuses.get(c.key) == STATUS_DONE)
         for c in definition.special_challenges
     )
     challenge_done = sum(1 for c in challenges if c.done)
-    bonus = CHALLENGE_POINTS * challenge_done if base == 100 else 0
+    earned = CHALLENGE_POINTS * challenge_done  # 記録から見た加点額（base を見ない素の値）
+    bonus = earned if base == 100 else 0
     return ScoreBreakdown(
         score=base,
         parts=parts,
@@ -201,6 +219,8 @@ def daily_score(statuses: Mapping[str, str], day: date, definition: SummerDefini
         total=base + bonus,
         challenges=challenges,
         challenge_max=CHALLENGE_POINTS * len(definition.special_challenges),
+        unlocked=unlocked,
+        bonus_pending=earned - bonus,
     )
 
 

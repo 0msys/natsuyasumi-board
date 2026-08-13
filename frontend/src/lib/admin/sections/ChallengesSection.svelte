@@ -36,7 +36,7 @@
 <section class="flex flex-col gap-3 rounded-lg bg-surface p-4 lg:p-5">
 	<h2 class="text-base font-bold text-text-base">スペシャルチャレンジ</h2>
 	<p class="text-xs text-text-dim">
-		宿題で100点をとった日にひらく、ボーナスのチャレンジ枠です（1つやると +25点）。
+		その日の宿題を全部やるとひらく、ボーナスのチャレンジ枠です（1つやると +25点。点が入るのは、せいかつも全部できて100点になった日だけ）。
 	</p>
 
 	{#each items as item, i}

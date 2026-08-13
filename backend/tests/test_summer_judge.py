@@ -160,15 +160,70 @@ def test_score_ラジオ体操中止は満点扱いで加点(definition):
     assert daily_score({**h3, "radio_taisou": "not_done"}, date(2026, 7, 24), definition).parts[0].points == 38
 
 
-# ---- スペシャルチャレンジ（base==100 で解放される +25点ボーナス・最大200点） ----
+# ---- スペシャルチャレンジ ----
+# 枠が開く条件（宿題を全部やった）と、加点の条件（base==100）はわざと別物。
+# 「夜の歯みがきが終わるまで開かない」をやめつつ、せいかつを落とした日は点にしない。
 
 FULL_100 = {**HAMIGAKI_ALL, **DAILY_ALL}  # 窓外(8/1)で base=100
 
 
+def test_challenge_宿題を全部やれば生活が残っていても解放される(definition):
+    # 朝のうちに宿題を終えた状態（せいかつは未記入）＝枠は開くが、加点はまだ付かない
+    r = daily_score(DAILY_ALL, date(2026, 8, 1), definition)
+    assert r.unlocked is True
+    assert r.score < 100
+    assert r.bonus == 0
+    assert r.bonus_pending == 0  # まだ1件も◯にしていない＝保留する点も無い
+
+
+def test_challenge_保留額は記録したチャレンジの件数ぶん(definition):
+    # 「せいかつも全部できたら +N点」の N。◯にしていない状態で点を約束しないため、
+    # 件数から出す（固定の25点ではない）。
+    base_lt_100 = {**DAILY_ALL}
+    assert daily_score(base_lt_100, date(2026, 8, 1), definition).bonus_pending == 0
+    one = daily_score({**base_lt_100, "gakki": "done"}, date(2026, 8, 1), definition)
+    assert one.bonus_pending == 25 and one.bonus == 0
+    two = daily_score(
+        {**base_lt_100, "gakki": "done", "otetsudai": "done"}, date(2026, 8, 1), definition
+    )
+    assert two.bonus_pending == 50 and two.bonus == 0
+
+
+def test_challenge_base100なら保留は0で加点側に入る(definition):
+    r = daily_score({**FULL_100, "gakki": "done"}, date(2026, 8, 1), definition)
+    assert r.bonus == 25 and r.bonus_pending == 0
+
+
+def test_challenge_宿題が1つでも欠けたら解放されない(definition):
+    r = daily_score({k: v for k, v in DAILY_ALL.items() if k != "nikki"}, date(2026, 8, 1), definition)
+    assert r.unlocked is False
+
+
+def test_challenge_やらなかった記録は解放にならない(definition):
+    # 未記入と「やらなかった」を区別しない＝記録しないほうが得、を作らない
+    r = daily_score({**DAILY_ALL, "nikki": "not_done"}, date(2026, 8, 1), definition)
+    assert r.unlocked is False
+
+
+def test_challenge_生活だけでは解放されない(definition):
+    r = daily_score(HAMIGAKI_ALL, date(2026, 8, 1), definition)
+    assert r.unlocked is False
+
+
+def test_challenge_宿題が0件の定義では解放されない(definition):
+    # 開いても base==100 に永久に届かない＝押せるのに点が入らない枠になるため
+    doc = load_sample_doc()
+    doc["daily_homework"] = []
+    d = parse_definition(doc)
+    assert daily_score(HAMIGAKI_ALL, date(2026, 8, 1), d).unlocked is False
+
+
 def test_challenge_base100未満は加点されない(definition):
-    # 宿題が1つ足りない（base<100）とチャレンジをやっても bonus 0・total==base
-    almost = {**FULL_100, "gakki": "done", "otetsudai": "done", "nikki": "not_done"}
+    # せいかつが1つ「やらなかった」（base<100）＝枠は開いたままだが bonus 0・total==base。
+    # 「開くが加点しない」という設計そのもの。
+    almost = {**FULL_100, "gakki": "done", "otetsudai": "done", "hamigaki_yoru": "not_done"}
     r = daily_score(almost, date(2026, 8, 1), definition)
+    assert r.unlocked is True
     assert r.score < 100
     assert r.bonus == 0
     assert r.total == r.score
@@ -176,7 +231,7 @@ def test_challenge_base100未満は加点されない(definition):
 
 def test_challenge_base100で1つにつき25点(definition):
     r0 = daily_score(FULL_100, date(2026, 8, 1), definition)
-    assert r0.score == 100 and r0.bonus == 0 and r0.total == 100
+    assert r0.score == 100 and r0.bonus == 0 and r0.total == 100 and r0.unlocked is True
     assert r0.challenge_max == 100  # 4項目 × 25
     r2 = daily_score({**FULL_100, "gakki": "done", "otetsudai": "done"}, date(2026, 8, 1), definition)
     assert r2.bonus == 50 and r2.total == 150
