@@ -140,6 +140,17 @@ const ROW_CHECKS: Record<string, (row: unknown) => boolean> = {
 };
 
 export function buildBackup(db: Db, now: number): { filename: string; payload: BackupPayload } {
+	// 生きている中身をそのまま渡さない。受け取った側が触ると本体が変わってしまう
+	// ——書き出しは「そのときの写し」であるべきで、参照を配る場所ではない。
+	const copy = JSON.parse(JSON.stringify(db)) as Db;
+	// 未回答の問いかけは、この端末だけの話。ファイルに乗せると、それを取り込んだ端末に
+	// 「一度も書き出していないのに、別世代の印を持つ問いかけ」が現れる。受け取った側は
+	// 答えようがない（保存側も世代違いで断る）ので、出さない。
+	//
+	// 落とす場所をここにしてあるのは、呼ぶ順序に依らない一点保証にするため。問いかけを
+	// 覚えるのは書き出しとは別の書き込みなので、「2回目の書き出しに1回目の控えが乗る」
+	// 経路が実在する。写しを作る側で必ず落としておけば、その並びを気にしなくてよい。
+	copy.meta.pending_backup = null;
 	return {
 		filename: `natsuyasumi-board-${todayJst()}.json`,
 		payload: {
@@ -147,9 +158,7 @@ export function buildBackup(db: Db, now: number): { filename: string; payload: B
 			version: BACKUP_VERSION,
 			exported_at: now,
 			schema_version: SCHEMA_VERSION,
-			// 生きている中身をそのまま渡さない。受け取った側が触ると本体が変わってしまう
-			// ——書き出しは「そのときの写し」であるべきで、参照を配る場所ではない。
-			db: JSON.parse(JSON.stringify(db)) as Db
+			db: copy
 		}
 	};
 }

@@ -22,6 +22,7 @@ import type {
 	TtsStatus,
 	ValidationResult
 } from './types';
+import type { BackupTicket, PendingBackup } from '$lib/backup/ticket';
 
 /** api が失敗を伝えるときの例外。
  *
@@ -139,22 +140,31 @@ export type Api = {
 	backupMarkSaved(ticket: BackupTicket): Promise<{ recorded: boolean }>;
 	/** バックアップで丸ごと置き換える（取り込む前に画面側で確認を取ること）。 */
 	backupImportAll(payload: unknown): Promise<{ ok: boolean }>;
+	/** 書き出したファイルをブラウザに渡せたので、あとで「ほぞんできた？」と聞けるよう覚えておく。
+	 *
+	 *  書き出しの api と分けてあるのは、**ファイルが1つも生まれていないのに問いかけだけ残る**
+	 *  道を作らないため。書き出しの往復中に画面を離れればブラウザには何も渡らないし、
+	 *  Blob の組み立て自体が落ちることもある。そこで問いかけが残ると、親は覚えのある名前を
+	 *  見て「ほぞんできた」と答えられてしまい、**手元に無いファイルで催促が1週間消える**
+	 *  ——この機能が防ごうとしているものそのもの。渡せたと分かってから呼ぶこと。
+	 *
+	 *  覚えているのは1つだけで、あとから書き出したものに置きかわる。届いた順ではなく
+	 *  書き出した順で決める（遅れて届いた古い書き出しが、新しい問いかけを踏み潰さない）。 */
+	backupNotePending(pending: PendingBackup): Promise<void>;
+	/** 「できていない」と答えられた。問いかけだけ落とす（催促の基準は動かさない）。
+	 *
+	 *  控えを渡すのは、**答えられたファイルの問いかけだけ**を下げるため。タブが2つあると、
+	 *  こちらが問いかけを描いたあとに、もう一方が書き出して控えを置きかえていることがある
+	 *  ——そのときファイルは2つとも端末にある。見ないで消すと、あとから書き出したほうを
+	 *  確かめる口が（開き直した先も含めて）どこにも無くなる。 */
+	backupDismissPending(ticket: BackupTicket): Promise<void>;
 	/** 「ホーム画面に追加」の案内を閉じた、を覚える。 */
 	backupDismissHomeHint(): Promise<void>;
 };
 
-/** 書き出したファイルが「何であるか」の控え。書き出しが渡し、確かめるときに返す。
- *
- *  3つとも「そのファイル」の話で、確かめた時点の話ではない。ここを呼んだ時点の値に
- *  すり替えると、ファイルに入っていないものまで済みに数える。 */
-export type BackupTicket = {
-	/** そのファイルに入っている記録の通番。 */
-	seq: number;
-	/** そのファイルを作った時刻（催促が測るのは、手元のファイルの古さ）。 */
-	exported_at: number;
-	/** 書き出したときの保存の世代（作り直された保存を、通番の大小と別に見分ける）。 */
-	storage_id: string;
-};
+// 控えの型は保存層（Meta）も要るので $lib/backup/ticket にある。ここからも読めるように
+// 通しておく（画面は $lib/api だけを見ていればよい、という約束を崩さないため）。
+export type { BackupTicket, PendingBackup };
 
 export type BackupStatus = {
 	/** この版でバックアップの出番があるか（docker 版は false＝カードごと出さない）。 */
@@ -170,4 +180,18 @@ export type BackupStatus = {
 	 *  入れ終わったあとタブを閉じた瞬間に全部消える。画面はこれを見て強く警告する。 */
 	storage_ephemeral: boolean;
 	home_hint_dismissed: boolean;
+	/**
+	 * まだ「ほぞんできた？」を聞けていない書き出し（無ければ null）。
+	 *
+	 * 画面のローカル状態ではなく保存に置いてあるので、書き出したあと画面を離れても、
+	 * タブを開き直しても問いかけが残る。iPhone の共有シートやプレビューから「もどる」で
+	 * 戻ってきた親には、ここでしか答える口が無い（それが無かったころは、ファイルは端末に
+	 * あるのに「まだバックアップしていません」が消えなかった）。
+	 *
+	 * **催促の強さ（$lib/backup/level の backupLevel）には効かせないこと。** 弱めれば
+	 * 押しただけで印が消え、強めれば「バックアップする」を押した瞬間に歯車が赤くなる。
+	 * どちらも印の当てにならなさを増やすだけで、判定の入力は last_backup_at と
+	 * changes_since_backup の2つのままにしておく。
+	 */
+	pending_backup: PendingBackup | null;
 };

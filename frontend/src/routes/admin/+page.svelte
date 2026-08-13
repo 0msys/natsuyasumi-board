@@ -198,10 +198,14 @@
 					importBusy = false;
 					return;
 				}
-				// 置きかえる前に、カードの問いかけを落とす（BackupCard.importAll と同じ順番）。
-				// 残すと、そのファイルには入っていない中身まで「ほぞんできた」と答えられる。
+				// 置きかえる前に、カードが抱えている写しを片づける（BackupCard.importAll と同じ順番）。
 				backupCard?.resetForRestore();
 				await api.backupImportAll(doc);
+				// 未回答の問いかけを落とすのは置きかえ側の仕事だが、カードは読み直さないかぎり
+				// 古い問いかけを出したまま。invalidateAll() はこのページの load をやり直すだけで、
+				// カードの中までは触らない——残すと、そのファイルには入っていない中身まで
+				// 「ほぞんできた」と答えられる（保存側でも断るが、聞かないのが先）。
+				await backupCard?.reloadStatus();
 			} else {
 				await api.adminImportDefinition(doc as AdminDocument);
 			}

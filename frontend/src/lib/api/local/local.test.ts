@@ -1020,6 +1020,366 @@ describe('バックアップの催促', () => {
 	});
 });
 
+// 書き出したあと、親が「ほぞんできた」と答えるまでのあいだの話。
+//
+// この問いかけを画面の中だけに持っていたころ、設定画面を離れると聞く口ごと消えていた。
+// iPhone では共有シートやプレビューから「もどる」だけでそうなる。書き出しは日づけを
+// 刻まない作りなので、答える口が消えると、ファイルは端末にあるのに
+// 「まだバックアップしていません」が二度と引っ込まない。だから保存に残す。
+describe('書き出しの控えを保存に残す', () => {
+	/** 書き出して、ブラウザに渡せたところまで（画面が downloadJson のあとに呼ぶ流れ）。 */
+	const exportAndNote = async () => {
+		const { filename, payload, ticket } = await api.backupExportAll();
+		await api.backupNotePending({ ticket, filename });
+		return { filename, payload, ticket };
+	};
+
+	// この機能の本体。保存から読み直しても問いかけが残っていること。
+	it('開き直しても、聞きそびれた問いかけは残っている', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+		const { ticket, filename } = await exportAndNote();
+
+		setPersistence(store); // 手元の写しを捨てて、保存から読み直させる
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'開き直したら、答える口が消えている'
+		).toEqual({ ticket, filename });
+	});
+
+	// 入ったまま別の端末で復元されると、一度も書き出していない端末に、しかも別世代の
+	// 印を持つ問いかけが出る（答えても保存側が断るだけ）。
+	it('書き出したファイルに、問いかけは入らない', async () => {
+		await wizard();
+		await exportAndNote(); // 1回目の控えが保存に残っている状態にしてから
+
+		const { payload } = await api.backupExportAll();
+
+		expect(
+			(payload as { db: Db }).db.meta.pending_backup,
+			'書き出したファイルに、この端末の問いかけが乗っている'
+		).toBeNull();
+	});
+
+	it('「ほぞんできた」を記録したら、問いかけは下がる', async () => {
+		await wizard();
+		const { ticket } = await exportAndNote();
+
+		expect(await api.backupMarkSaved(ticket)).toEqual({ recorded: true });
+		expect((await api.backupStatus()).pending_backup, '答えたのにまだ聞いてくる').toBeNull();
+	});
+
+	// 断ったときに問いかけを残すと、押しても同じ理由で断られるだけ。画面は書き出し直しを
+	// 促しているので、問いかけのほうは下げる。
+	//
+	// 断られる形は、控えを作り替えるのではなく保存の側で作る。画面が渡すのは保存に入って
+	// いる控えそのものなので、細工した控えで断らせると実際には起きない形を固定してしまう
+	// （ここは「時計が進んでいた端末で書き出して、そのあと直った」）。
+	it('受け取れなかったときも、その問いかけは下がる', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+		const { ticket } = await exportAndNote();
+
+		const skewed = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
+		const ahead = nowEpochSec() + 86_400;
+		skewed.meta.pending_backup = { ...skewed.meta.pending_backup!, ticket: { ...ticket, exported_at: ahead } };
+		store.poke(skewed);
+		setPersistence(store);
+
+		expect(await api.backupMarkSaved({ ...ticket, exported_at: ahead })).toEqual({
+			recorded: false
+		});
+		const status = await api.backupStatus();
+		expect(status.pending_backup, '答えた問いかけが残っている').toBeNull();
+		expect(status.last_backup_at, '断ったのに日づけを刻んでいる').toBeNull();
+	});
+
+	it('「できていない」は、問いかけを下げるだけで催促を動かさない', async () => {
+		await wizard();
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		const { ticket } = await exportAndNote();
+		const before = (await api.backupStatus()).changes_since_backup;
+
+		await api.backupDismissPending(ticket);
+
+		const status = await api.backupStatus();
+		expect(status.pending_backup).toBeNull();
+		expect(status.last_backup_at, '「できていない」なのに日づけを刻んでいる').toBeNull();
+		expect(
+			status.changes_since_backup,
+			'問いかけを下げただけで「そのあと N件」が増えている'
+		).toBe(before);
+	});
+
+	it('もう一度書き出したら、問いかけは新しいほうに置きかわる', async () => {
+		await wizard();
+		await exportAndNote();
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done'); // 通番を進める
+		const second = await exportAndNote();
+
+		expect((await api.backupStatus()).pending_backup, '古いほうの問いかけが残っている').toEqual({
+			ticket: second.ticket,
+			filename: second.filename
+		});
+	});
+
+	// 復元は基準をいまの通番へ引き直すので、その前に書き出したファイルはもう受け取れない。
+	it('復元したら、問いかけは落ちる', async () => {
+		await wizard();
+		const { payload } = await exportAndNote();
+
+		await api.backupImportAll(payload);
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'復元したのに、答えても断られる問いかけが残っている'
+		).toBeNull();
+	});
+
+	// タブが2つあると、こちらが問いかけを描いたあとに、もう一方が書き出して控えを
+	// 置きかえていることがある。そのときファイルは2つとも端末にあるので、古いほうに
+	// 答えたからといって新しいほうの問いかけを消してはいけない——消すと、あとから
+	// 書き出したファイルを確かめる口が（開き直した先も含めて）どこにも無くなる。
+	// この機能が直そうとしている壊れかたを、2タブの形で作ることになる。
+	it('別のタブが後から書き出していたら、そちらの問いかけは残す', async () => {
+		await wizard();
+		const first = await exportAndNote(); // タブA が書き出した
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		const second = await exportAndNote(); // タブB が書き出した（控えは B に置きかわる）
+
+		// タブA の画面に残っていた問いかけに答える
+		expect(await api.backupMarkSaved(first.ticket)).toEqual({ recorded: true });
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'あとから書き出したファイルの問いかけまで消えた（確かめる口が無くなる）'
+		).toEqual({ ticket: second.ticket, filename: second.filename });
+	});
+
+	// 書き出しは「ブラウザに渡す」→「覚える」の2段で、あいだでタブが止まりうる（背景に
+	// 回された iOS のタブがまさにそれ）。止まっているうちに別のタブが書き出しを終えていると、
+	// 遅れて再開した古いほうが新しい問いかけを踏み潰す——親は古いファイルについて聞かれ、
+	// それに答えると、あとから書き出したファイルを確かめる口はどこにも残らない。
+	it('遅れて届いた古い書き出しは、新しい問いかけを押しのけない', async () => {
+		await wizard();
+		const older = await exportAndNote(); // タブA が書き出して渡した
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		const newer = await exportAndNote(); // タブB が書き出して覚えた
+
+		// 止まっていたタブA が、いまごろ「覚える」まで進んだ
+		await api.backupNotePending(older);
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'古いほうの書き出しが、新しい問いかけを踏み潰した'
+		).toEqual({ ticket: newer.ticket, filename: newer.filename });
+	});
+
+	// 止まっていたタブが、サイトデータを消される前の世代で書き出した控えを持って再開する
+	// ことがある。それを「あとから届いた」というだけで採ると、いま答えられる問いかけを
+	// もう受け取れない控えで上書きすることになる（backupStatus は世代の合わない控えを
+	// 伏せるので、問いかけが消えたのと同じ）。
+	it('世代が変わっていたら、いまの世代の問いかけを残す', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+		const stale = await exportAndNote(); // 消される前の世代で書き出した
+
+		// サイトデータを消して入れ直し、新しい世代で書き出した状況を作る
+		const reborn = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
+		reborn.meta.storage_id = 'せだい2';
+		const live = {
+			ticket: { seq: stale.ticket.seq, exported_at: stale.ticket.exported_at - 60, storage_id: 'せだい2' },
+			filename: 'natsuyasumi-board-せだい2.json'
+		};
+		reborn.meta.pending_backup = live;
+		store.poke(reborn);
+		setPersistence(store);
+
+		// 止まっていたタブが、いまごろ「覚える」まで進んだ（時刻は新しいが、世代は古い）
+		await api.backupNotePending(stale);
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'いま答えられる問いかけを、もう受け取れない控えで上書きした'
+		).toEqual(live);
+	});
+
+	// 同じ状態を2つのタブが書き出し、片方が止まっているあいだに、もう片方で「ほぞんできた」
+	// まで済ませることがある。止まっていたほうが再開したときに空いた枠へそのまま入れると、
+	// 答えた直後に同じ内容をもう一度聞かれる。答えても日づけは動かないので、押しても
+	// 何も起きない問いかけになる。
+	it('すでに答えた分に収まる書き出しは、聞き直さない', async () => {
+		await wizard();
+		const paused = await api.backupExportAll(); // タブA が渡したところで止まった
+		const answered = await exportAndNote(); // タブB が書き出して
+		expect(await api.backupMarkSaved(answered.ticket)).toEqual({ recorded: true }); // 答えた
+
+		// 止まっていたタブA が、いまごろ「覚える」まで進んだ
+		await api.backupNotePending({ ticket: paused.ticket, filename: paused.filename });
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'答えた直後に、同じ内容の問いかけがまた出ている'
+		).toBeNull();
+	});
+
+	// 未来の日づけは、書き出して答え直すことでしか直せない（markSaved の known > now の道）。
+	// 復元は last_backup_seq をいまの通番へ引き直すので、そのあと最初の書き出しは
+	// 「済んだ分に収まる」の形にぴたりと当たる。そこで問いかけを消すと、直す道へ辿り着けず、
+	// 記録が何か変わるまで日づけも催促も固まったままになる。
+	it('日づけが未来のままなら、書き出しの問いかけを消さない', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+		await api.backupExportAll(); // 世代の印を刻ませる
+
+		// 時計が進んでいた端末で取ったバックアップから復元した直後の状態
+		const restored = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
+		restored.meta.last_backup_at = nowEpochSec() + 86_400;
+		restored.meta.last_backup_seq = restored.meta.seq;
+		restored.meta.pending_backup = null;
+		store.poke(restored);
+		setPersistence(store);
+
+		const retaken = await exportAndNote(); // 記録は1件も変わっていない
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'未来の日づけを直す道へ辿り着けない'
+		).toEqual({ ticket: retaken.ticket, filename: retaken.filename });
+
+		// 答えれば直る（ここまで通って、はじめて意味がある）
+		expect(await api.backupMarkSaved(retaken.ticket)).toEqual({ recorded: true });
+		expect(
+			(await api.backupStatus()).last_backup_at,
+			'未来の日づけが残ったまま'
+		).toBe(retaken.ticket.exported_at);
+	});
+
+	// 上の検査で「答えたあとは何も聞かない」に倒れていないこと。書き出し直したなら、
+	// それは手元の新しいファイルなので必ず聞く。
+	it('答えたあとの書き出しは、ちゃんと聞く', async () => {
+		await wizard();
+		const first = await exportAndNote();
+		await api.backupMarkSaved(first.ticket);
+
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		const next = await exportAndNote();
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'書き出し直したのに聞かれない'
+		).toEqual({ ticket: next.ticket, filename: next.filename });
+	});
+
+	// 時計が進んでいるあいだに書き出すと、控えの日づけが未来になって backupStatus が伏せる。
+	// 時計が直ってから書き出し直しても、記録が変わっていなければ通番は同じで時刻は小さい
+	// ——順序だけで決めると未来の控えが残り続け、何度書き出しても問いかけが出ない＝親には
+	// 直す手立てが無くなる。
+	it('答えられなくなった控えは、書き出し直しで置きかわる', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+		const stuck = await exportAndNote();
+
+		// 時計が進んでいた端末で書き出した状態にする（日づけが未来の控え）
+		const skewed = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
+		skewed.meta.pending_backup = {
+			...stuck,
+			ticket: { ...stuck.ticket, exported_at: nowEpochSec() + 86_400 }
+		};
+		store.poke(skewed);
+		setPersistence(store);
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'受け取れない控えが問いかけとして出ている'
+		).toBeNull();
+
+		// 時計が直ってから書き出し直す（記録は1件も変わっていないので、通番は同じ）
+		const retry = await exportAndNote();
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'書き出し直しても問いかけが出ない（親に直す手立てが無い）'
+		).toEqual({ ticket: retry.ticket, filename: retry.filename });
+	});
+
+	// 通番が同じ（記録が1件も変わっていない）ときは、中身の同じファイルが2つある状態。
+	// 並べる物差しが通番だけだと、ここで古いほうに置きかわる。
+	it('同じ通番なら、書き出した時刻の新しいほうを覚える', async () => {
+		await wizard();
+		const newer = await exportAndNote();
+
+		await api.backupNotePending({
+			...newer,
+			ticket: { ...newer.ticket, exported_at: newer.ticket.exported_at - 60 }
+		});
+
+		expect(
+			(await api.backupStatus()).pending_backup?.ticket.exported_at,
+			'先に書き出したほうに戻された'
+		).toBe(newer.ticket.exported_at);
+	});
+
+	it('別のタブの書き出しは、「できていない」でも消さない', async () => {
+		await wizard();
+		const first = await exportAndNote();
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		const second = await exportAndNote();
+
+		await api.backupDismissPending(first.ticket);
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'答えていないファイルの問いかけを消した'
+		).toEqual({ ticket: second.ticket, filename: second.filename });
+	});
+
+	// この欄を知らない版のタブ（Service Worker のキャッシュに残ったもの）が
+	// 「ほぞんできた」を記録すると、基準だけが先へ進んで控えは残る。
+	it('もう受け取れない控えは、問いかけとして出さない', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+		await exportAndNote();
+
+		const advanced = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
+		advanced.meta.seq += 5;
+		advanced.meta.last_backup_seq = advanced.meta.seq;
+		advanced.meta.last_backup_at = nowEpochSec();
+		store.poke(advanced);
+		setPersistence(store);
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'押しても断られるだけの問いかけを出している'
+		).toBeNull();
+	});
+
+	it('この欄を知らない保存から読んでも落ちない', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+
+		const old = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
+		delete (old.meta as unknown as Record<string, unknown>).pending_backup;
+		store.poke(old);
+		setPersistence(store);
+
+		expect((await api.backupStatus()).pending_backup).toBeNull();
+	});
+});
+
 describe('編集用に渡す定義は写しであること', () => {
 	// 管理画面は受け取った doc を直接書き換える作り。実体をそのまま渡すと、
 	// 保存を押す前の編集が生きているデータに入る。

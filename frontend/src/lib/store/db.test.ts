@@ -684,4 +684,30 @@ describe('まるごと復元', () => {
 		expect(Object.keys(db.flags), '復元したのに前の記録が残っている').not.toContain('もとから');
 		expect(db.meta.persisted, '並んだ書き込みのほうが消えた').toBe(true);
 	});
+
+	// 復元は last_backup_seq をいまの通番に引き直すので、その前に書き出したファイルは
+	// もう受け取れない（api 側が「合わなくなっていた」と断る）。答えても断られるだけの
+	// 問いかけを、復元したばかりの親の前に残さない。取り込むファイルが抱えていた分も同じ
+	// ——あちらは出どころの端末の話で、こちらでは一度も書き出していない。
+	it('復元すると、未確認の問いかけは（こちらの分もファイルの分も）落ちる', async () => {
+		setPersistence(memoryPersistence());
+		await mutate((db) => {
+			db.meta.pending_backup = {
+				ticket: { seq: 1, exported_at: 1_785_900_000, storage_id: 'こちらの世代' },
+				filename: 'natsuyasumi-board-2026-08-09.json'
+			};
+		});
+
+		const restored = emptyDb();
+		restored.meta.pending_backup = {
+			ticket: { seq: 3, exported_at: 1_785_800_000, storage_id: 'むこうの世代' },
+			filename: 'natsuyasumi-board-2026-08-08.json'
+		};
+		await replaceAll(restored);
+
+		expect(
+			(await read((d) => d.meta.pending_backup)),
+			'答えても断られる問いかけが、復元のあとに残っている'
+		).toBeNull();
+	});
 });

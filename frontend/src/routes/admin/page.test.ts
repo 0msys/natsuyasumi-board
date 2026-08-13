@@ -69,6 +69,7 @@ beforeEach(() => {
 			supported: false,
 			last_backup_at: null,
 			changes_since_backup: 0,
+			pending_backup: null,
 			persisted: null,
 			storage_ephemeral: false,
 			home_hint_dismissed: true
