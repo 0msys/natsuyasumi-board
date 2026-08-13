@@ -72,12 +72,21 @@ function acceptableTicket(meta: Meta, ticket: BackupTicket, now: number): boolea
  * 世代が同じときにしか使えない。last_backup_seq と last_backup_at はこの世代の話で、
  * 作り直された保存の通番は 0 から振り直されるので、別の世代の控えと比べても何も言えない
  * （acceptableTicket が世代を先に見ているのと同じ理由）。
+ *
+ * 基準の日づけ自体が未来を指しているときは、収まっているとは言わない。未来が入るのは、
+ * 時計が進んでいた端末で取ったバックアップから復元したとき。復元は last_backup_seq を
+ * いまの通番へ引き直すので、そのあと最初に書き出した控えはここに当たってしまう——
+ * けれど **markSaved にはその未来を直す道がある**（known > now なら書き出した時刻で
+ * 置きかえる）。問いかけを消すと、その道へ辿り着けない。日づけも催促も、記録が何か
+ * 変わるまで固まったままになる。
  */
-function coveredByBaseline(meta: Meta, ticket: BackupTicket): boolean {
+function coveredByBaseline(meta: Meta, ticket: BackupTicket, now: number): boolean {
+	const baseline = meta.last_backup_at ?? 0;
+	if (baseline > now) return false;
 	return (
 		ticket.storage_id === meta.storage_id &&
 		ticket.seq <= meta.last_backup_seq &&
-		ticket.exported_at <= (meta.last_backup_at ?? 0)
+		ticket.exported_at <= baseline
 	);
 }
 
@@ -115,7 +124,7 @@ function newerPending(meta: Meta, incoming: PendingBackup, now: number): Pending
 	// 空いた枠にそのまま入れると、**答えた直後に同じ内容をもう一度聞かれる**。
 	// 答えても日づけは動かない（下の Math.max が空振りする）ので、親から見ると
 	// 押しても何も起きない問いかけ——催促は、当てにならないと思われた時点で効かなくなる。
-	if (coveredByBaseline(meta, incoming.ticket)) return stored;
+	if (coveredByBaseline(meta, incoming.ticket, now)) return stored;
 	if (!stored) return incoming;
 	const storedOk = acceptableTicket(meta, stored.ticket, now);
 	const incomingOk = acceptableTicket(meta, incoming.ticket, now);

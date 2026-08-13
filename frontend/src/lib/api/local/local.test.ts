@@ -1182,6 +1182,39 @@ describe('書き出しの控えを保存に残す', () => {
 		).toBeNull();
 	});
 
+	// 未来の日づけは、書き出して答え直すことでしか直せない（markSaved の known > now の道）。
+	// 復元は last_backup_seq をいまの通番へ引き直すので、そのあと最初の書き出しは
+	// 「済んだ分に収まる」の形にぴたりと当たる。そこで問いかけを消すと、直す道へ辿り着けず、
+	// 記録が何か変わるまで日づけも催促も固まったままになる。
+	it('日づけが未来のままなら、書き出しの問いかけを消さない', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+		await api.backupExportAll(); // 世代の印を刻ませる
+
+		// 時計が進んでいた端末で取ったバックアップから復元した直後の状態
+		const restored = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
+		restored.meta.last_backup_at = nowEpochSec() + 86_400;
+		restored.meta.last_backup_seq = restored.meta.seq;
+		restored.meta.pending_backup = null;
+		store.poke(restored);
+		setPersistence(store);
+
+		const retaken = await exportAndNote(); // 記録は1件も変わっていない
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'未来の日づけを直す道へ辿り着けない'
+		).toEqual({ ticket: retaken.ticket, filename: retaken.filename });
+
+		// 答えれば直る（ここまで通って、はじめて意味がある）
+		expect(await api.backupMarkSaved(retaken.ticket)).toEqual({ recorded: true });
+		expect(
+			(await api.backupStatus()).last_backup_at,
+			'未来の日づけが残ったまま'
+		).toBe(retaken.ticket.exported_at);
+	});
+
 	// 上の検査で「答えたあとは何も聞かない」に倒れていないこと。書き出し直したなら、
 	// それは手元の新しいファイルなので必ず聞く。
 	it('答えたあとの書き出しは、ちゃんと聞く', async () => {
