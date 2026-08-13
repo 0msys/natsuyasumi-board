@@ -177,12 +177,21 @@ export const api: Api = {
 		supported: false,
 		last_backup_at: null,
 		changes_since_backup: 0,
+		pending_backup: null,
 		persisted: null,
 		storage_ephemeral: false,
 		home_hint_dismissed: true
 	}),
 	backupExportAll: () => {
 		throw new ApiError(501, 'この版にまるごとバックアップはありません（./data をコピーしてください）');
+	},
+	// 「案内を閉じた」の no-op と違って、こちらは黙って通さない。書き出しの往復の部品なので、
+	// カードごと出していないこの版から呼ばれたなら、それは経路の間違い。
+	backupNotePending: () => {
+		throw new ApiError(501, 'この版にまるごとバックアップはありません');
+	},
+	backupDismissPending: () => {
+		throw new ApiError(501, 'この版にまるごとバックアップはありません');
 	},
 	backupMarkSaved: () => {
 		throw new ApiError(501, 'この版にまるごとバックアップはありません');

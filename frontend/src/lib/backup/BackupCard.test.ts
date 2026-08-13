@@ -11,7 +11,7 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from 'bun:test';
 import { cleanup, fireEvent, render, screen } from '@testing-library/svelte';
 import { setApi } from '../../test-support/apiMock';
-import type { BackupStatus, BackupTicket } from '$lib/api';
+import type { BackupStatus, BackupTicket, PendingBackup } from '$lib/api';
 
 const BackupCard = (await import('./BackupCard.svelte')).default;
 
@@ -22,6 +22,7 @@ const STATUS: BackupStatus = {
 	supported: true,
 	last_backup_at: null,
 	changes_since_backup: 3,
+	pending_backup: null,
 	persisted: true,
 	storage_ephemeral: false,
 	home_hint_dismissed: true
@@ -30,6 +31,10 @@ const STATUS: BackupStatus = {
 let status: BackupStatus;
 /** backupMarkSaved に渡された控え（呼ばれた順）. */
 let marked: BackupTicket[];
+/** backupNotePending に渡された問いかけ（呼ばれた順）. */
+let noted: PendingBackup[];
+/** backupDismissPending を呼んだ回数. */
+let dismissed: number;
 /** backupMarkSaved の答え（既定は「進めた」）. */
 let markRecorded: boolean;
 let exportSeq: number;
@@ -48,6 +53,8 @@ beforeEach(() => {
 	cleanup();
 	status = { ...STATUS };
 	marked = [];
+	noted = [];
+	dismissed = 0;
 	markRecorded = true;
 	exportSeq = 7;
 	exportedAt = 1_785_900_000;
@@ -66,8 +73,19 @@ beforeEach(() => {
 				ticket: { seq: exportSeq, exported_at: exportedAt, storage_id: 'gen-1' }
 			};
 		},
+		// 本物と同じ因果にしておく（問いかけを立てるのは書き出しではなく、こちら）。
+		backupNotePending: async (pending: PendingBackup) => {
+			noted.push(pending);
+			status = { ...status, pending_backup: pending };
+		},
+		backupDismissPending: async () => {
+			dismissed += 1;
+			status = { ...status, pending_backup: null };
+		},
 		backupMarkSaved: async (ticket: BackupTicket) => {
 			marked.push(ticket);
+			// 受け取れたかどうかによらず、問いかけは下がる（保存側と同じ）。
+			status = { ...status, pending_backup: null };
 			if (markRecorded) {
 				status = { ...status, last_backup_at: 1_786_000_000, changes_since_backup: 0 };
 			}
@@ -141,6 +159,7 @@ describe('バックアップのカード', () => {
 		await flush();
 
 		expect(marked, '「できていない」なのに基準を進めている').toEqual([]);
+		expect(dismissed, '問いかけを保存から落としていない（次に開くとまた聞かれる）').toBe(1);
 		expect(screen.getByText(/日づけは そのままにしました/)).toBeTruthy();
 		expect(screen.queryByText('ファイルは ほぞんできましたか？')).toBeNull();
 	});
@@ -189,17 +208,90 @@ describe('バックアップのカード', () => {
 	// まるごと復元の口は、このカードの「もどす」だけではない（管理画面トップの
 	// 「JSON をインポート」からも置きかわる）。あちらから置きかえたときに問いかけが
 	// 残ると、そのファイルには入っていない中身まで「ほぞんできた」と答えられてしまう。
-	it('外から復元されるときは、問いかけを落とせる', async () => {
+	// 問いかけを落とすのは置きかえ側（replaceAll）で、カードは読み直して追随する。
+	it('外から復元されたら、抱えている写しを手放して問いかけも消える', async () => {
 		const r = await mountCard();
 		await pressExport();
 		expect(screen.getByText('ファイルは ほぞんできましたか？')).toBeTruthy();
 
+		// 置きかえる前（写しを手放す）
 		(r.component as unknown as { resetForRestore(): void }).resetForRestore();
+		await flush();
+		expect(revoked, '抱えていた写しを解放していない').toEqual([created[0]]);
+
+		// 置きかえたあと（保存側が問いかけを落としてある）
+		status = { ...status, pending_backup: null };
+		await (r.component as unknown as { reloadStatus(): Promise<void> }).reloadStatus();
 		await flush();
 
 		expect(screen.queryByText('ファイルは ほぞんできましたか？'), '問いかけが残っている').toBeNull();
-		expect(revoked, '抱えていた写しを解放していない').toEqual([created[0]]);
 		expect(marked, '落としただけで記録している').toEqual([]);
+	});
+
+	// 今回の回帰の本体。iPhone で共有シートやプレビューから「もどる」と、この画面は
+	// 作り直される。問いかけがカードの中にしか無かったころは、そこで聞く口ごと消えて、
+	// ファイルは端末にあるのに「まだバックアップしていません」が二度と引っ込まなかった。
+	it('開き直したあとでも、聞きそびれた問いかけは出ている', async () => {
+		status = {
+			...status,
+			pending_backup: {
+				ticket: { seq: 7, exported_at: 1_785_900_000, storage_id: 'gen-1' },
+				filename: 'natsuyasumi-board-2026-08-09.json'
+			}
+		};
+		await mountCard(); // 書き出しは押さない（前に開いていたときの続き）
+
+		expect(screen.getByText('ファイルは ほぞんできましたか？')).toBeTruthy();
+		expect(screen.getByText(/natsuyasumi-board-2026-08-09\.json を書き出しました/)).toBeTruthy();
+		expect(created, '開き直しただけで写しを作っている').toEqual([]);
+		// blob はもう無いので、押し直せるリンクは出せない（出すと href が空のリンクになる）
+		expect(screen.queryByRole('link', { name: 'こちらからほぞん' })).toBeNull();
+		expect(screen.getByRole('button', { name: 'もういちど書き出す' })).toBeTruthy();
+	});
+
+	it('開き直したあとの「ほぞんできた」は、保存に残っている控えを渡す', async () => {
+		status = {
+			...status,
+			pending_backup: {
+				ticket: { seq: 4, exported_at: 1_785_800_000, storage_id: 'gen-0' },
+				filename: 'natsuyasumi-board-2026-08-08.json'
+			}
+		};
+		await mountCard();
+		await fireEvent.click(screen.getByRole('button', { name: 'ほぞんできた' }));
+		await flush();
+
+		expect(marked, '保存に残っていた控えではないものを渡している').toEqual([
+			{ seq: 4, exported_at: 1_785_800_000, storage_id: 'gen-0' }
+		]);
+		expect(
+			screen.getByText(/natsuyasumi-board-2026-08-08\.json をほぞんしました。/),
+			'ファイル名を保存側から取れていない'
+		).toBeTruthy();
+	});
+
+	// 押し直せるリンクが指すのは、いま手元にある blob。問いかけが別のファイルの話に
+	// なっていたら（別のタブが後から書き出した）、文中の名前とリンクの中身が食い違う。
+	it('押し直せるリンクは、問いかけと同じファイルのときだけ出す', async () => {
+		const r = await mountCard();
+		await pressExport();
+		expect(screen.getByRole('link', { name: 'こちらからほぞん' })).toBeTruthy();
+
+		status = {
+			...status,
+			pending_backup: {
+				ticket: { seq: 9, exported_at: 1_785_900_500, storage_id: 'gen-1' },
+				filename: 'natsuyasumi-board-2026-08-10.json'
+			}
+		};
+		await (r.component as unknown as { reloadStatus(): Promise<void> }).reloadStatus();
+		await flush();
+
+		expect(
+			screen.queryByRole('link', { name: 'こちらからほぞん' }),
+			'別のファイルの問いかけに、手元の写しへのリンクを出している'
+		).toBeNull();
+		expect(screen.getByText(/natsuyasumi-board-2026-08-10\.json を書き出しました/)).toBeTruthy();
 	});
 
 	// blob URL が抱えているのは記録まるごとの写し。解放できる者が誰も居ない状態で作ると、
@@ -217,5 +309,9 @@ describe('バックアップのカード', () => {
 
 		expect(created, '聞く相手が居ないのに書き出しを作っている').toEqual([]);
 		expect(created.length - revoked.length, '解放されない blob URL が残っている').toBe(0);
+		// ファイルは1つも生まれていない。ここで問いかけを覚えると、次に開いた親が
+		// 覚えのある名前を見て「ほぞんできた」と答えられる＝手元に無いファイルで
+		// 催促が1週間消える。だから「渡せた」と分かってからしか覚えない。
+		expect(noted, 'ファイルが無いのに問いかけを残している').toEqual([]);
 	});
 });

@@ -971,6 +971,150 @@ describe('バックアップの催促', () => {
 	});
 });
 
+// 書き出したあと、親が「ほぞんできた」と答えるまでのあいだの話。
+//
+// この問いかけを画面の中だけに持っていたころ、設定画面を離れると聞く口ごと消えていた。
+// iPhone では共有シートやプレビューから「もどる」だけでそうなる。書き出しは日づけを
+// 刻まない作りなので、答える口が消えると、ファイルは端末にあるのに
+// 「まだバックアップしていません」が二度と引っ込まない。だから保存に残す。
+describe('書き出しの控えを保存に残す', () => {
+	/** 書き出して、ブラウザに渡せたところまで（画面が downloadJson のあとに呼ぶ流れ）。 */
+	const exportAndNote = async () => {
+		const { filename, payload, ticket } = await api.backupExportAll();
+		await api.backupNotePending({ ticket, filename });
+		return { filename, payload, ticket };
+	};
+
+	// この機能の本体。保存から読み直しても問いかけが残っていること。
+	it('開き直しても、聞きそびれた問いかけは残っている', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+		const { ticket, filename } = await exportAndNote();
+
+		setPersistence(store); // 手元の写しを捨てて、保存から読み直させる
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'開き直したら、答える口が消えている'
+		).toEqual({ ticket, filename });
+	});
+
+	// 入ったまま別の端末で復元されると、一度も書き出していない端末に、しかも別世代の
+	// 印を持つ問いかけが出る（答えても保存側が断るだけ）。
+	it('書き出したファイルに、問いかけは入らない', async () => {
+		await wizard();
+		await exportAndNote(); // 1回目の控えが保存に残っている状態にしてから
+
+		const { payload } = await api.backupExportAll();
+
+		expect(
+			(payload as { db: Db }).db.meta.pending_backup,
+			'書き出したファイルに、この端末の問いかけが乗っている'
+		).toBeNull();
+	});
+
+	it('「ほぞんできた」を記録したら、問いかけは下がる', async () => {
+		await wizard();
+		const { ticket } = await exportAndNote();
+
+		expect(await api.backupMarkSaved(ticket)).toEqual({ recorded: true });
+		expect((await api.backupStatus()).pending_backup, '答えたのにまだ聞いてくる').toBeNull();
+	});
+
+	// 断ったときに問いかけを残すと、押しても同じ理由で断られるだけ。画面は書き出し直しを
+	// 促しているので、問いかけのほうは下げる。
+	it('受け取れなかったときも、問いかけは下がる', async () => {
+		await wizard();
+		const { ticket } = await exportAndNote();
+
+		expect(await api.backupMarkSaved({ ...ticket, storage_id: 'ほかの世代' })).toEqual({
+			recorded: false
+		});
+		const status = await api.backupStatus();
+		expect(status.pending_backup).toBeNull();
+		expect(status.last_backup_at, '断ったのに日づけを刻んでいる').toBeNull();
+	});
+
+	it('「できていない」は、問いかけを下げるだけで催促を動かさない', async () => {
+		await wizard();
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		await exportAndNote();
+		const before = (await api.backupStatus()).changes_since_backup;
+
+		await api.backupDismissPending();
+
+		const status = await api.backupStatus();
+		expect(status.pending_backup).toBeNull();
+		expect(status.last_backup_at, '「できていない」なのに日づけを刻んでいる').toBeNull();
+		expect(
+			status.changes_since_backup,
+			'問いかけを下げただけで「そのあと N件」が増えている'
+		).toBe(before);
+	});
+
+	it('もう一度書き出したら、問いかけは新しいほうに置きかわる', async () => {
+		await wizard();
+		await exportAndNote();
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done'); // 通番を進める
+		const second = await exportAndNote();
+
+		expect((await api.backupStatus()).pending_backup, '古いほうの問いかけが残っている').toEqual({
+			ticket: second.ticket,
+			filename: second.filename
+		});
+	});
+
+	// 復元は基準をいまの通番へ引き直すので、その前に書き出したファイルはもう受け取れない。
+	it('復元したら、問いかけは落ちる', async () => {
+		await wizard();
+		const { payload } = await exportAndNote();
+
+		await api.backupImportAll(payload);
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'復元したのに、答えても断られる問いかけが残っている'
+		).toBeNull();
+	});
+
+	// この欄を知らない版のタブ（Service Worker のキャッシュに残ったもの）が
+	// 「ほぞんできた」を記録すると、基準だけが先へ進んで控えは残る。
+	it('もう受け取れない控えは、問いかけとして出さない', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+		await exportAndNote();
+
+		const advanced = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
+		advanced.meta.seq += 5;
+		advanced.meta.last_backup_seq = advanced.meta.seq;
+		advanced.meta.last_backup_at = nowEpochSec();
+		store.poke(advanced);
+		setPersistence(store);
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'押しても断られるだけの問いかけを出している'
+		).toBeNull();
+	});
+
+	it('この欄を知らない保存から読んでも落ちない', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+
+		const old = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
+		delete (old.meta as unknown as Record<string, unknown>).pending_backup;
+		store.poke(old);
+		setPersistence(store);
+
+		expect((await api.backupStatus()).pending_backup).toBeNull();
+	});
+});
+
 describe('編集用に渡す定義は写しであること', () => {
 	// 管理画面は受け取った doc を直接書き換える作り。実体をそのまま渡すと、
 	// 保存を押す前の編集が生きているデータに入る。

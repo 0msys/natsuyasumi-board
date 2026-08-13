@@ -10,6 +10,7 @@
 	import { downloadJson, type DownloadHandle } from '$lib/admin/download';
 	import { errorDetail } from '$lib/api/apiError';
 	import { backupLevel, daysSinceBackup } from './level';
+	import { sameBackupFile } from './ticket';
 
 	let { onImported }: { onImported?: () => void } = $props();
 
@@ -18,19 +19,23 @@
 	let error = $state<string | null>(null);
 	let notice = $state<string | null>(null);
 	let fileEl = $state<HTMLInputElement | undefined>(undefined);
-	// 書き出したけれど、まだ「手元にある」と確かめていないファイル。
-	// これがあるあいだ、催促の基準（さいごのバックアップ）は動かさない。
-	let pending = $state<{ ticket: BackupTicket; handle: DownloadHandle } | null>(null);
+	// 押し直せるリンクのための blob。**問いかけを出すかどうかはこれで決めない**。
+	//
+	// 問いかけそのものは保存側（status.pending_backup）にある。ここに持たせていたころは、
+	// 設定画面を離れた瞬間——iPhone なら共有シートやプレビューから「もどる」だけでも——
+	// 問いかけごと消えて、ファイルは端末にあるのに「まだバックアップしていません」が
+	// 二度と引っ込まなかった。blob は画面を離れれば本当に無くなるものなので、こちらに残す。
+	let handle = $state<{ ticket: BackupTicket; download: DownloadHandle } | null>(null);
 	// 走っている書き出しが「まだ自分の番か」を見るための世代。描画には使わない（$state にしない）。
-	let pendingGen = 0;
+	let handleGen = 0;
 
-	function dropPending() {
-		pendingGen++; // 往復の途中のものは、戻ってきても出さない
-		pending?.handle.release();
-		pending = null;
+	function dropHandle() {
+		handleGen++; // 往復の途中のものは、戻ってきても出さない
+		handle?.download.release();
+		handle = null;
 	}
 	// 画面を離れるときに解放する（抱えているのは記録まるごとの写し）。
-	$effect(() => () => dropPending());
+	$effect(() => () => dropHandle());
 
 	// この端末が「ホーム画面から開いたアプリ」として動いているか。
 	// standalone なら iOS の7日間削除の対象外なので、追加の案内は出さない。
@@ -51,10 +56,26 @@
 		void refresh();
 	});
 
+	/** 保存の状態を読み直す。
+	 *
+	 *  この画面の別の口（管理画面トップの「JSON をインポート」）から復元したあとに呼んでもらう。
+	 *  復元は保存側で問いかけを落とすが、こちらは読み直さないかぎり古い問いかけを出したままになる
+	 *  （invalidateAll() はページの load をやり直すだけで、このカードの $effect は走らない）。 */
+	export async function reloadStatus() {
+		await refresh();
+	}
+
 	// 日数もしきい値の判定も $lib/backup/level に置いてある（子どもページの歯車バッジと
 	// 同じものを使う。ここに書き写すと、また片方だけずれる）。
 	const daysSince = $derived(status ? daysSinceBackup(status) : null);
 	const level = $derived(status ? backupLevel(status) : 'ok');
+
+	// まだ答えていない問いかけ。保存側が持っているので、開き直しても残っている。
+	const question = $derived(status?.pending_backup ?? null);
+	// 押し直せるリンクを出してよいのは、いま手元にある blob が、問いかけの指すファイルと
+	// 同じときだけ。開き直したあと（blob は消えている）や、別のタブが後から書き出したあとに
+	// 出すと、文中のファイル名とリンクの中身が食い違う。
+	const canRelink = $derived(!!(handle && question && sameBackupFile(handle.ticket, question.ticket)));
 
 	// 書き出してブラウザに渡すところまで。「バックアップした」ことにはまだしない
 	// ——渡したファイルが端末に残ったかは、こちらからは分からない。
@@ -62,17 +83,22 @@
 		busy = true;
 		error = null;
 		notice = null;
-		dropPending();
-		const gen = pendingGen;
+		dropHandle();
+		const gen = handleGen;
 		try {
 			const { filename, payload, ticket } = await api.backupExportAll();
 			// 待っているあいだに画面を離れた（＝ティアダウンが走り終わった）なら、渡す先も
 			// 聞く相手ももういない。ここで作ると、release() を呼べる者が誰も居ない blob URL
 			// ——記録まるごとの写し——がタブを閉じるまで残る。
-			if (gen !== pendingGen) return;
+			if (gen !== handleGen) return;
 			// ここに await を挟まないこと。押した操作の続きとみなされるうちに渡す
 			// （間が空くと、こちらが仕込んだクリックが黙って落とされることがある）。
-			pending = { ticket, handle: downloadJson(filename, payload) };
+			handle = { ticket, download: downloadJson(filename, payload) };
+			// 渡せたと分かってから覚える。書き出しの api の中で覚えると、上の「画面を離れた」や
+			// Blob の組み立てが落ちた回にも問いかけだけが残る——手元に無いファイルに
+			// 「ほぞんできた」と答えられて、催促が1週間消える。
+			await api.backupNotePending({ ticket, filename });
+			await refresh();
 		} catch (e) {
 			error = errorDetail(e);
 		} finally {
@@ -82,14 +108,16 @@
 
 	// 親が「ほぞんできた」と答えたときだけ、催促の基準を進める。
 	async function confirmSaved() {
-		if (!pending) return;
-		const { ticket, handle } = pending;
+		if (!question) return;
+		// ファイル名は問いかけ（保存側）から取る。開き直したあとは手元の blob が無いので、
+		// そちらを見ていると文言からファイル名が消える。
+		const { ticket, filename } = question;
 		busy = true;
 		error = null;
 		try {
 			const { recorded } = await api.backupMarkSaved(ticket);
 			if (recorded) {
-				notice = `${handle.filename} をほぞんしました。`;
+				notice = `${filename} をほぞんしました。`;
 			} else {
 				// 待っているあいだに復元した／別のタブがもっと新しいものを書き出した、
 				// あるいは保存が作り直された。どちらも「このファイルがいまの記録の
@@ -97,7 +125,7 @@
 				error =
 					'このファイルは いまの記録と合わなくなっていたので、日づけは変えませんでした。もういちど「バックアップする」をおしてください。';
 			}
-			dropPending();
+			dropHandle();
 			await refresh();
 		} catch (e) {
 			error = errorDetail(e);
@@ -106,22 +134,32 @@
 		}
 	}
 
-	// この画面の別の口（管理画面トップの「JSON をインポート」）からまるごと復元するとき、
-	// 置きかえる**前**に呼んでもらう。下の importAll と同じ理由——古い問いかけが残ると、
-	// そのファイルには入っていない中身まで「ほぞんできた」と答えられてしまう。
-	// 保存側でも断るが、受理されえない問いかけを出したままにしないのが先。
-	export function resetForRestore() {
-		dropPending();
+	// 出てこなかった・取り消した。何も記録しないので、催促はそのまま残る。
+	async function giveUpSaved() {
+		busy = true;
 		notice = null;
 		error = null;
+		try {
+			await api.backupDismissPending();
+			dropHandle();
+			await refresh();
+			error =
+				'ほぞんできていないので、さいごのバックアップの日づけは そのままにしました。もういちど「バックアップする」をおしてください。';
+		} catch (e) {
+			error = errorDetail(e);
+		} finally {
+			busy = false;
+		}
 	}
 
-	// 出てこなかった・取り消した。何も記録しないので、催促はそのまま残る。
-	function giveUpSaved() {
-		dropPending();
+	// この画面の別の口（管理画面トップの「JSON をインポート」）からまるごと復元するとき、
+	// 置きかえる**前**に呼んでもらう。抱えている blob（記録まるごとの写し）を解放し、
+	// 前の操作の言葉を消すだけ。問いかけそのものを落とすのは復元側の仕事で、
+	// 置きかえたあとに reloadStatus() を呼んでもらえば画面から消える。
+	export function resetForRestore() {
+		dropHandle();
 		notice = null;
-		error =
-			'ほぞんできていないので、さいごのバックアップの日づけは そのままにしました。もういちど「バックアップする」をおしてください。';
+		error = null;
 	}
 
 	async function importAll(event: Event) {
@@ -140,9 +178,9 @@
 		busy = true;
 		error = null;
 		notice = null;
-		// 入れかえたあとに古い問いかけが残っていると、そのファイルには入っていない
-		// 中身まで「ほぞんできた」と答えられてしまう（保存側でも断るが、聞かないのが先）。
-		dropPending();
+		// 抱えている blob は、もう指す先が無い（置きかえたあとの記録とは別物）。
+		// 問いかけのほうは置きかえが落とすので、下の refresh() で画面からも消える。
+		dropHandle();
 		try {
 			await api.backupImportAll(JSON.parse(await file.text()));
 			notice = 'バックアップから もどしました。';
@@ -158,6 +196,62 @@
 
 {#if status?.supported}
 	<div class="mb-4 flex flex-col gap-3">
+		<!-- 押しただけでは「バックアップした」ことにしない。
+		     ファイルが端末に残ったかはブラウザが教えてくれないので、ここで親に聞く。
+		     「ほぞんできた」を押すまで、さいごのバックアップの日づけは動かない。
+
+		     いちばん上に出す。iPhone で共有シートやプレビューから戻ってきた親が最初に見るのは
+		     画面の上端で、ボタンの下だとスクロールしないと見えない——それで問いかけに気づけず、
+		     ファイルは取れているのに「まだバックアップしていません」が消えない、という報告が出た。 -->
+		{#if question}
+			<div class="flex flex-wrap items-center gap-2 rounded-lg border border-warn/50 bg-warn/5 p-3">
+				<div class="flex-1 text-sm text-text-base">
+					<p class="font-bold">ファイルは ほぞんできましたか？</p>
+					<p class="mt-0.5 text-xs text-text-dim">
+						{question.filename} を書き出しました。端末に入っているのを確かめてください。
+						{#if canRelink}
+							出てこないときは<a
+								href={handle?.download.url}
+								download={question.filename}
+								class="underline">こちらからほぞん</a
+							>できます。
+						{:else}
+							この画面をひらき直したので、押し直せるリンクは消えています。ファイルが
+							見あたらなければ「もういちど書き出す」をおしてください。
+						{/if}
+					</p>
+				</div>
+				<button
+					type="button"
+					disabled={busy}
+					onclick={confirmSaved}
+					class="rounded-lg bg-accent px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+				>
+					ほぞんできた
+				</button>
+				{#if !canRelink}
+					<!-- ラベルに「バックアップする」を含めないこと（e2e の get_by_role は部分一致で、
+					     含めると当たり先が2つになる）。 -->
+					<button
+						type="button"
+						disabled={busy}
+						onclick={exportAll}
+						class="rounded-lg border border-border-dim px-3 py-2 text-sm font-bold text-text-base disabled:opacity-50"
+					>
+						もういちど書き出す
+					</button>
+				{/if}
+				<button
+					type="button"
+					disabled={busy}
+					onclick={giveUpSaved}
+					class="rounded-lg border border-border-dim px-3 py-2 text-sm font-bold text-text-base disabled:opacity-50"
+				>
+					できていない
+				</button>
+			</div>
+		{/if}
+
 		<!-- 保存そのものが効いていないときは、この案内より先に読むべきものがある
 		     （警告は admin/+layout.svelte が画面の上に出している） -->
 		{#if !installed && !status.home_hint_dismissed && !status.storage_ephemeral}
@@ -232,41 +326,6 @@
 				class="hidden"
 			/>
 		</div>
-
-		<!-- 押しただけでは「バックアップした」ことにしない。
-		     ファイルが端末に残ったかはブラウザが教えてくれないので、ここで親に聞く。
-		     「ほぞんできた」を押すまで、さいごのバックアップの日づけは動かない。 -->
-		{#if pending}
-			<div class="flex flex-wrap items-center gap-2 rounded-lg border border-accent/40 bg-accent/5 p-3">
-				<div class="flex-1 text-sm text-text-base">
-					<p class="font-bold">ファイルは ほぞんできましたか？</p>
-					<p class="mt-0.5 text-xs text-text-dim">
-						{pending.handle.filename} を書き出しました。端末に入っているのを確かめてください。
-						出てこないときは<a
-							href={pending.handle.url}
-							download={pending.handle.filename}
-							class="underline">こちらからほぞん</a
-						>できます。
-					</p>
-				</div>
-				<button
-					type="button"
-					disabled={busy}
-					onclick={confirmSaved}
-					class="rounded-lg bg-accent px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
-				>
-					ほぞんできた
-				</button>
-				<button
-					type="button"
-					disabled={busy}
-					onclick={giveUpSaved}
-					class="rounded-lg border border-border-dim px-3 py-2 text-sm font-bold text-text-base disabled:opacity-50"
-				>
-					できていない
-				</button>
-			</div>
-		{/if}
 
 		{#if notice}<p class="text-xs text-text-dim">{notice}</p>{/if}
 		{#if error}<p class="text-xs text-danger">{error}</p>{/if}

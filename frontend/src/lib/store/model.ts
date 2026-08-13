@@ -11,6 +11,7 @@
 //   - 保存の実体を差し替えられる＝テストが IndexedDB 無しで全部通る
 // 代わりに1回の書き込みで全体を書き直すが、実測で数百KB・数ミリ秒なので問題にならない。
 import type { DayString } from '$lib/core/dates';
+import type { PendingBackup } from '$lib/backup/ticket';
 
 export const SCHEMA_VERSION = 1;
 
@@ -73,6 +74,23 @@ export type Meta = {
 	 * 全員へ書き込みを走らせない）。
 	 */
 	storage_id: string | null;
+	/**
+	 * ブラウザに渡したのに、まだ「ほぞんできた？」を聞けていない書き出し。
+	 *
+	 * 画面に置いていたころは、書き出したあと設定画面を離れる（iPhone なら共有シートや
+	 * プレビューから「もどる」だけでも）と問いかけごと消えていた。書き出しは日づけを
+	 * 刻まない作りなので、答える口が消えると、ファイルは端末にあるのに
+	 * 「まだバックアップしていません」が二度と引っ込まない。だから保存に置く。
+	 *
+	 * **書き出したファイルには入れない**（buildBackup が写しから落とす）。入れたまま
+	 * 別の端末で復元されると、一度も書き出していない端末に、しかも別世代の印を持つ
+	 * 問いかけが出る。
+	 *
+	 * この欄を知らない版（Service Worker のキャッシュに残った古いタブ、配信の切り戻し）が
+	 * 書き戻すと消えるが、失うのは問いかけだけで記録ではない——消えたときの姿は
+	 * 「この欄が無かったころ」そのものなので、壊れかたとしては受け入れられる。
+	 */
+	pending_backup: PendingBackup | null;
 	/** navigator.storage.persist() の結果（まだ聞いていなければ null）。 */
 	persisted: boolean | null;
 	/** 最後に見た「今日」。端末の日付が巻き戻ったことに気づくため。 */
@@ -134,6 +152,7 @@ export function emptyDb(): Db {
 			last_backup_at: null,
 			last_backup_seq: 0,
 			storage_id: null,
+			pending_backup: null,
 			persisted: null,
 			last_seen_day: null,
 			home_hint_dismissed: false

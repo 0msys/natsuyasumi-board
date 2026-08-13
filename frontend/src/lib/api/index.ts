@@ -7,5 +7,5 @@
 // （src/test-support/apiMock.ts）ので、ここに値を足すとモック下で undefined になり
 // `e instanceof ApiError` が TypeError で落ちる。ApiError は $lib/api/contract から取ること。
 export { api } from '$apiImpl';
-export type { Api, BackupStatus, BackupTicket } from './contract';
+export type { Api, BackupStatus, BackupTicket, PendingBackup } from './contract';
 export type * from './types';
