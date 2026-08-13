@@ -75,19 +75,26 @@ function acceptableTicket(meta: Meta, ticket: BackupTicket, now: number): boolea
  * 同じ通番なら記録は1件も変わっていない＝中身の同じファイルなので、書き出した時刻で決める
  * （そこも並びなら、入っているものを残す。どちらを聞いても同じことになる）。
  *
- * 通番を比べる前に世代を見るのは、通番が世代をまたぐと比べられないから（作り直された保存の
- * 通番は 0 から振り直される）。**いまの世代のものを残す。** 新しく届いたほうではない——
- * 止まっていたタブが、サイトデータを消される前の世代で書き出した控えを持って再開することが
- * ある。それを新しいというだけで採ると、いま答えられる問いかけを、もう受け取れない控えで
- * 上書きすることになる（backupStatus は世代の合わない控えを伏せるので、問いかけが消えたのと
- * 同じ）。どちらも今の世代でなければ、どちらを残しても答えられないので順序の規則に任せる。
+ * ただし順序を見るのは、**どちらも今の記録に対して答えられるとき**だけ。先に見るのは
+ * 「いま答えられるか」（acceptableTicket）のほうで、答えられるものが1つなら順序に関係なく
+ * それを残す。理由は2つあって、どちらも「答えられない控えを抱えたまま動けなくなる」型:
+ *
+ *   - 止まっていたタブが、サイトデータを消される前の世代で書き出した控えを持って再開する。
+ *     新しいというだけで採ると、いま答えられる問いかけを、もう受け取れない控えで上書きする。
+ *   - 時計が進んでいるあいだに書き出すと、控えの日づけが未来になって backupStatus が伏せる。
+ *     時計が直ってから書き出し直しても、記録が変わっていなければ通番は同じで時刻は小さい
+ *     ——順序だけで決めると未来の控えが残り続け、**何度書き出しても問いかけが出ない**。
+ *
+ * どちらも答えられないなら、どちらを残しても同じなので順序の規則に任せる。
  */
-function newerPending(meta: Meta, incoming: PendingBackup): PendingBackup {
+function newerPending(meta: Meta, incoming: PendingBackup, now: number): PendingBackup {
 	const stored = meta.pending_backup;
 	if (!stored) return incoming;
-	const storedLives = stored.ticket.storage_id === meta.storage_id;
-	const incomingLives = incoming.ticket.storage_id === meta.storage_id;
-	if (storedLives !== incomingLives) return incomingLives ? incoming : stored;
+	const storedOk = acceptableTicket(meta, stored.ticket, now);
+	const incomingOk = acceptableTicket(meta, incoming.ticket, now);
+	if (storedOk !== incomingOk) return incomingOk ? incoming : stored;
+	// 通番を先に見る。世代をまたぐと通番は比べられない（作り直された保存は 0 から振り直される）
+	// が、そこは上の acceptableTicket が世代ごと弾いている。
 	if (incoming.ticket.seq !== stored.ticket.seq) {
 		return incoming.ticket.seq > stored.ticket.seq ? incoming : stored;
 	}
@@ -196,7 +203,7 @@ export const backupApi = {
 		// いちばん新しいファイルについての1つになる。
 		mutate(
 			(db) => {
-				db.meta.pending_backup = newerPending(db.meta, pending);
+				db.meta.pending_backup = newerPending(db.meta, pending, nowEpochSec());
 			},
 			{ local: true }
 		).then(() => undefined),

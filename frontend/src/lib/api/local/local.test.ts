@@ -1163,6 +1163,38 @@ describe('書き出しの控えを保存に残す', () => {
 		).toEqual(live);
 	});
 
+	// 時計が進んでいるあいだに書き出すと、控えの日づけが未来になって backupStatus が伏せる。
+	// 時計が直ってから書き出し直しても、記録が変わっていなければ通番は同じで時刻は小さい
+	// ——順序だけで決めると未来の控えが残り続け、何度書き出しても問いかけが出ない＝親には
+	// 直す手立てが無くなる。
+	it('答えられなくなった控えは、書き出し直しで置きかわる', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
+		await wizard();
+		const stuck = await exportAndNote();
+
+		// 時計が進んでいた端末で書き出した状態にする（日づけが未来の控え）
+		const skewed = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
+		skewed.meta.pending_backup = {
+			...stuck,
+			ticket: { ...stuck.ticket, exported_at: nowEpochSec() + 86_400 }
+		};
+		store.poke(skewed);
+		setPersistence(store);
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'受け取れない控えが問いかけとして出ている'
+		).toBeNull();
+
+		// 時計が直ってから書き出し直す（記録は1件も変わっていないので、通番は同じ）
+		const retry = await exportAndNote();
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'書き出し直しても問いかけが出ない（親に直す手立てが無い）'
+		).toEqual({ ticket: retry.ticket, filename: retry.filename });
+	});
+
 	// 通番が同じ（記録が1件も変わっていない）ときは、中身の同じファイルが2つある状態。
 	// 並べる物差しが通番だけだと、ここで古いほうに置きかわる。
 	it('同じ通番なら、書き出した時刻の新しいほうを覚える', async () => {
