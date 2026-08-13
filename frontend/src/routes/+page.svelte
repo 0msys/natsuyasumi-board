@@ -284,13 +284,16 @@
 </svelte:head>
 
 <div class="mx-auto max-w-screen-2xl p-3 lg:p-6">
-	<header class="mb-4 flex items-center justify-between lg:mb-6">
+	<!-- 入らないときは右の並びごと下の行へ落とす。狭い画面（子ども2人＋タイマー表示）では
+	     題と右の並びで幅がちょうど埋まっていて、歯車を押しやすい大きさにすると溢れる。
+	     横スクロールに逃がすと歯車が画面の外に出るので、折り返して全部見えるほうを採る。 -->
+	<header class="mb-4 flex flex-wrap items-center justify-between gap-y-2 lg:mb-6">
 		<h1 class="flex items-center gap-2 text-lg font-bold text-text-base lg:text-2xl">
 			<Sun size={26} class="text-amber-500" />{#if summer}<Ruby
 					text={fmt(summer.ui.header_title, { name: summer.child_kana })}
 				/>{:else}{data.child ? `${data.child}のなつやすみ` : 'なつやすみ'}{/if}
 		</h1>
-		<div class="flex items-center gap-2 lg:gap-3">
+		<div class="ml-auto flex items-center gap-2 lg:gap-3">
 			{#if data.children.length > 1}
 				<nav class="flex items-center gap-1">
 					{#each data.children as c (c.child)}
@@ -325,20 +328,20 @@
 				href={resolve('/manual')}
 				aria-label="つかいかた"
 				title="つかいかた"
-				class="text-text-dim/60"
+				class="grid size-10 shrink-0 place-items-center rounded-lg text-text-dim/60 hover:bg-surface2 hover:text-text-base"
 			>
-				<CircleQuestionMark size={16} />
+				<CircleQuestionMark size={22} />
 			</a>
 			<a
 				href={resolve('/admin')}
 				aria-label={backupNeeded ? 'せってい（バックアップをおすすめします）' : 'せってい'}
 				title={backupNeeded ? 'せってい（バックアップをおすすめします）' : 'せってい'}
-				class="relative text-text-dim/60"
+				class="relative grid size-10 shrink-0 place-items-center rounded-lg text-text-dim/60 hover:bg-surface2 hover:text-text-base"
 			>
-				<Settings size={16} />
+				<Settings size={22} />
 				{#if backupNeeded}
-					<span class="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-danger" aria-hidden="true"
-					></span>
+					<!-- 印の位置は歯車の角に合わせる（枠が大きいので、枠の隅ではなく内側に寄せる）。 -->
+					<span class="absolute right-1 top-1 size-2 rounded-full bg-danger" aria-hidden="true"></span>
 				{/if}
 			</a>
 		</div>
