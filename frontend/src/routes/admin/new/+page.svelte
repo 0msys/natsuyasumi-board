@@ -2,7 +2,7 @@
 	// 初回ウィザード（1画面ずつのステップ式）:
 	// ①名前・よみがな ②学年 ③期間（start/end/始業式） ④テンプレート → 作成。
 	// year は period.start の西暦から自動導出する（入力させない）。
-	import { goto, invalidateAll } from '$app/navigation';
+	import { beforeNavigate, goto, invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { ArrowLeft, ArrowRight, Check, CircleQuestionMark, TriangleAlert } from '@lucide/svelte';
 	import { api } from '$lib/api';
@@ -31,6 +31,37 @@
 	const datesFilled = $derived(!!start && !!end && !!firstDay);
 	const step3Ok = $derived(datesFilled && start < end && end < firstDay);
 
+	// 何か打ってあるか（離脱ガードの引き金）。テンプレートは既定値があるので数えない——
+	// ステップ4はステップ1〜3を埋めないと出ないので、そこだけ触った状態は起こらない。
+	const hasInput = $derived(
+		child.trim() !== '' ||
+			childKana.trim() !== '' ||
+			grade !== '' ||
+			!!start ||
+			!!end ||
+			!!firstDay
+	);
+
+	// 作成が済んだ（＝下の goto で自分から出ていく）。入力欄は埋まったままなので、これが
+	// 無いと成功した親に「保存していない変更があります」を出してしまう。
+	let created = false;
+
+	// 未入力のうちは黙って通す。ウィザードの入力は $state に持つだけなので、確認が無いと
+	// ヘッダーの「一覧へ」やブラウザの戻るで、打った名前・学年・日づけが手がかりも無く消える。
+	// 定義がゼロの初回はこの画面へ直行する＝はじめて触る親が最初に見る画面で起きる（issue #35）。
+	// エディタ側（admin/[child]/+page.svelte）と作りも文言もそろえる。素通しの例外は要らない:
+	// ステップ移動は URL を変えないので、ここへ来る遷移はすべて画面からの離脱になる。
+	beforeNavigate((nav) => {
+		if (created || !hasInput) return;
+		if (nav.type === 'leave') {
+			nav.cancel();
+			return;
+		}
+		if (!confirm('保存していない変更があります。ページを離れると変更は失われます。よろしいですか？')) {
+			nav.cancel();
+		}
+	});
+
 	async function create() {
 		if (!step1Ok || !step2Ok || !step3Ok || year == null || busy) return;
 		busy = true;
@@ -48,6 +79,7 @@
 				period: { start, end, first_day_of_school: firstDay },
 				template
 			});
+			created = true; // ここから先の遷移は自分で起こすもの＝離脱ガードに聞かせない
 			await goto(resolve('/admin/[child]', { child: encodeURIComponent(name) }));
 		} catch (e) {
 			error = errorDetail(e);
@@ -64,9 +96,10 @@
 		<h1 class="text-lg font-bold text-text-base lg:text-xl">あたらしくつくる</h1>
 		<!-- 定義がゼロの初回はここへ直行するので、この画面のマニュアル入口は
 		     アイコンだけにせず文字も出す（はじめて触る親が最初に見る画面）。
-		     ただし別タブで開く: このウィザードの入力は $state に持つだけで離脱ガードも
-		     無いため、同じタブで出ていくと入力が消えてステップ1へ戻る。手が止まって
-		     マニュアルを開く親ほど、そこまでの入力を持っている。 -->
+		     ただし別タブで開く: 離脱ガードが入ったので入力は消えないが、同じタブだと
+		     「保存していない変更があります」の確認が挟まり、読むか直すかの二択になる。
+		     手が止まってマニュアルを開く親ほど、そこまでの入力を持っている
+		     （エディタのマニュアル入口が別タブなのも同じ理由）。 -->
 		<div class="flex items-center gap-3">
 			<a
 				href={resolve('/manual')}
