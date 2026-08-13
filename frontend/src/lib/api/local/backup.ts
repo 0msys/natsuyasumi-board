@@ -63,6 +63,25 @@ function acceptableTicket(meta: Meta, ticket: BackupTicket, now: number): boolea
 }
 
 /**
+ * その書き出しは、すでに「ほぞんできた」と答えた分に収まっているか。
+ *
+ * 収まっているのは、通番が確かめ済みの基準まで届いていて（＝そのファイルに入っている記録は
+ * ぜんぶ済み扱い）、かつ書き出した時刻も基準より古いとき。この2つが揃うと、答えても
+ * last_backup_seq も last_backup_at も動かない＝聞く意味がない。
+ *
+ * 世代が同じときにしか使えない。last_backup_seq と last_backup_at はこの世代の話で、
+ * 作り直された保存の通番は 0 から振り直されるので、別の世代の控えと比べても何も言えない
+ * （acceptableTicket が世代を先に見ているのと同じ理由）。
+ */
+function coveredByBaseline(meta: Meta, ticket: BackupTicket): boolean {
+	return (
+		ticket.storage_id === meta.storage_id &&
+		ticket.seq <= meta.last_backup_seq &&
+		ticket.exported_at <= (meta.last_backup_at ?? 0)
+	);
+}
+
+/**
  * 覚えておく問いかけを1つ選ぶ。**新しく書き出したほう**を残す。
  *
  * 届いた順に上書きしてはいけない。書き出しは「ブラウザに渡す」→「覚える」の2段になっていて、
@@ -87,8 +106,16 @@ function acceptableTicket(meta: Meta, ticket: BackupTicket, now: number): boolea
  *
  * どちらも答えられないなら、どちらを残しても同じなので順序の規則に任せる。
  */
-function newerPending(meta: Meta, incoming: PendingBackup, now: number): PendingBackup {
+function newerPending(meta: Meta, incoming: PendingBackup, now: number): PendingBackup | null {
 	const stored = meta.pending_backup;
+	// もう聞くことの無い書き出しは、空いていても入れない。
+	//
+	// 同じ状態を2つのタブが書き出し、片方が止まっているあいだに、もう片方で
+	// 「ほぞんできた」まで済ませることがある。止まっていたほうが再開したとき、
+	// 空いた枠にそのまま入れると、**答えた直後に同じ内容をもう一度聞かれる**。
+	// 答えても日づけは動かない（下の Math.max が空振りする）ので、親から見ると
+	// 押しても何も起きない問いかけ——催促は、当てにならないと思われた時点で効かなくなる。
+	if (coveredByBaseline(meta, incoming.ticket)) return stored;
 	if (!stored) return incoming;
 	const storedOk = acceptableTicket(meta, stored.ticket, now);
 	const incomingOk = acceptableTicket(meta, incoming.ticket, now);

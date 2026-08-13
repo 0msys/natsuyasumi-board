@@ -1163,6 +1163,42 @@ describe('書き出しの控えを保存に残す', () => {
 		).toEqual(live);
 	});
 
+	// 同じ状態を2つのタブが書き出し、片方が止まっているあいだに、もう片方で「ほぞんできた」
+	// まで済ませることがある。止まっていたほうが再開したときに空いた枠へそのまま入れると、
+	// 答えた直後に同じ内容をもう一度聞かれる。答えても日づけは動かないので、押しても
+	// 何も起きない問いかけになる。
+	it('すでに答えた分に収まる書き出しは、聞き直さない', async () => {
+		await wizard();
+		const paused = await api.backupExportAll(); // タブA が渡したところで止まった
+		const answered = await exportAndNote(); // タブB が書き出して
+		expect(await api.backupMarkSaved(answered.ticket)).toEqual({ recorded: true }); // 答えた
+
+		// 止まっていたタブA が、いまごろ「覚える」まで進んだ
+		await api.backupNotePending({ ticket: paused.ticket, filename: paused.filename });
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'答えた直後に、同じ内容の問いかけがまた出ている'
+		).toBeNull();
+	});
+
+	// 上の検査で「答えたあとは何も聞かない」に倒れていないこと。書き出し直したなら、
+	// それは手元の新しいファイルなので必ず聞く。
+	it('答えたあとの書き出しは、ちゃんと聞く', async () => {
+		await wizard();
+		const first = await exportAndNote();
+		await api.backupMarkSaved(first.ticket);
+
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		const next = await exportAndNote();
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'書き出し直したのに聞かれない'
+		).toEqual({ ticket: next.ticket, filename: next.filename });
+	});
+
 	// 時計が進んでいるあいだに書き出すと、控えの日づけが未来になって backupStatus が伏せる。
 	// 時計が直ってから書き出し直しても、記録が変わっていなければ通番は同じで時刻は小さい
 	// ——順序だけで決めると未来の控えが残り続け、何度書き出しても問いかけが出ない＝親には
