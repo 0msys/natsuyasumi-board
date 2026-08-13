@@ -1024,15 +1024,27 @@ describe('書き出しの控えを保存に残す', () => {
 
 	// 断ったときに問いかけを残すと、押しても同じ理由で断られるだけ。画面は書き出し直しを
 	// 促しているので、問いかけのほうは下げる。
-	it('受け取れなかったときも、問いかけは下がる', async () => {
+	//
+	// 断られる形は、控えを作り替えるのではなく保存の側で作る。画面が渡すのは保存に入って
+	// いる控えそのものなので、細工した控えで断らせると実際には起きない形を固定してしまう
+	// （ここは「時計が進んでいた端末で書き出して、そのあと直った」）。
+	it('受け取れなかったときも、その問いかけは下がる', async () => {
+		const store = pokeablePersistence();
+		setPersistence(store);
 		await wizard();
 		const { ticket } = await exportAndNote();
 
-		expect(await api.backupMarkSaved({ ...ticket, storage_id: 'ほかの世代' })).toEqual({
+		const skewed = await read((db) => JSON.parse(JSON.stringify(db)) as Db);
+		const ahead = nowEpochSec() + 86_400;
+		skewed.meta.pending_backup = { ...skewed.meta.pending_backup!, ticket: { ...ticket, exported_at: ahead } };
+		store.poke(skewed);
+		setPersistence(store);
+
+		expect(await api.backupMarkSaved({ ...ticket, exported_at: ahead })).toEqual({
 			recorded: false
 		});
 		const status = await api.backupStatus();
-		expect(status.pending_backup).toBeNull();
+		expect(status.pending_backup, '答えた問いかけが残っている').toBeNull();
 		expect(status.last_backup_at, '断ったのに日づけを刻んでいる').toBeNull();
 	});
 
@@ -1040,10 +1052,10 @@ describe('書き出しの控えを保存に残す', () => {
 		await wizard();
 		const k = await keysOf();
 		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
-		await exportAndNote();
+		const { ticket } = await exportAndNote();
 		const before = (await api.backupStatus()).changes_since_backup;
 
-		await api.backupDismissPending();
+		await api.backupDismissPending(ticket);
 
 		const status = await api.backupStatus();
 		expect(status.pending_backup).toBeNull();
@@ -1078,6 +1090,42 @@ describe('書き出しの控えを保存に残す', () => {
 			(await api.backupStatus()).pending_backup,
 			'復元したのに、答えても断られる問いかけが残っている'
 		).toBeNull();
+	});
+
+	// タブが2つあると、こちらが問いかけを描いたあとに、もう一方が書き出して控えを
+	// 置きかえていることがある。そのときファイルは2つとも端末にあるので、古いほうに
+	// 答えたからといって新しいほうの問いかけを消してはいけない——消すと、あとから
+	// 書き出したファイルを確かめる口が（開き直した先も含めて）どこにも無くなる。
+	// この機能が直そうとしている壊れかたを、2タブの形で作ることになる。
+	it('別のタブが後から書き出していたら、そちらの問いかけは残す', async () => {
+		await wizard();
+		const first = await exportAndNote(); // タブA が書き出した
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		const second = await exportAndNote(); // タブB が書き出した（控えは B に置きかわる）
+
+		// タブA の画面に残っていた問いかけに答える
+		expect(await api.backupMarkSaved(first.ticket)).toEqual({ recorded: true });
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'あとから書き出したファイルの問いかけまで消えた（確かめる口が無くなる）'
+		).toEqual({ ticket: second.ticket, filename: second.filename });
+	});
+
+	it('別のタブの書き出しは、「できていない」でも消さない', async () => {
+		await wizard();
+		const first = await exportAndNote();
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		const second = await exportAndNote();
+
+		await api.backupDismissPending(first.ticket);
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'答えていないファイルの問いかけを消した'
+		).toEqual({ ticket: second.ticket, filename: second.filename });
 	});
 
 	// この欄を知らない版のタブ（Service Worker のキャッシュに残ったもの）が

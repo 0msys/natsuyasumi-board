@@ -136,11 +136,15 @@
 
 	// 出てこなかった・取り消した。何も記録しないので、催促はそのまま残る。
 	async function giveUpSaved() {
+		if (!question) return;
+		// どのファイルについて「できていない」と答えたのかを渡す。別のタブが後から書き出して
+		// いたら、そちらの問いかけは残す（そのファイルは端末にあるので、確かめる口が要る）。
+		const { ticket } = question;
 		busy = true;
 		notice = null;
 		error = null;
 		try {
-			await api.backupDismissPending();
+			await api.backupDismissPending(ticket);
 			dropHandle();
 			await refresh();
 			error =

@@ -3,6 +3,7 @@ import { nowEpochSec } from '$lib/core/clock';
 import { isStorageUnavailable, mutate, read, replaceAll } from '$lib/store/db';
 import { buildBackup, parseBackup } from '$lib/store/backup';
 import type { Meta } from '$lib/store/model';
+import { sameBackupFile } from '$lib/backup/ticket';
 import { ApiError, type BackupTicket, type PendingBackup } from '../contract';
 
 /** 保存の世代につける印。作り直された保存と別物になればよく、当てにくさは要らない。 */
@@ -58,6 +59,22 @@ function acceptableTicket(meta: Meta, ticket: BackupTicket, now: number): boolea
 	// 日づけの決められない控えは丸ごと断る（催促は残り、書き出し直せばすぐ済む）。
 	if (ticket.exported_at > now) return false;
 	return true;
+}
+
+/**
+ * 答えてもらったファイルの問いかけを下げる。**そのファイルのものだけ**を下げる。
+ *
+ * 見ないで消してはいけない。タブが2つあると、こちらが問いかけを描いたあとに、もう一方が
+ * 書き出して控えを置きかえていることがある——そのときファイルは2つとも端末にある。ここで
+ * 無条件に消すと、あとから書き出したほうを確かめる口が（開き直した先も含めて）どこにも
+ * 無くなる。それはこの仕掛けが直そうとしている壊れかたそのもの。
+ *
+ * 置きかえられていたら、残っているのは新しいほうの問いかけ。そのまま残す＝あとで答えられる。
+ */
+function dropAnsweredPending(meta: Meta, answered: BackupTicket): void {
+	if (meta.pending_backup && sameBackupFile(meta.pending_backup.ticket, answered)) {
+		meta.pending_backup = null;
+	}
 }
 
 export const backupApi = {
@@ -151,12 +168,12 @@ export const backupApi = {
 			{ local: true }
 		).then(() => undefined),
 
-	backupDismissPending: () =>
+	backupDismissPending: (ticket: BackupTicket) =>
 		// 「できていない」と答えられた。問いかけを下げるだけで、何も記録しない（local）。
 		// 催促はそのまま残るので、書き出し直せばすぐ済む。
 		mutate(
 			(db) => {
-				db.meta.pending_backup = null;
+				dropAnsweredPending(db.meta, ticket);
 			},
 			{ local: true }
 		).then(() => undefined),
@@ -168,11 +185,10 @@ export const backupApi = {
 			(db) => {
 				const { seq, exported_at } = ticket;
 				const now = nowEpochSec();
-				// 答えは1つで終わり。受け取れたかどうかによらず、問いかけは下げる。
-				// 控えは「未回答の問いかけが1つある」という印であって、配ったファイルの
-				// 台帳ではない。受け取れなかったときは画面が理由を出して書き出し直しを促す
-				// ので、同じ問いかけをもう一度出しても押し直させるだけになる。
-				db.meta.pending_backup = null;
+				// 答えられたファイルの問いかけだけを下げる。受け取れたかどうかは問わない
+				// （受け取れなかったときは画面が理由を出して書き出し直しを促すので、同じ
+				// 問いかけをもう一度出しても押し直させるだけ）。
+				dropAnsweredPending(db.meta, ticket);
 				if (!acceptableTicket(db.meta, ticket, now)) return { recorded: false };
 
 				// 2つの欄は必ずいっしょに動かす。片方だけ動くと「さいごのバックアップ」と

@@ -18,6 +18,10 @@ const BackupCard = (await import('./BackupCard.svelte')).default;
 /** マイクロタスクと $effect の後始末が一巡するのを待つ。 */
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 
+/** 同じ書き出しの控えか（保存側の sameBackupFile と同じ判定を、モックの中でも使う）。 */
+const sameTicket = (a: BackupTicket | undefined, b: BackupTicket): boolean =>
+	!!a && a.seq === b.seq && a.exported_at === b.exported_at && a.storage_id === b.storage_id;
+
 const STATUS: BackupStatus = {
 	supported: true,
 	last_backup_at: null,
@@ -33,8 +37,8 @@ let status: BackupStatus;
 let marked: BackupTicket[];
 /** backupNotePending に渡された問いかけ（呼ばれた順）. */
 let noted: PendingBackup[];
-/** backupDismissPending を呼んだ回数. */
-let dismissed: number;
+/** backupDismissPending に渡された控え（呼ばれた順）. */
+let dismissed: BackupTicket[];
 /** backupMarkSaved の答え（既定は「進めた」）. */
 let markRecorded: boolean;
 let exportSeq: number;
@@ -54,7 +58,7 @@ beforeEach(() => {
 	status = { ...STATUS };
 	marked = [];
 	noted = [];
-	dismissed = 0;
+	dismissed = [];
 	markRecorded = true;
 	exportSeq = 7;
 	exportedAt = 1_785_900_000;
@@ -78,14 +82,20 @@ beforeEach(() => {
 			noted.push(pending);
 			status = { ...status, pending_backup: pending };
 		},
-		backupDismissPending: async () => {
-			dismissed += 1;
-			status = { ...status, pending_backup: null };
+		// 本物と同じく、答えられたファイルの問いかけだけを下げる（別のタブが後から書き出して
+		// いたら、そちらは残る）。
+		backupDismissPending: async (ticket: BackupTicket) => {
+			dismissed.push(ticket);
+			if (sameTicket(status.pending_backup?.ticket, ticket)) {
+				status = { ...status, pending_backup: null };
+			}
 		},
 		backupMarkSaved: async (ticket: BackupTicket) => {
 			marked.push(ticket);
-			// 受け取れたかどうかによらず、問いかけは下がる（保存側と同じ）。
-			status = { ...status, pending_backup: null };
+			// 受け取れたかどうかによらず、答えられたファイルの問いかけは下がる（保存側と同じ）。
+			if (sameTicket(status.pending_backup?.ticket, ticket)) {
+				status = { ...status, pending_backup: null };
+			}
 			if (markRecorded) {
 				status = { ...status, last_backup_at: 1_786_000_000, changes_since_backup: 0 };
 			}
@@ -159,7 +169,9 @@ describe('バックアップのカード', () => {
 		await flush();
 
 		expect(marked, '「できていない」なのに基準を進めている').toEqual([]);
-		expect(dismissed, '問いかけを保存から落としていない（次に開くとまた聞かれる）').toBe(1);
+		expect(dismissed, '答えたファイルの控えを渡して落としていない').toEqual([
+			{ seq: 7, exported_at: 1_785_900_000, storage_id: 'gen-1' }
+		]);
 		expect(screen.getByText(/日づけは そのままにしました/)).toBeTruthy();
 		expect(screen.queryByText('ファイルは ほぞんできましたか？')).toBeNull();
 	});
@@ -268,6 +280,27 @@ describe('バックアップのカード', () => {
 			screen.getByText(/natsuyasumi-board-2026-08-08\.json をほぞんしました。/),
 			'ファイル名を保存側から取れていない'
 		).toBeTruthy();
+	});
+
+	// 別のタブが後から書き出していたら、端末にはファイルが2つある。古いほうに答えたときに
+	// 新しいほうの控えを渡すと、そのファイルの問いかけが消える＝確かめる口が無くなる。
+	it('答えるときは、画面に出ている問いかけの控えを渡す', async () => {
+		const r = await mountCard();
+		await pressExport();
+
+		// 別のタブが後から書き出した（保存の控えが置きかわった）状況を読み込む
+		const newer = {
+			ticket: { seq: 9, exported_at: 1_785_900_500, storage_id: 'gen-1' },
+			filename: 'natsuyasumi-board-2026-08-10.json'
+		};
+		status = { ...status, pending_backup: newer };
+		await (r.component as unknown as { reloadStatus(): Promise<void> }).reloadStatus();
+		await flush();
+
+		await fireEvent.click(screen.getByRole('button', { name: 'できていない' }));
+		await flush();
+
+		expect(dismissed, '画面に出ているのと違うファイルについて答えている').toEqual([newer.ticket]);
 	});
 
 	// 押し直せるリンクが指すのは、いま手元にある blob。問いかけが別のファイルの話に
