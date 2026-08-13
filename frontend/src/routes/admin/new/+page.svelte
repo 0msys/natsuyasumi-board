@@ -42,17 +42,22 @@
 			!!firstDay
 	);
 
-	// 作成が済んだ（＝下の goto で自分から出ていく）。入力欄は埋まったままなので、これが
-	// 無いと成功した親に「保存していない変更があります」を出してしまう。
-	let created = false;
+	// 作成に成功して自分から飛ぶ先。入力欄は埋まったままなので、素通しの道が無いと
+	// 成功した親に「保存していない変更があります」を出してしまう。
+	// 真偽値で「作成が済んだ」と持たないこと: goto が転んで（あるいは遷移だけ起きずに）
+	// この画面に残ったとき、素通しが居座ってガードが死ぬ。行き先で絞れば、素通しは
+	// その1回の行き先だけで済み、残ってしまった画面はそのまま守られる（Codex レビュー P2）。
+	let createdHref: string | null = null;
 
 	// 未入力のうちは黙って通す。ウィザードの入力は $state に持つだけなので、確認が無いと
 	// ヘッダーの「一覧へ」やブラウザの戻るで、打った名前・学年・日づけが手がかりも無く消える。
 	// 定義がゼロの初回はこの画面へ直行する＝はじめて触る親が最初に見る画面で起きる（issue #35）。
-	// エディタ側（admin/[child]/+page.svelte）と作りも文言もそろえる。素通しの例外は要らない:
-	// ステップ移動は URL を変えないので、ここへ来る遷移はすべて画面からの離脱になる。
+	// エディタ側（admin/[child]/+page.svelte）と作りも文言もそろえる。素通しは作成に成功した
+	// 行き先の1つだけ: ステップ移動は URL を変えないので、ここへ来る遷移はほかに無い。
+	// リロードとタブを閉じる（nav.to が無い）は、その1つにも当たらない＝必ず聞く。
 	beforeNavigate((nav) => {
-		if (created || !hasInput) return;
+		if (createdHref !== null && nav.to?.url.pathname === createdHref) return;
+		if (!hasInput) return;
 		if (nav.type === 'leave') {
 			nav.cancel();
 			return;
@@ -79,8 +84,9 @@
 				period: { start, end, first_day_of_school: firstDay },
 				template
 			});
-			created = true; // ここから先の遷移は自分で起こすもの＝離脱ガードに聞かせない
-			await goto(resolve('/admin/[child]', { child: encodeURIComponent(name) }));
+			const href = resolve('/admin/[child]', { child: encodeURIComponent(name) });
+			createdHref = href; // この行き先への遷移だけ、離脱ガードに聞かせない
+			await goto(href);
 		} catch (e) {
 			error = errorDetail(e);
 		} finally {

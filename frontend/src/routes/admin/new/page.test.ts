@@ -33,6 +33,27 @@ const type = (label: string, value: string) =>
 
 const next = () => fireEvent.click(screen.getByRole('button', { name: 'つぎへ' }));
 
+/** 4ステップぜんぶ埋めて「この内容でつくる」まで押す（作成に成功する側）。api に届いた定義を返す. */
+async function fillAndCreate() {
+	let sent: unknown = null;
+	setApi({
+		adminCreateDefinition: async (body: unknown) => {
+			sent = body;
+			return {};
+		}
+	});
+	await type('名前', 'はな');
+	await next();
+	await fireEvent.click(screen.getByRole('button', { name: '小3' }));
+	await next();
+	await type('なつやすみの初日', '2026-07-20');
+	await type('なつやすみの最終日', '2026-08-31');
+	await type('始業式の日', '2026-09-01');
+	await next();
+	await fireEvent.click(screen.getByRole('button', { name: 'この内容でつくる' }));
+	return sent;
+}
+
 beforeEach(() => {
 	// screen は document 全体を見る＝前に描いたものが残っていると「複数見つかった」で落ちる。
 	// bun では @testing-library の自動 cleanup が効かないので、描く前に自分で畳む。
@@ -146,30 +167,27 @@ describe('聞かないとき', () => {
 	// 他のテストと同じく runBeforeNavigate() で自分で流す。ここを省くと、素通しの判定を
 	// 何も見ないまま通ってしまう。
 	it('作成に成功した遷移では確認しない', async () => {
-		let sent: unknown = null;
-		setApi({
-			adminCreateDefinition: async (body: unknown) => {
-				sent = body;
-				return {};
-			}
-		});
 		render(Page, { props: { data: data() } });
 
-		await type('名前', 'はな');
-		await next();
-		await fireEvent.click(screen.getByRole('button', { name: '小3' }));
-		await next();
-		await type('なつやすみの初日', '2026-07-20');
-		await type('なつやすみの最終日', '2026-08-31');
-		await type('始業式の日', '2026-09-01');
-		await next();
-		await fireEvent.click(screen.getByRole('button', { name: 'この内容でつくる' }));
-
-		expect(sent).toMatchObject({ child: 'はな', grade: '小3', year: 2026 });
+		expect(await fillAndCreate()).toMatchObject({ child: 'はな', grade: '小3', year: 2026 });
 		expect(gotoCalls).toEqual(['/admin/%E3%81%AF%E3%81%AA']);
 
 		setConfirmAnswer(false); // 聞かれたら「いいえ」＝出来たての編集画面へ行けなくなる
 		expect(runBeforeNavigate('/admin/new', '/admin/%E3%81%AF%E3%81%AA')).toBe(false);
 		expect(confirmMessages).toEqual([]);
+	});
+
+	// 素通しは「作成が済んだ」ではなく「その行き先」に付ける。真偽値で持つと、goto が
+	// 転んでこの画面に残ったときに素通しが居座り、そこから先は一覧へ・戻る・リロードの
+	// どれでも入力が黙って消える＝この PR が直したはずの壊れ方が復活する（Codex レビュー P2）。
+	it('作成のあとでも、ほかの行き先は確認する', async () => {
+		render(Page, { props: { data: data() } });
+		await fillAndCreate();
+		setConfirmAnswer(false);
+
+		expect(leaveToList()).toBe(true);
+		expect(confirmMessages.length).toBe(1);
+		// リロード・タブを閉じる（行き先が無い）も、素通しには当たらない
+		expect(leaveToList('leave')).toBe(true);
 	});
 });
