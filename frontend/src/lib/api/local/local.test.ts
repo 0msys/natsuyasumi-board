@@ -1113,6 +1113,43 @@ describe('書き出しの控えを保存に残す', () => {
 		).toEqual({ ticket: second.ticket, filename: second.filename });
 	});
 
+	// 書き出しは「ブラウザに渡す」→「覚える」の2段で、あいだでタブが止まりうる（背景に
+	// 回された iOS のタブがまさにそれ）。止まっているうちに別のタブが書き出しを終えていると、
+	// 遅れて再開した古いほうが新しい問いかけを踏み潰す——親は古いファイルについて聞かれ、
+	// それに答えると、あとから書き出したファイルを確かめる口はどこにも残らない。
+	it('遅れて届いた古い書き出しは、新しい問いかけを押しのけない', async () => {
+		await wizard();
+		const older = await exportAndNote(); // タブA が書き出して渡した
+		const k = await keysOf();
+		await api.summerSetCheck(CHILD, today, k.habits[0], 'done');
+		const newer = await exportAndNote(); // タブB が書き出して覚えた
+
+		// 止まっていたタブA が、いまごろ「覚える」まで進んだ
+		await api.backupNotePending(older);
+
+		expect(
+			(await api.backupStatus()).pending_backup,
+			'古いほうの書き出しが、新しい問いかけを踏み潰した'
+		).toEqual({ ticket: newer.ticket, filename: newer.filename });
+	});
+
+	// 通番が同じ（記録が1件も変わっていない）ときは、中身の同じファイルが2つある状態。
+	// 並べる物差しが通番だけだと、ここで古いほうに置きかわる。
+	it('同じ通番なら、書き出した時刻の新しいほうを覚える', async () => {
+		await wizard();
+		const newer = await exportAndNote();
+
+		await api.backupNotePending({
+			...newer,
+			ticket: { ...newer.ticket, exported_at: newer.ticket.exported_at - 60 }
+		});
+
+		expect(
+			(await api.backupStatus()).pending_backup?.ticket.exported_at,
+			'先に書き出したほうに戻された'
+		).toBe(newer.ticket.exported_at);
+	});
+
 	it('別のタブの書き出しは、「できていない」でも消さない', async () => {
 		await wizard();
 		const first = await exportAndNote();

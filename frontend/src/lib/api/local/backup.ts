@@ -6,6 +6,7 @@ import type { Meta } from '$lib/store/model';
 import { sameBackupFile } from '$lib/backup/ticket';
 import { ApiError, type BackupTicket, type PendingBackup } from '../contract';
 
+
 /** 保存の世代につける印。作り直された保存と別物になればよく、当てにくさは要らない。 */
 const newStorageId = (): string =>
 	`${nowEpochSec().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
@@ -59,6 +60,29 @@ function acceptableTicket(meta: Meta, ticket: BackupTicket, now: number): boolea
 	// 日づけの決められない控えは丸ごと断る（催促は残り、書き出し直せばすぐ済む）。
 	if (ticket.exported_at > now) return false;
 	return true;
+}
+
+/**
+ * 覚えておく問いかけを1つ選ぶ。**新しく書き出したほう**を残す。
+ *
+ * 届いた順に上書きしてはいけない。書き出しは「ブラウザに渡す」→「覚える」の2段になっていて、
+ * そのあいだでタブが止まりうる（背景に回された iOS のタブがまさにそれで、この仕掛けは
+ * そこで問いかけが消えることを直しにきている）。止まっているあいだに別のタブが書き出しを
+ * 終えていると、遅れて再開した**古いほうが新しい問いかけを踏み潰す**。親は古いファイルに
+ * ついて聞かれ、それに答えると、あとから書き出したファイルを確かめる口はどこにも残らない。
+ *
+ * 並べる物差しは通番を先にする。保存の世代が同じあいだ通番は下がらないので、時計に依らない。
+ * 同じ通番なら記録は1件も変わっていない＝中身の同じファイルなので、書き出した時刻で決める
+ * （そこも並びなら、入っているものを残す。どちらを聞いても同じことになる）。
+ */
+function newerPending(stored: PendingBackup | null, incoming: PendingBackup): PendingBackup {
+	if (!stored) return incoming;
+	// 世代が違う控えは、もう受け取れない（acceptableTicket が断る）。生きているほうを採る。
+	if (stored.ticket.storage_id !== incoming.ticket.storage_id) return incoming;
+	if (incoming.ticket.seq !== stored.ticket.seq) {
+		return incoming.ticket.seq > stored.ticket.seq ? incoming : stored;
+	}
+	return incoming.ticket.exported_at > stored.ticket.exported_at ? incoming : stored;
 }
 
 /**
@@ -158,12 +182,12 @@ export const backupApi = {
 		// 記録は1件も変わっていない（local）。local を外すと、書き出すたびに催促の
 		// 「そのあと N件」が1つ増える——押した人を数えることになる。
 		//
-		// 呼ぶのは「渡せた」と分かってから（画面側）。ここで覚えるのは1つだけで、
-		// 書き出し直せば置きかわる。2度押しでも2つのタブでも、親に出る問いかけは
-		// 最後のファイルについての1つになる。
+		// 呼ぶのは「渡せた」と分かってから（画面側）。覚えるのは1つだけで、あとから
+		// 書き出したものに置きかわる。2度押しでも2つのタブでも、親に出る問いかけは
+		// いちばん新しいファイルについての1つになる。
 		mutate(
 			(db) => {
-				db.meta.pending_backup = pending;
+				db.meta.pending_backup = newerPending(db.meta.pending_backup, pending);
 			},
 			{ local: true }
 		).then(() => undefined),
